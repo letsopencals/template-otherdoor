@@ -112,7 +112,8 @@
 	overflow: clip;
 	/* closed: the clusters meet over the content; parted: drawn back past the edges */
 	--reach: 44vw;
-	--out: 19vw;
+	/* parted far enough that no blade reaches past the page gutter, whatever the width */
+	--out: max(19vw, calc(38vw - max(16px, (100vw - 1240px) / 2)));
 	/* leaves fade out where the layer ends instead of being cut by its edge */
 	-webkit-mask-image: linear-gradient(180deg, transparent 0, #000 9%, #000 88%, transparent 100%);
 	mask-image: linear-gradient(180deg, transparent 0, #000 9%, #000 88%, transparent 100%);
@@ -1919,6 +1920,14 @@
 
 /* ------------------------------------------------------------------ Plumb line */
 
+.world [data-asleep],
+.world [data-asleep] * {
+	animation-play-state: paused !important;
+}
+.plumb[data-away] {
+	opacity: 0 !important;
+	pointer-events: none;
+}
 .plumb {
 	--rope-h: calc(100svh - var(--header-h) - 120px);
 	position: fixed;
@@ -2048,10 +2057,13 @@
 		transform: none;
 	}
 	.lock {
-		width: min(320px, 34vw);
+		width: min(300px, 30vw);
 	}
 	.doorCopy {
-		width: min(340px, 34vw);
+		width: min(300px, 27vw);
+	}
+	.doorCopy .h2 {
+		font-size: 2rem;
 	}
 }
 
@@ -2136,6 +2148,14 @@
 	.doorTrack {
 		height: 220vh;
 	}
+	@media (max-height: 720px) {
+		.doorPhoto {
+			width: max(100vw, calc(50svh * 1.7911));
+		}
+		.idolLine {
+			top: 42svh;
+		}
+	}
 	.doorPhoto {
 		top: calc(var(--header-h) - 2svh);
 		width: max(100vw, calc(58svh * 1.7911));
@@ -2213,6 +2233,7 @@
 	}
 
 	.plumb {
+		pointer-events: none;
 		right: 2px;
 		width: 12px;
 		opacity: clamp(0, calc((0.992 - var(--depth, 0)) * 90), 0.7);
@@ -2240,6 +2261,9 @@
 @media (max-aspect-ratio: 1/1) and (min-width: 721px) {
 	.doorCopy {
 		bottom: 4svh;
+	}
+	.doorCopy .lede {
+		display: none;
 	}
 	.lock {
 		top: auto;

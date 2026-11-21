@@ -31,6 +31,15 @@ export function Descent({ layers, className, style, children }: { layers: Layer[
 		if (!el) return;
 		const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 		const curtains = Array.from(el.querySelectorAll<HTMLElement>('[data-curtain]'));
+		// Ambient loops (fireflies, sway, mist, torches) pause in layers that are off screen.
+		const layersEls = Array.from(el.querySelectorAll<HTMLElement>(':scope > header, :scope > section'));
+		const sleeper = new IntersectionObserver(
+			(entries) => {
+				for (const e of entries) (e.target as HTMLElement).toggleAttribute('data-asleep', !e.isIntersecting);
+			},
+			{ rootMargin: '15% 0px' },
+		);
+		layersEls.forEach((n) => sleeper.observe(n));
 		let tops: number[] = [];
 		let height = 1;
 		let raf = 0;
@@ -55,7 +64,7 @@ export function Descent({ layers, className, style, children }: { layers: Layer[
 			const p = Math.min(1, Math.max(0, -r.top / span));
 			el.style.setProperty('--depth', p.toFixed(4));
 			// The hero's frame of leaves and the canopy lift away over the first screen.
-			if (window.scrollY < vh * 1.5) el.style.setProperty('--hero-out', Math.min(1, window.scrollY / vh).toFixed(4));
+			if (!reduced && window.scrollY < vh * 1.5) el.style.setProperty('--hero-out', Math.min(1, window.scrollY / vh).toFixed(4));
 			if (bob.current) bob.current.style.transform = `translate3d(0, calc(${(p * 100).toFixed(2)} * var(--rope-h) / 100), 0)`;
 
 			// Which layer are we in, and how deep (metres, interpolated to the next layer)?
@@ -97,6 +106,7 @@ export function Descent({ layers, className, style, children }: { layers: Layer[
 		window.addEventListener('resize', onResize);
 		return () => {
 			cancelAnimationFrame(raf);
+			sleeper.disconnect();
 			window.clearTimeout(late);
 			window.removeEventListener('scroll', on);
 			window.removeEventListener('resize', onResize);
@@ -106,7 +116,7 @@ export function Descent({ layers, className, style, children }: { layers: Layer[
 	return (
 		<div ref={root} className={className} style={style}>
 			{children}
-			<nav className={s.plumb} aria-label="Descend to a layer">
+			<nav className={s.plumb} aria-label="Descend to a layer" data-away={layers[active]?.id === 'jt-chamber' ? '' : undefined}>
 				<span className={s.rope} aria-hidden />
 				{layers.map((l, i) => (
 					<a

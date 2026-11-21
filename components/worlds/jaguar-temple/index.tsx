@@ -64,7 +64,7 @@ const HERO_FRAME: LeafSpot[] = [
 	{
 		kind: 'palm',
 		seed: 8,
-		tone: 'mid',
+		tone: 'near',
 		x: -4,
 		y: 96,
 		w: 'clamp(260px, 30vw, 480px)',
@@ -83,7 +83,7 @@ const HERO_FRAME: LeafSpot[] = [
 	{
 		kind: 'monstera',
 		seed: 9,
-		tone: 'mid',
+		tone: 'near',
 		x: 4,
 		y: 112,
 		w: 'clamp(200px, 22vw, 360px)',
@@ -104,7 +104,7 @@ const HERO_FRAME_R: LeafSpot[] = [
 	{
 		kind: 'fern',
 		seed: 14,
-		tone: 'mid',
+		tone: 'near',
 		x: -4,
 		y: 100,
 		w: 'clamp(240px, 30vw, 460px)',
@@ -213,7 +213,7 @@ const FACE_L: LeafSpot[] = [
 	{
 		kind: 'palm',
 		seed: 33,
-		tone: 'mid',
+		tone: 'near',
 		x: -6,
 		y: 104,
 		w: 'clamp(300px, 36vw, 560px)',
@@ -225,7 +225,7 @@ const HALL_L: LeafSpot[] = [
 	{
 		kind: 'monstera',
 		seed: 41,
-		tone: 'lit',
+		tone: 'near',
 		rim: 'gold',
 		x: -4,
 		y: 28,
@@ -235,7 +235,7 @@ const HALL_L: LeafSpot[] = [
 	{
 		kind: 'fern',
 		seed: 42,
-		tone: 'gold',
+		tone: 'near',
 		rim: 'gold',
 		x: -5,
 		y: 70,
@@ -258,7 +258,7 @@ const HALL_R: LeafSpot[] = [
 	{
 		kind: 'palm',
 		seed: 44,
-		tone: 'gold',
+		tone: 'near',
 		rim: 'gold',
 		x: -6,
 		y: 22,
@@ -269,7 +269,7 @@ const HALL_R: LeafSpot[] = [
 	{
 		kind: 'monstera',
 		seed: 45,
-		tone: 'lit',
+		tone: 'near',
 		rim: 'gold',
 		x: -3,
 		y: 66,

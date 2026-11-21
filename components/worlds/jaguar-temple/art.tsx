@@ -136,7 +136,7 @@ export function Leaf({ kind, seed, tone = 'mid', rim = 'moon', className, style 
 			<path d={g.blade} fillRule="evenodd" fill={`url(#jt2-${tone})`} />
 			{solid ? <path d={g.blade} fillRule="evenodd" fill="url(#jt2-half)" /> : null}
 			{solid ? <path d={g.blade} fillRule="evenodd" fill="url(#jt2-sheen)" /> : null}
-			{rim !== 'none' ? <path d={g.blade} fillRule="evenodd" fill="none" stroke={`url(#jt2-rim-${rim})`} strokeWidth={solid ? 2.2 : 1.1} /> : null}
+			{rim !== 'none' ? <path d={g.blade} fillRule="evenodd" fill="none" stroke={`url(#jt2-rim-${rim})`} strokeWidth={solid ? 1.4 : 0.9} /> : null}
 			<path d={g.veins} fill="none" stroke={RIB[tone]} strokeOpacity={tone === 'near' ? 0.5 : 0.28} strokeWidth={solid ? 1.1 : 0.7} />
 			<path d={g.rib} fill="none" stroke={RIB[tone]} strokeOpacity={tone === 'near' ? 0.7 : 0.55} strokeWidth={solid ? 2.6 : 1.8} strokeLinecap="round" />
 		</svg>
