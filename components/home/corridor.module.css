@@ -133,30 +133,34 @@
 }
 .panelTop {
 	top: 9%;
-	height: 34%;
+	height: 48%;
 	overflow: hidden;
 	background: #0a0810;
 }
-/* the transom: frosted glass with the world glowing through it */
+/* the glazed upper panel: the room's key art behind old glass, lit fully when the door opens */
 .transom {
 	position: absolute;
 	inset: 0;
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
-	filter: blur(5px) brightness(0.75) saturate(1.2);
-	transform: scale(1.3);
-	opacity: 0.85;
+	object-position: 50% 35%;
+	filter: brightness(0.82) saturate(1.05);
+	transition: filter 0.6s ease;
+}
+.door:hover .transom,
+.door:focus-visible .transom {
+	filter: brightness(1) saturate(1.1);
 }
 .panelTop::after {
 	content: "";
 	position: absolute;
 	inset: 0;
-	background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), transparent 30%), repeating-linear-gradient(90deg, transparent 0 calc(33.3% - 1px), rgba(10, 8, 16, 0.85) calc(33.3% - 1px) 33.3%);
+	background: linear-gradient(160deg, rgba(255, 255, 255, 0.14), transparent 28%), linear-gradient(180deg, transparent 60%, rgba(10, 8, 16, 0.45));
 	box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 0 20px color-mix(in srgb, var(--slit) 40%, transparent);
 }
 .panelBottom {
-	top: 49%;
+	top: 62%;
 	bottom: 9%;
 }
 .plate {
@@ -174,7 +178,7 @@
 	position: absolute;
 	left: 0;
 	right: 0;
-	top: 70%;
+	top: 76%;
 	text-align: center;
 	font-family: var(--font-display);
 	font-size: clamp(0.9rem, 1.3vw, 1.3rem);
