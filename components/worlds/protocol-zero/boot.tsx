@@ -68,7 +68,16 @@ export function Boot({ target }: { target: string }) {
 				{LINES.map(([k, v], i) => {
 					const text = v ? `${k.padEnd(12, '.')} ${v}` : k;
 					return (
-						<p key={k} className={s.bootLine} style={{ '--n': text.length, '--d': `${0.6 + i * 0.32}s` } as CSSProperties}>
+						<p
+							key={k}
+							className={s.bootLine}
+							style={
+								{
+									'--n': text.length,
+									'--d': `${0.6 + i * 0.32}s`,
+								} as CSSProperties
+							}
+						>
 							<span>{text}</span>
 						</p>
 					);

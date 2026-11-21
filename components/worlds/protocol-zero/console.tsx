@@ -80,26 +80,30 @@ export function MeridianConsole({ watch }: { watch: string }) {
 			<p className="sr-only" aria-live="polite">
 				MERIDIAN: {last.text}
 			</p>
-			<div className={s.console} aria-hidden>
-				<div className={s.consoleBar}>
-					<Wave />
-					<span className={s.consoleName}>MERIDIAN</span>
-					<span className={s.consoleLink}>direct line</span>
-				</div>
-				<div className={s.consoleBody}>
-					{lines.slice(0, -1).map((l) => (
-						<p key={l.id} className={s.consoleLine}>
-							<b>{l.from === 'system' ? 'SYS' : 'M'}›</b> {l.text}
-						</p>
-					))}
-					<p key={last.id} className={`${s.consoleLine} ${s.consoleNow}`}>
-						<b>{last.from === 'system' ? 'SYS' : 'M'}›</b> {shown}
-						<i className={busy ? s.caretBusy : s.caret} />
-					</p>
-				</div>
-				<div className={s.consoleFoot}>
-					<span>Wipe in</span>
-					<Countdown className={s.consoleClock} />
+			<div className={s.rail}>
+				<div className={s.railStick}>
+					<div className={s.console} aria-hidden>
+						<div className={s.consoleBar}>
+							<Wave />
+							<span className={s.consoleName}>MERIDIAN</span>
+							<span className={s.consoleLink}>direct line</span>
+						</div>
+						<div className={s.consoleBody}>
+							{lines.slice(0, -1).map((l) => (
+								<p key={l.id} className={s.consoleLine}>
+									<b>{l.from === 'system' ? 'SYS' : 'M'}›</b> {l.text}
+								</p>
+							))}
+							<p key={last.id} className={`${s.consoleLine} ${s.consoleNow}`}>
+								<b>{last.from === 'system' ? 'SYS' : 'M'}›</b> {shown}
+								<i className={busy ? s.caretBusy : s.caret} />
+							</p>
+						</div>
+						<div className={s.consoleFoot}>
+							<span>Wipe in</span>
+							<Countdown className={s.consoleClock} />
+						</div>
+					</div>
 				</div>
 			</div>
 			<div className={s.dock} data-show={dock ? '' : undefined} aria-hidden>

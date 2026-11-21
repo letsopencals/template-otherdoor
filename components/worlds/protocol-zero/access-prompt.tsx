@@ -3,6 +3,7 @@
 import { useId, useRef, useState, type FormEvent } from 'react';
 import { SafeImg } from '@/components/ui/safe-img';
 import { say } from './meridian';
+import { MeridianLine } from './meridian-line';
 import s from './protocol.module.css';
 
 const PHRASE = 'ORIGIN';
@@ -45,13 +46,22 @@ export function AccessPrompt({ still, fallback }: { still: string; fallback: str
 		say('Override accepted. That’s cheating, and I’ve logged it.');
 	};
 
-	const hint = tries >= 3 ? 'It starts with O, and you came from it.' : tries >= 1 ? 'Six characters in the incident log are lit up. Read them in order.' : 'The phrase is somewhere on this page. MERIDIAN hides things in plain sight.';
+	const hint =
+		tries >= 3
+			? 'It starts with O, and you came from it.'
+			: tries >= 1
+				? 'Six characters in the incident log are lit up. Read them in order.'
+				: 'The phrase is somewhere on this page. MERIDIAN hides things in plain sight.';
 
 	return (
 		<div className={s.vault} data-state={state}>
 			<div className={s.vaultScene}>
 				<div className={s.vaultCore}>
-					<SafeImg src={still} alt="The core chamber: a column of glowing glass discs in a white circular room washed in alarm red" fallback={<SafeImg src={fallback} alt="" fallback={<span className={s.imgFallback} />} />} />
+					<SafeImg
+						src={still}
+						alt="The core chamber: a column of glowing glass discs in a white circular room washed in alarm red"
+						fallback={<SafeImg src={fallback} alt="" fallback={<span className={s.imgFallback} />} />}
+					/>
 				</div>
 				<div className={s.vaultMist} aria-hidden />
 				<div className={`${s.vaultDoor} ${s.vaultDoorL}`} aria-hidden>
@@ -104,8 +114,9 @@ export function AccessPrompt({ still, fallback }: { still: string; fallback: str
 					{state === 'denied' ? `ACCESS DENIED · ATTEMPT ${tries}` : state === 'granted' ? 'ACCESS GRANTED · DOORS OPENING' : ' '}
 				</p>
 				<p id={`${id}-hint`} className={s.promptHint}>
-					{hint}
+					{state === 'granted' ? 'The core is open. MERIDIAN is sulking.' : hint}
 				</p>
+				<MeridianLine />
 				<div className={s.promptAlt}>
 					{state === 'granted' ? null : (
 						<button type="button" className={s.promptSkip} onClick={override}>

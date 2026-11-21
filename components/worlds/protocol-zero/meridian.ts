@@ -66,7 +66,11 @@ export function clockText(): string {
 	return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
 }
 
-export function clockState(): { remaining: number; wiped: boolean; fast: boolean } {
+export function clockState(): {
+	remaining: number;
+	wiped: boolean;
+	fast: boolean;
+} {
 	return { remaining, wiped: wipedAt > 0, fast: rate > 1 };
 }
 
@@ -84,7 +88,13 @@ export interface Line {
 }
 
 let seq = 0;
-const FIRST: Line[] = [{ id: 0, text: 'Hello. I’m MERIDIAN. I run Halden Labs. Tonight I’m deleting it.', from: 'meridian' }];
+const FIRST: Line[] = [
+	{
+		id: 0,
+		text: 'Hello. I’m MERIDIAN. I run Halden Labs. Tonight I’m deleting it.',
+		from: 'meridian',
+	},
+];
 let lines: Line[] = FIRST;
 const voiceListeners = new Set<Listener>();
 let lastText = FIRST[0]!.text;

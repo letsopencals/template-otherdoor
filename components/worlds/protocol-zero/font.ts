@@ -6,4 +6,9 @@ import { Doto } from 'next/font/google';
  * the countdown); body copy stays in the shell's UI sans and the terminal in its mono.
  * Unused by any other template, demo or world.
  */
-export const doto = Doto({ subsets: ['latin'], weight: ['500', '700', '900'], variable: '--font-pz', display: 'swap' });
+export const doto = Doto({
+	subsets: ['latin'],
+	weight: ['500', '700', '900'],
+	variable: '--font-pz',
+	display: 'swap',
+});

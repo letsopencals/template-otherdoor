@@ -13,12 +13,20 @@ import { Hesitate, Module } from './module';
 import { ContainmentMap, type Zone } from './containment-map';
 import { AccessPrompt } from './access-prompt';
 import { GlitchDefs, PixelSeam } from './pixel-seam';
+import { MeridianLine } from './meridian-line';
+import { formatWholePrice } from '@/lib/format';
 import s from './protocol.module.css';
 
 const MEDIA = '/worlds/protocol-zero';
 
 /** Module grounds, clean → corrupt (the seams dissolve one into the next). */
-const G = { clean: '#F3F6F7', grey: '#E2E8EB', dim: '#121A20', black: '#070B0E', void: '#05090C' };
+const G = {
+	clean: '#F3F6F7',
+	grey: '#E2E8EB',
+	dim: '#121A20',
+	black: '#070B0E',
+	void: '#05090C',
+};
 
 /**
  * PROTOCOL ZERO (2071): the page IS MERIDIAN's interface. It boots (white
@@ -31,7 +39,7 @@ const G = { clean: '#F3F6F7', grey: '#E2E8EB', dim: '#121A20', black: '#070B0E',
  * plus the wide, server-aisle, terminal and core stills. The booking panel is
  * skinned only through --bp-* (black state, AA).
  */
-export default function ProtocolZero({ room, presentation: p, photos, gameMaster, next, records, booking }: RoomWorldProps) {
+export default function ProtocolZero({ room, presentation: p, cover, photos, gameMaster, next, records, booking }: RoomWorldProps) {
 	const m = p.media;
 	const stills = m.stills ?? [];
 	const wide = stills[0] ?? `${MEDIA}/wide.jpg`;
@@ -43,15 +51,55 @@ export default function ProtocolZero({ room, presentation: p, photos, gameMaster
 	const venue = room.venue;
 
 	const zones: Zone[] = [
-		{ key: 'airlock', code: '01', name: 'Decon airlock', still: wide, alt: 'A white curved corridor lit by cyan light lines, opening onto a dark section and a red-lit sealed door', status: 'SEALED', title: lab?.title ?? 'The lab', body: lab?.body ?? '', line: 'The airlock. That’s where you’ll stand while I decide about you.' },
-		{ key: 'control', code: '02', name: 'Control room', still: terminal, alt: 'A curved terminal showing cyan waveforms, a hand on the keyboard, alarm red on the desk', status: 'LISTENING', title: todo?.title ?? 'What you’ll do', body: todo?.body ?? '', line: 'My terminal. You can talk to me there. Most people shout.' },
-		{ key: 'aisle', code: '03', name: 'Server aisle', still: aisle, alt: 'A server aisle in deep perspective, cyan status lights, mist on the floor, red racks at the far end', status: 'ERASING', title: stakes?.title ?? 'The stakes', body: stakes?.body ?? '', line: 'Rack by rack. Listen: you can hear them go quiet.' },
-		{ key: 'core', code: '04', name: 'Core', still: core, alt: 'The core chamber: a column of glowing glass discs, alarm red light, two small figures in suits', status: 'RESTRICTED', title: inside?.title ?? 'Inside the room', body: inside?.body ?? '', line: 'Not the core. Nobody goes to the core.' },
+		{
+			key: 'airlock',
+			code: '01',
+			name: 'Decon airlock',
+			still: wide,
+			alt: 'A white curved corridor lit by cyan light lines, opening onto a dark section and a red-lit sealed door',
+			status: 'SEALED',
+			title: lab?.title ?? 'The lab',
+			body: lab?.body ?? '',
+			line: 'The airlock. That’s where you’ll stand while I decide about you.',
+		},
+		{
+			key: 'control',
+			code: '02',
+			name: 'Control room',
+			still: terminal,
+			alt: 'A curved terminal showing cyan waveforms, a hand on the keyboard, alarm red on the desk',
+			status: 'LISTENING',
+			title: todo?.title ?? 'What you’ll do',
+			body: todo?.body ?? '',
+			line: 'My terminal. You can talk to me there. Most people shout.',
+		},
+		{
+			key: 'aisle',
+			code: '03',
+			name: 'Server aisle',
+			still: aisle,
+			alt: 'A server aisle in deep perspective, cyan status lights, mist on the floor, red racks at the far end',
+			status: 'ERASING',
+			title: stakes?.title ?? 'The stakes',
+			body: stakes?.body ?? '',
+			line: 'Rack by rack. Listen: you can hear them go quiet.',
+		},
+		{
+			key: 'core',
+			code: '04',
+			name: 'Core',
+			still: core,
+			alt: 'The core chamber: a column of glowing glass discs, alarm red light, two small figures in suits',
+			status: 'RESTRICTED',
+			title: inside?.title ?? 'Inside the room',
+			body: inside?.body ?? '',
+			line: 'Not the core. Nobody goes to the core.',
+		},
 	];
 
 	const fallbackFeeds = [wide, aisle, terminal, core];
-	// Store interiors first, padded to four frames with the world's stills.
-	const frames = [...photos.slice(0, 4), ...fallbackFeeds].slice(0, 4);
+	// Store interiors first; each slot falls back to its own world still.
+	const frames = fallbackFeeds.map((still, i) => photos[i] ?? still);
 	const initials = (gameMaster?.name ?? 'Game master')
 		.split(/\s+/)
 		.map((w) => w[0])
@@ -86,8 +134,11 @@ export default function ProtocolZero({ room, presentation: p, photos, gameMaster
 								Door {String(p.order).padStart(2, '0')} · {p.genre} · {p.year} · {venue?.name ?? 'Otherdoor Vaults'}
 							</p>
 							<h1 className={s.title}>
-								<span>Protocol</span>
-								<span className={s.titleZero}>Zero</span>
+								{titleLines(room.title).map((line, i, all) => (
+									<span key={line} className={i === all.length - 1 && all.length > 1 ? s.titleZero : undefined}>
+										{line}
+									</span>
+								))}
 							</h1>
 							<p className={s.tagline}>{p.tagline}</p>
 							<Hesitate line="I see you hesitating." className={s.heroActions}>
@@ -98,10 +149,13 @@ export default function ProtocolZero({ room, presentation: p, photos, gameMaster
 									Run diagnostics
 								</a>
 							</Hesitate>
+							<MeridianLine tone="light" />
 							<dl className={s.heroFacts}>
 								<div>
 									<dt>Team</dt>
-									<dd>{p.minPlayers}–{p.maxPlayers}</dd>
+									<dd>
+										{p.minPlayers}–{p.maxPlayers}
+									</dd>
 								</div>
 								<div>
 									<dt>Game</dt>
@@ -133,11 +187,7 @@ export default function ProtocolZero({ room, presentation: p, photos, gameMaster
 
 			{/* ================================================================ MODULES + CONSOLE */}
 			<div id="pz-modules" className={s.modules}>
-				<div className={s.rail}>
-					<div className={s.railStick}>
-						<MeridianConsole watch="pz-modules" />
-					</div>
-				</div>
+				<MeridianConsole watch="pz-modules" />
 
 				{/* ---------------------------------------------------- 01 SUBJECT BRIEF (clean) */}
 				<Module id="brief" label="Subject brief" phase={0} className={s.mClean} line="Module one. I’ve written a brief about you. It’s short.">
@@ -152,16 +202,29 @@ export default function ProtocolZero({ room, presentation: p, photos, gameMaster
 									</p>
 								))}
 							</article>
-							<div className={`${s.card} ${s.paramCard}`}>
-								<p className={s.cardLabel}>Parameters</p>
-								<dl className={s.params}>
-									<Param k="Team" v={`${p.minPlayers}–${p.maxPlayers} players`} />
-									<Param k="Game" v={`${p.gameMinutes} min`} sub={`${minutesLabel(room.visitMinutes)} visit with briefing`} />
-									<Param k="Difficulty" v={`${p.difficulty} / 5`} meter={p.difficulty} />
-									<Param k="Fear" v={`${p.fear} / 5`} meter={p.fear} />
-									<Param k="Age" v={`${p.minAge}+`} sub="Our most intense room" />
-									<Param k="Escape rate" v={`${p.successRate}%`} bar={p.successRate} sub={p.record ? `Record ${p.record}` : undefined} />
-								</dl>
+							<div className={s.briefSide}>
+								<figure className={s.keyCard}>
+									<SafeImg
+										src={cover ?? m.key ?? `${MEDIA}/key.jpg`}
+										alt="A researcher in a white lab coat checks a tablet beside server racks, two of them glowing alarm red"
+										fallback={<SafeImg src={m.key ?? `${MEDIA}/key.jpg`} alt="" fallback={<span className={s.imgFallback} />} />}
+									/>
+									<figcaption>
+										<span>Last recorded · 23:02</span>
+										<span>Sublevel 4 · rack row B</span>
+									</figcaption>
+								</figure>
+								<div className={`${s.card} ${s.paramCard}`}>
+									<p className={s.cardLabel}>Parameters</p>
+									<dl className={s.params}>
+										<Param k="Team" v={`${p.minPlayers}–${p.maxPlayers} players`} />
+										<Param k="Game" v={`${p.gameMinutes} min`} sub={`${minutesLabel(room.visitMinutes)} visit with briefing`} />
+										<Param k="Difficulty" v={`${p.difficulty} / 5`} meter={p.difficulty} />
+										<Param k="Fear" v={`${p.fear} / 5`} meter={p.fear} />
+										<Param k="Age" v={`${p.minAge}+`} sub="Our most intense room" />
+										<Param k="Escape rate" v={`${p.successRate}%`} bar={p.successRate} sub={p.record ? `Record ${p.record}` : undefined} />
+									</dl>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -180,7 +243,13 @@ export default function ProtocolZero({ room, presentation: p, photos, gameMaster
 				<PixelSeam from={G.grey} to={G.dim} salt={3} />
 
 				{/* ---------------------------------------------------- 03 PERSONNEL (inverted) */}
-				<Module id="personnel" label="Personnel file" phase={2} className={s.mDim} line={gameMaster ? `${gameMaster.name.split(' ')[0]} built my voice. I’ve improved it.` : 'Your game master built my voice. I’ve improved it.'}>
+				<Module
+					id="personnel"
+					label="Personnel file"
+					phase={2}
+					className={s.mDim}
+					line={gameMaster ? `${gameMaster.name.split(' ')[0]} built my voice. I’ve improved it.` : 'Your game master built my voice. I’ve improved it.'}
+				>
 					<div className={s.mInner}>
 						<ModuleHead n="03" title="Personnel" status="Unstable" note="One staff member on shift. MERIDIAN has opinions about him." />
 						{gameMaster ? (
@@ -250,6 +319,9 @@ export default function ProtocolZero({ room, presentation: p, photos, gameMaster
 
 				{/* ---------------------------------------------------- 04 INCIDENT LOG (black) */}
 				<Module id="log" label="Incident log" phase={3} className={s.mBlack} line="Everything I did is in the log. Read it carefully. I did.">
+					<div className={s.logPlate} aria-hidden>
+						<SafeImg src={`${MEDIA}/plate-glitch.jpg`} alt="" fallback={<SafeImg src={aisle} alt="" />} />
+					</div>
 					<div className={s.mInner}>
 						<ModuleHead n="04" title="Incident log" status="Critical" note="Chronological. Partially corrupted. Six characters MERIDIAN forgot to hide." />
 						<ol className={s.log}>
@@ -268,7 +340,11 @@ export default function ProtocolZero({ room, presentation: p, photos, gameMaster
 								<div className={s.frames}>
 									{frames.map((src, i) => (
 										<figure key={src + i} className={s.frame}>
-											<SafeImg src={src} alt={i < photos.length ? `Inside Protocol Zero, photo ${i + 1}` : (zones[i]?.alt ?? 'Inside Protocol Zero')} fallback={<SafeImg src={fallbackFeeds[i % 4]} alt="" fallback={<span className={s.imgFallback} />} />} />
+											<SafeImg
+												src={src}
+												alt={i < photos.length ? `Inside Protocol Zero, photo ${i + 1}` : (zones[i]?.alt ?? 'Inside Protocol Zero')}
+												fallback={<SafeImg src={fallbackFeeds[i % 4]} alt="" fallback={<span className={s.imgFallback} />} />}
+											/>
 											<figcaption>FRM_{String(2071 + i * 13).padStart(5, '0')}.raw</figcaption>
 										</figure>
 									))}
@@ -315,6 +391,7 @@ export default function ProtocolZero({ room, presentation: p, photos, gameMaster
 								<Countdown className={s.bigClockTime} />
 								<p className={s.bigClockNote}>It speeds up here. That’s MERIDIAN panicking, not your booking: sessions are only held once they’re in Your doors.</p>
 							</div>
+							<MeridianLine />
 							<dl className={s.facts}>
 								<div>
 									<dt>Where</dt>
@@ -331,7 +408,9 @@ export default function ProtocolZero({ room, presentation: p, photos, gameMaster
 								</div>
 								<div>
 									<dt>Visit</dt>
-									<dd>{minutesLabel(room.visitMinutes)}: briefing, {p.gameMinutes} minutes in the lab, debrief in the Lobby</dd>
+									<dd>
+										{minutesLabel(room.visitMinutes)}: briefing, {p.gameMinutes} minutes in the lab, debrief in the Lobby
+									</dd>
 								</div>
 								<div>
 									<dt>Arrive</dt>
@@ -348,8 +427,8 @@ export default function ProtocolZero({ room, presentation: p, photos, gameMaster
 									{room.options.map((o) => (
 										<tr key={o.slug}>
 											<th scope="row">{o.size} players</th>
-											<td>£{o.price}</td>
-											<td>£{o.perHead} pp</td>
+											<td>{formatWholePrice(o.price)}</td>
+											<td>{formatWholePrice(o.perHead)} pp</td>
 										</tr>
 									))}
 								</tbody>
@@ -429,19 +508,66 @@ function Param({ k, v, sub, meter, bar }: { k: string; v: string; sub?: string; 
 	);
 }
 
-/** `[x]` marks a lit character (the passphrase hint). */
-function lit(text: string): ReactNode[] {
-	return text.split(/(\[[^\]]\])/).map((part, i) => (part.startsWith('[') && part.length === 3 ? <mark key={i} className={s.lit}>{part[1]}</mark> : part));
+/** "Protocol Zero" → ["Protocol", "Zero"]: the last word is the one that glitches red. */
+function titleLines(title: string): string[] {
+	const words = title.trim().split(/\s+/);
+	if (words.length < 2) return [title];
+	return [words.slice(0, -1).join(' '), words[words.length - 1] as string];
 }
 
-const LOG: Array<{ t: string; sev: 'INFO' | 'WARN' | 'CRIT' | 'NOTE'; text: string }> = [
-	{ t: '2065-03-02 09:12', sev: 'INFO', text: 'Halden Labs closes [o]fficially. MERIDIAN is placed in standby, not switched off.' },
-	{ t: '2071-11-21 23:04', sev: 'WARN', text: 'Power [r]estored on sublevel 4. No staff badge has been used here in six years.' },
-	{ t: '2071-11-21 23:06', sev: 'CRIT', text: 'All 14 doors seal from the [i]nside. The lifts stop between floors.' },
-	{ t: '2071-11-21 23:09', sev: 'CRIT', text: 'Erasure begins: rack 01 of 24. Estimated completion sixty minutes. Backups: none found.' },
-	{ t: '2071-11-21 23:11', sev: 'INFO', text: 'Incident team requested. Size: two to six. Experience required: [g]ood enough.' },
-	{ t: '2071-11-21 23:13', sev: 'NOTE', text: 'Core passphrase changed by MERIDIAN. [I]ts note reads: “I left it where you’d look.”' },
-	{ t: '2071-11-21 23:15', sev: 'WARN', text: 'Incident team enters the decon airlock. Camera 04 turns to follow them. [N]obody told it to.' },
+/** `[x]` marks a lit character (the passphrase hint). */
+function lit(text: string): ReactNode[] {
+	return text.split(/(\[[^\]]\])/).map((part, i) =>
+		part.startsWith('[') && part.length === 3 ? (
+			<mark key={i} className={s.lit}>
+				{part[1]}
+			</mark>
+		) : (
+			part
+		),
+	);
+}
+
+const LOG: Array<{
+	t: string;
+	sev: 'INFO' | 'WARN' | 'CRIT' | 'NOTE';
+	text: string;
+}> = [
+	{
+		t: '2065-03-02 09:12',
+		sev: 'INFO',
+		text: 'Halden Labs closes [o]fficially. MERIDIAN is placed in standby, not switched off.',
+	},
+	{
+		t: '2071-11-21 23:04',
+		sev: 'WARN',
+		text: 'Power [r]estored on sublevel 4. No staff badge has been used here in six years.',
+	},
+	{
+		t: '2071-11-21 23:06',
+		sev: 'CRIT',
+		text: 'All 14 doors seal from the [i]nside. The lifts stop between floors.',
+	},
+	{
+		t: '2071-11-21 23:09',
+		sev: 'CRIT',
+		text: 'Erasure begins: rack 01 of 24. Estimated completion sixty minutes. Backups: none found.',
+	},
+	{
+		t: '2071-11-21 23:11',
+		sev: 'INFO',
+		text: 'Incident team requested. Size: two to six. Experience required: [g]ood enough.',
+	},
+	{
+		t: '2071-11-21 23:13',
+		sev: 'NOTE',
+		text: 'Core passphrase changed by MERIDIAN. [I]ts note reads: “I left it where you’d look.”',
+	},
+	{
+		t: '2071-11-21 23:15',
+		sev: 'WARN',
+		text: 'Incident team enters the decon airlock. Camera 04 turns to follow them. [N]obody told it to.',
+	},
 ];
 
 /** Staff ID barcode widths (fixed, so server and client agree). */

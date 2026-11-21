@@ -33,8 +33,16 @@ export function Module({ id, phase, line, fast, className, label, children }: { 
 			{ rootMargin: '-35% 0px -35% 0px' },
 		);
 		io.observe(el);
+		// Pause the module's ambient loops while it is off screen.
+		const live = new IntersectionObserver(([e]) => {
+			if (!e) return;
+			if (e.isIntersecting) delete el.dataset.idle;
+			else el.dataset.idle = '';
+		});
+		live.observe(el);
 		return () => {
 			io.disconnect();
+			live.disconnect();
 			if (fast) setRate(1);
 		};
 	}, [phase, line, fast]);
@@ -48,9 +56,14 @@ export function Module({ id, phase, line, fast, className, label, children }: { 
 /** "I see you hesitating.": hovering or focusing inside for a while makes MERIDIAN notice. */
 export function Hesitate({ line, after = 1600, className, children }: { line: string; after?: number; className?: string; children: ReactNode }) {
 	const t = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const fired = useRef(false);
 	const arm = () => {
+		if (fired.current) return;
 		if (t.current) clearTimeout(t.current);
-		t.current = setTimeout(() => say(line), after);
+		t.current = setTimeout(() => {
+			fired.current = true;
+			say(line);
+		}, after);
 	};
 	const clear = () => {
 		if (t.current) clearTimeout(t.current);

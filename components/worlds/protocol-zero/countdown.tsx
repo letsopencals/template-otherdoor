@@ -2,23 +2,31 @@
 
 import { useEffect, useRef } from 'react';
 import { clockState, clockText, subscribeClock } from './meridian';
+import s from './protocol.module.css';
 
 /**
- * The wipe countdown (fiction). Writes its own text through a ref, so a tick
+ * The wipe countdown (fiction). Writes its own digits through refs, so a tick
  * never re-renders React. `data-state` drives the styling: calm, fast (near the
  * reservation, it accelerates), low (under five minutes) and wiped (00:00 hold).
+ * The colon is a separate glyph in the mono face (Doto's colon reads as a dagger).
  */
 export function Countdown({ className }: { className?: string }) {
-	const ref = useRef<HTMLSpanElement>(null);
+	const box = useRef<HTMLSpanElement>(null);
+	const mm = useRef<HTMLSpanElement>(null);
+	const ss = useRef<HTMLSpanElement>(null);
 	useEffect(() => {
-		const el = ref.current;
-		if (!el) return;
+		const el = box.current;
+		if (!el || !mm.current || !ss.current) return;
+		const m = mm.current;
+		const sec = ss.current;
 		let prev = '';
 		let prevState = '';
 		const paint = () => {
 			const t = clockText();
 			if (t !== prev) {
-				el.textContent = t;
+				m.textContent = t.slice(0, 2);
+				sec.textContent = t.slice(3, 5);
+				el.setAttribute('aria-label', `${t.slice(0, 2)} minutes ${t.slice(3, 5)} seconds`);
 				prev = t;
 			}
 			const c = clockState();
@@ -32,8 +40,16 @@ export function Countdown({ className }: { className?: string }) {
 		return subscribeClock(paint);
 	}, []);
 	return (
-		<span ref={ref} className={className} data-state="calm" suppressHydrationWarning>
-			60:00
+		<span ref={box} className={className} data-state="calm" role="timer" aria-label="60 minutes 00 seconds">
+			<span ref={mm} aria-hidden suppressHydrationWarning>
+				60
+			</span>
+			<i className={s.colon} aria-hidden>
+				:
+			</i>
+			<span ref={ss} aria-hidden suppressHydrationWarning>
+				00
+			</span>
 		</span>
 	);
 }
