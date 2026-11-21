@@ -32,7 +32,11 @@ const CREW: Array<{ key: CrewKey; role: string; alias: string; line: string; sta
  */
 export default function HotelLumiere({ room, presentation: p, photos, gameMaster, next, records, booking }: RoomWorldProps) {
 	const m = p.media;
-	const vault = m.stills?.[0] ?? `${MEDIA}/vault.jpg`;
+	const vault = still(m.stills, 'vault.jpg');
+	const wide = still(m.stills, 'wide.jpg');
+	const corridor = still(m.stills, 'laser-corridor.jpg');
+	const crewShot = still(m.stills, 'balcony-crew.jpg');
+	const sunset = still(m.stills, 'plate-sunset.jpg');
 	const [job, stakes, todo, inside] = p.beats;
 	const venue = room.venue?.name ?? 'Otherdoor Leith';
 	const doorNo = String(p.order).padStart(2, '0');
@@ -173,8 +177,8 @@ export default function HotelLumiere({ room, presentation: p, photos, gameMaster
 							<Caption i={0} tone="paper" className={s.capBottom}>Crack the safe.</Caption>
 						</figure>
 						<figure className={`${s.panel} ${s.pSmall}`} data-slam style={{ '--d': '240ms' } as CSSProperties}>
-							<BeamsVignette className={s.fill} />
-							<span className={s.screen} aria-hidden />
+							<SafeImg src={corridor} alt="" className={`${s.photoFill} ${s.smallPhoto}`} fallback={<BeamsVignette className={s.fill} />} />
+							<span className={`${s.screen} ${s.duoScreen}`} aria-hidden />
 							<Caption i={0} tone="paper" className={s.capBottom}>Slip the grid.</Caption>
 						</figure>
 					</div>
@@ -183,7 +187,7 @@ export default function HotelLumiere({ room, presentation: p, photos, gameMaster
 					</p>
 					<div className={s.tier3}>
 						<figure className={`${s.panel} ${s.pInside}`} data-slam>
-							<SafeImg src={setPhotos[0] ?? vault} alt="Inside the Hôtel Lumière set" className={s.photoFill} fallback={<DiamondVignette className={s.fill} />} />
+							<SafeImg src={setPhotos[0] ?? wide} alt={setPhotos[0] ? 'Inside the Hôtel Lumière set' : 'The Hôtel Lumière above the bay at sunset'} className={s.photoFill} fallback={<DiamondVignette className={s.fill} />} />
 							<span className={`${s.screen} ${s.screenLight}`} aria-hidden />
 							<Caption i={0} className={s.capTL}>
 								{inside?.title ?? 'Inside the room'}. {inside?.body}
@@ -191,7 +195,7 @@ export default function HotelLumiere({ room, presentation: p, photos, gameMaster
 						</figure>
 						<figure className={`${s.panel} ${s.pCar}`} data-slam style={{ '--d': '160ms' } as CSSProperties}>
 							<div className={s.carScene} aria-hidden>
-								<span className={s.carSun} />
+								<SafeImg src={sunset} alt="" className={`${s.photoFill} ${s.carPlate}`} fallback={<span className={s.carSun} />} />
 								<span className={s.carRoad} />
 								<Coupe className={s.coupe} />
 							</div>
@@ -207,6 +211,16 @@ export default function HotelLumiere({ room, presentation: p, photos, gameMaster
 			{/* ================================================================ PAGE 3: the crew */}
 			<Page id="page-3" n={3} title="Meet the crew" sub={`You are the crew: ${p.minPlayers} to ${p.maxPlayers} of you`}>
 				<p className={s.crewIntro}>Pick your parts at the briefing. Every role has its own puzzles, and the job only works if you talk.</p>
+				<figure className={`${s.panel} ${s.crewShot}`} data-slam>
+					<SafeImg src={crewShot} alt="Three of the crew on the hotel terrace at sunset, one checking his watch" className={s.photoFill} fallback={<DiamondVignette className={s.fill} />} />
+					<span className={`${s.screen} ${s.duoScreen}`} aria-hidden />
+					<Caption i={0} className={s.capTL}>
+						8.47 pm, the terrace. The band starts at nine.
+					</Caption>
+					<Balloon i={1} kind="whisper" tail="br" className={s.crewShotBalloon}>
+						Synchronise watches.
+					</Balloon>
+				</figure>
 				<ul className={s.crew}>
 					{CREW.map((c, i) => (
 						<li key={c.key} className={s.crewCard} data-tone={c.tone} data-slam style={{ '--d': `${i * 110}ms` } as CSSProperties}>
@@ -313,7 +327,7 @@ export default function HotelLumiere({ room, presentation: p, photos, gameMaster
 
 				<h3 className={s.backHead}>From the set</h3>
 				<div className={s.setStrip}>
-					{(setPhotos.length ? setPhotos : [vault]).map((src, i) => (
+					{(setPhotos.length ? setPhotos : [wide, vault]).map((src, i) => (
 						<figure key={src} className={`${s.panel} ${s.setPhoto}`} data-slam style={{ '--d': `${i * 120}ms` } as CSSProperties}>
 							<SafeImg src={src} alt={`Inside the Hôtel Lumière Job, view ${i + 1}`} className={s.photoFill} fallback={<DiamondVignette className={s.fill} />} />
 							<figcaption className={s.setCap}>Panel {i + 1}</figcaption>
@@ -425,6 +439,11 @@ export default function HotelLumiere({ room, presentation: p, photos, gameMaster
 }
 
 /* ------------------------------------------------------------------ module-scope pieces */
+
+/** A named world still: the manifest's entry when declared, else the file in public/worlds/hotel-lumiere. */
+function still(list: string[] | undefined, name: string): string {
+	return list?.find((x) => x.endsWith(`/${name}`)) ?? `${MEDIA}/${name}`;
+}
 
 function Page({ id, n, title, sub, dark = false, children }: { id: string; n: number; title: string; sub: string; dark?: boolean; children: ReactNode }) {
 	return (
