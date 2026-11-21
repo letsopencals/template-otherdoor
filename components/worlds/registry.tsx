@@ -13,6 +13,7 @@ import type { RoomWorldProps } from '@/lib/worlds';
  */
 const WORLDS: Record<string, ComponentType<RoomWorldProps>> = {
 	'kepler-station': dynamic(() => import('./kepler-station')),
+	'gaslight-no-9': dynamic(() => import('./gaslight-no-9')),
 };
 
 const GenericWorld = dynamic(() => import('./_placeholder/placeholder-world'));
