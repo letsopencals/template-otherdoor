@@ -2,7 +2,7 @@
 
 import { memo, useState } from 'react';
 import type { AddOnListItemResponse } from '@opencals/storefront-sdk';
-import { formatWholePrice } from '@/lib/format';
+import { formatPrice } from '@/lib/format';
 import s from './booking.module.css';
 
 const FIRST = 3;
@@ -21,7 +21,7 @@ export const AddOnList = memo(function AddOnList({ addOns, picked, onToggle }: {
 							<span className={s.addonTitle}>{a.title}</span>
 							{a.description ? <span className={s.addonDesc}>{a.description}</span> : null}
 						</span>
-						<span className={s.addonPrice}>+{formatWholePrice(a.price)}</span>
+						<span className={s.addonPrice}>+{formatPrice(a.price)}</span>
 					</label>
 				))}
 			</div>

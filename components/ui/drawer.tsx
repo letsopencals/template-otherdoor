@@ -5,13 +5,19 @@ import { useEffect, useRef, type ReactNode } from 'react';
 /** A modal side drawer: Escape closes, focus moves in and back, the page doesn't scroll behind it. */
 export function Drawer({ open, onClose, label, children, className = '', side = 'right' }: { open: boolean; onClose: () => void; label: string; children: ReactNode; className?: string; side?: 'right' | 'bottom' }) {
 	const ref = useRef<HTMLDivElement>(null);
+	// Callers pass inline handlers: keep the latest in a ref so a re-render doesn't re-run the open effect
+	// (which would steal focus back to the first button and drop the scroll lock).
+	const closeRef = useRef(onClose);
+	useEffect(() => {
+		closeRef.current = onClose;
+	}, [onClose]);
 	useEffect(() => {
 		if (!open) return;
 		const prev = document.activeElement as HTMLElement | null;
 		document.documentElement.style.overflow = 'hidden';
 		const t = window.setTimeout(() => ref.current?.querySelector<HTMLElement>('button, a, input')?.focus(), 30);
 		const key = (e: KeyboardEvent) => {
-			if (e.key === 'Escape') onClose();
+			if (e.key === 'Escape') closeRef.current();
 			if (e.key === 'Tab' && ref.current) {
 				const f = [...ref.current.querySelectorAll<HTMLElement>('button:not([disabled]), a[href], input, select, textarea')];
 				if (!f.length) return;
@@ -33,7 +39,7 @@ export function Drawer({ open, onClose, label, children, className = '', side = 
 			document.documentElement.style.overflow = '';
 			prev?.focus?.();
 		};
-	}, [open, onClose]);
+	}, [open]);
 	if (!open) return null;
 	return (
 		<div className="fixed inset-0 z-[70]" role="dialog" aria-modal="true" aria-label={label}>

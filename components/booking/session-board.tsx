@@ -117,8 +117,8 @@ export function SessionBoard({ rooms, venues, initialRanges, renderedAt, initial
 											<span className={s.labelNote}>Price for the whole team</span>
 										</p>
 										<TeamSizes options={r.options} selected={team} onSelect={(n) => { setTeam(n); setAdded(null); }} />
-										{error ? <p className={`${s.error} !mx-0 mt-3`}>{error}</p> : null}
-										{added ? <p className={`${s.ok} !mx-0 mt-3`}>Added to your doors: {added}</p> : null}
+										{error ? <p role="alert" className={`${s.error} !mx-0 mt-3`}>{error}</p> : null}
+										{added ? <p role="status" className={`${s.ok} !mx-0 mt-3`}>Added to your doors: {added}</p> : null}
 										<div className="mt-4 flex items-center gap-3">
 											<div className={s.total}>
 												<span className={s.totalAmount}>{option ? formatPrice(option.price) : 'Choose your team'}</span>
@@ -148,7 +148,7 @@ export function SessionBoard({ rooms, venues, initialRanges, renderedAt, initial
 						);
 					})}
 				</ol>
-				{added && !pick ? <p className={s.ok}>Added to your doors: {added}</p> : null}
+				{added && !pick ? <p role="status" className={s.ok}>Added to your doors: {added}</p> : null}
 			</div>
 		</div>
 	);
