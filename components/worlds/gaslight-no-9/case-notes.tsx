@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import s from './gaslight.module.css';
 
 /** The three hidden clues the glass can find. Optional fun: nothing here gates booking. */
@@ -41,10 +41,23 @@ export function CaseNotes() {
 	const { found } = useCase();
 	const n = found.size;
 	const solved = n === CLUES.length;
+	// Open the notebook for a few seconds whenever a clue is found.
+	const [flash, setFlash] = useState(false);
+	useEffect(() => {
+		if (!n) return;
+		setFlash(true);
+		const t = window.setTimeout(() => setFlash(false), solved ? 6000 : 3200);
+		return () => window.clearTimeout(t);
+	}, [n, solved]);
 	return (
-		<aside className={s.notes} data-solved={solved || undefined} aria-label="Case notes">
+		<aside className={s.notes} data-solved={solved || undefined} data-open={flash || undefined} tabIndex={0} aria-label={`Case notes: ${n} of ${CLUES.length} clues found`}>
 			<p className={s.notesHead}>
 				<span>Case notes</span>
+				<span className={s.notesBoxes} aria-hidden>
+					{CLUES.map((c) => (
+						<i key={c.id} data-got={found.has(c.id) || undefined} />
+					))}
+				</span>
 				<b aria-live="polite">
 					{n} of {CLUES.length}
 				</b>

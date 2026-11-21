@@ -70,15 +70,14 @@ export function Wall({ width, strings, knots, index, backdrop, notes, children }
 			const p = Math.min(1, Math.max(0, -r.top / Math.max(1, r.height - vh)));
 			wrap.style.setProperty('--p', p.toFixed(4));
 			const scrolled = p * Math.max(0, width * fs - vw);
-			const frontier = (scrolled + vw * 0.72) / fs;
+			// The string runs a little ahead of the middle of the screen, and reaches the end of the wall as the walk ends.
+			const frontier = (scrolled + vw * (0.72 + 0.4 * p)) / fs;
 			strings.forEach((sg, i) => {
 				const f = Math.min(1, Math.max(0, (frontier - sg.from) / (sg.to - sg.from)));
 				const off = (1 - f).toFixed(4);
 				for (const el of [segs[i * 2], segs[i * 2 + 1]]) if (el) el.style.strokeDashoffset = off;
-				const k = knotEls[i + 1];
-				if (k) k.toggleAttribute('data-on', f >= 0.995);
 			});
-			knotEls[0]?.toggleAttribute('data-on', frontier > (knots[0]?.x ?? 0));
+			knots.forEach((k, i) => knotEls[i]?.toggleAttribute('data-on', frontier >= k.x));
 			const mid = (scrolled + vw / 2) / fs;
 			let cur = index[0]?.key ?? '';
 			for (const it of index) if (it.x <= mid) cur = it.key;

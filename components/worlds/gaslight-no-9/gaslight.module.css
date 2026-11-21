@@ -180,8 +180,9 @@
 }
 .heroKicker {
 	font-family: var(--g-type);
-	font-size: clamp(0.7rem, 2.9vw, 0.95rem);
+	font-size: clamp(0.74rem, 3vw, 1.05rem);
 	color: var(--g-amber-2);
+	text-shadow: 0 0 12px rgba(232, 163, 61, 0.45);
 	margin-bottom: 1.1rem;
 }
 .typed {
@@ -539,7 +540,7 @@
 		left: calc(var(--x) * 1em);
 		top: calc(var(--y) * 1em);
 		width: calc(var(--w) * 1em);
-		max-height: calc(var(--h) * 1em);
+		min-height: calc(var(--h) * 1em);
 		align-self: auto;
 		transform: rotate(var(--r));
 	}
@@ -758,11 +759,12 @@
 }
 .stamp {
 	position: absolute;
-	right: 0.6em;
-	top: 1.2em;
-	padding: 0.1em 0.45em 0.15em;
+	right: -0.5em;
+	top: -0.9em;
+	padding: 0.05em 0.4em 0.1em;
 	font-family: var(--g-display);
-	font-size: 1.7em;
+	font-size: 1.45em;
+	background: rgba(241, 232, 210, 0.55);
 	color: rgba(165, 28, 32, 0.9);
 	border: 0.09em double rgba(165, 28, 32, 0.9);
 	border-width: 0.16em;
@@ -1127,7 +1129,13 @@
 		padding-top: 0.6em;
 	}
 	.masthead {
-		font-size: 2.1em;
+		font-size: 2.05em;
+		white-space: normal;
+		line-height: 0.98;
+		text-wrap: balance;
+	}
+	.paperTop span:first-child {
+		display: none;
 	}
 	.ink {
 		top: 82%;
@@ -1479,11 +1487,11 @@
 .ticket {
 	display: flex;
 	flex-direction: column;
-	padding: 1.1em 1.1em 0.9em;
+	padding: 2.1em 1.1em 0.9em;
 	background: linear-gradient(#f0e4c4, #e2d2aa);
 	mask:
-		radial-gradient(circle at 0 calc(100% - 4.4em), transparent 0.6em, #000 0.62em) left / 51% 100% no-repeat,
-		radial-gradient(circle at 100% calc(100% - 4.4em), transparent 0.6em, #000 0.62em) right / 51% 100% no-repeat;
+		radial-gradient(circle at 0 calc(100% - 3.55em), transparent 0.6em, #000 0.62em) left / 51% 100% no-repeat,
+		radial-gradient(circle at 100% calc(100% - 3.55em), transparent 0.6em, #000 0.62em) right / 51% 100% no-repeat;
 }
 .ticketShop {
 	text-align: center;
@@ -1567,7 +1575,6 @@
 	font-family: var(--g-type);
 	font-size: 0.6em;
 	color: #5a4f40;
-	transform: translateY(1.2em);
 }
 .ticketStub span:first-child {
 	font-family: var(--g-display);
@@ -1897,21 +1904,6 @@
 	transform: rotate(-10deg);
 	filter: drop-shadow(0 0.3em 0.4em rgba(0, 0, 0, 0.35));
 }
-.warrantCover {
-	width: 46%;
-	aspect-ratio: 3 / 4;
-	margin: -1.2em 4% 0 auto;
-	overflow: hidden;
-	border: 0.5em solid #ece4cf;
-	border-bottom-width: 1.6em;
-	transform: rotate(2.4deg);
-	box-shadow: 0 1.4em 2.6em -1em rgba(0, 0, 0, 0.85);
-}
-@media (max-width: 959px) {
-	.warrantCover {
-		display: none;
-	}
-}
 .panelCol {
 	min-width: 0;
 }
@@ -2142,5 +2134,70 @@
 	}
 	.lens {
 		transition: none;
+	}
+}
+
+/* ------------------------------------------------------------------ case notes: folded until wanted */
+.notesHead {
+	gap: 0.6em;
+}
+.notesHead > span:first-child {
+	margin-right: auto;
+}
+.notesBoxes {
+	display: inline-flex;
+	gap: 0.25em;
+}
+.notesBoxes i {
+	position: relative;
+	width: 0.7em;
+	height: 0.7em;
+	border: 1px solid rgba(31, 25, 18, 0.55);
+}
+.notesBoxes i[data-got] {
+	background: var(--g-red);
+	border-color: var(--g-red);
+}
+.notesList,
+.notesFoot {
+	display: grid;
+	max-height: 0;
+	overflow: clip;
+	opacity: 0;
+	transition:
+		max-height 0.4s var(--g-ease),
+		opacity 0.3s,
+		margin 0.3s;
+	margin-top: 0;
+}
+.notes:hover .notesList,
+.notes:focus-within .notesList,
+.notes[data-open] .notesList,
+.notes[data-solved] .notesList {
+	max-height: 9em;
+	opacity: 1;
+	margin-top: 0.4em;
+}
+.notes:hover .notesFoot,
+.notes:focus-within .notesFoot,
+.notes[data-open] .notesFoot,
+.notes[data-solved] .notesFoot {
+	max-height: 4em;
+	opacity: 1;
+	margin-top: 0.45em;
+}
+.notesFoot {
+	display: block;
+}
+.notes {
+	cursor: default;
+}
+
+@media (min-width: 1024px) and (min-aspect-ratio: 5/4) and (min-height: 600px) and (prefers-reduced-motion: no-preference) {
+	.kTicket {
+		display: flex;
+	}
+	.ticket {
+		flex: 1;
 	}
 }
