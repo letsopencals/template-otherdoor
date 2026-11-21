@@ -2577,6 +2577,13 @@
 	.instBig {
 		font-size: 1.6rem;
 	}
+	.cogs {
+		gap: 3px;
+	}
+	.cogs svg {
+		width: 24px;
+		height: 24px;
+	}
 	.frames {
 		grid-template-columns: minmax(0, 1fr);
 		gap: 26px;
@@ -2650,6 +2657,9 @@
 		transition: none !important;
 	}
 	.cover {
+		display: none;
+	}
+	.playBtn {
 		display: none;
 	}
 	.keyHelp {

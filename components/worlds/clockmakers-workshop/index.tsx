@@ -55,7 +55,8 @@ export default function ClockmakersWorkshop({ room, presentation: p, photos, gam
 	const players = `${p.minPlayers}–${p.maxPlayers}`;
 	const paragraphs = room.description.split(/\n\s*\n/).filter(Boolean);
 	const venue = room.venue;
-	const shots = photos.slice(0, 3);
+	// Store interiors first; without them, the world's own stills fill the case.
+	const shots = photos.length ? photos.slice(0, 3) : [`${MEDIA}/hero-poster.jpg`, `${MEDIA}/key.jpg`, `${MEDIA}/toys.jpg`];
 
 	return (
 		<div data-cw-root className={`${s.world} ${caprasimo.variable}`} style={{ '--door': p.palette.glow } as CSSProperties}>
@@ -181,9 +182,9 @@ export default function ClockmakersWorkshop({ room, presentation: p, photos, gam
 							<SafeImg src={`${MEDIA}/giant-clock.jpg`} alt="The great clock’s movement: brass wheels, a heavy pendulum and a tiny mechanical bird, lit by candles" className={s.giantImg} fallback={<FrameFallback i={9} />} />
 						</figure>
 					</div>
-					<div className={s.frames} data-count={shots.length || 3}>
-						{(shots.length ? shots : [null, null, null]).map((src, i) => (
-							<figure key={src ?? i} className={s.frameFig}>
+					<div className={s.frames} data-count={shots.length}>
+						{shots.map((src, i) => (
+							<figure key={src} className={s.frameFig}>
 								<div className={s.frameArch}>
 									<SafeImg src={src} alt={`Inside the Clockmaker’s Workshop, plate ${PLATE[i]}`} className={s.frameImg} fallback={<FrameFallback i={i} />} />
 								</div>
