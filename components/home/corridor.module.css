@@ -338,7 +338,7 @@ bottom: calc(34px + 26%);
 	}
 	.door {
 		display: grid;
-		grid-template-columns: 88px 1fr;
+		grid-template-columns: 104px 1fr;
 		grid-template-rows: auto auto;
 		column-gap: 18px;
 		align-items: center;

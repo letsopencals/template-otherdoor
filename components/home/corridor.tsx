@@ -41,6 +41,7 @@ export function Corridor({ doors, moods }: { doors: DoorRoom[]; moods: ReadonlyA
 	const [open, setOpen] = useState<string | null>(null);
 	const listRef = useRef<HTMLOListElement>(null);
 	const rects = useRef<Map<string, DOMRect>>(new Map());
+	const tapped = useRef<string | null>(null);
 	const ordered = doorsForMood(doors, mood);
 
 	const focus = useCallback((d: DoorRoom | null) => {
@@ -83,8 +84,9 @@ export function Corridor({ doors, moods }: { doors: DoorRoom[]; moods: ReadonlyA
 								onMouseEnter={() => focus(d)}
 								onFocus={() => focus(d)}
 								onClick={(e) => {
-									if (window.matchMedia(PHONE).matches && !isOpen) {
+									if (window.matchMedia(PHONE).matches && tapped.current !== d.slug) {
 										e.preventDefault();
+										tapped.current = d.slug;
 										focus(d);
 									}
 								}}
