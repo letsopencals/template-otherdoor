@@ -32,7 +32,7 @@ export function DoorMark({ size = 26, className = '' }: { size?: number; classNa
 
 export function Logo({ compact = false }: { compact?: boolean }) {
 	return (
-		<Link href="/" className="group flex items-center gap-2 text-[#efe7da]" aria-label={`${siteConfig.name}, home`}>
+		<Link href="/" className="group flex items-center gap-2 text-inherit" aria-label={`${siteConfig.name}, home`}>
 			<DoorMark className="shrink-0 transition-transform duration-700 group-hover:-translate-y-0.5" />
 			{compact ? null : <span className="font-display text-[1.22rem] font-semibold tracking-[0.07em]">{siteConfig.wordmark}</span>}
 		</Link>
