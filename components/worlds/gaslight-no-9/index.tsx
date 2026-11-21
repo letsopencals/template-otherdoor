@@ -187,7 +187,7 @@ export default function GaslightNo9({ room, presentation: p, cover, photos, game
 						<figure className={s.warrantPhoto}>
 							<span className={s.warrantPin} aria-hidden />
 							<div className={s.warrantPhotoPrint}>
-								<SafeImg src={cover ?? m.key} alt={`${room.title}: a figure with a lantern looks up at the lit window of No. 9 in the fog`} className={s.fill} fallback={<SafeImg src={m.key} alt="" className={s.fill} fallback={<span className={s.imgFallback} />} />} />
+								<SafeImg src={cover ?? m.key} alt={`${room.title}: a figure with a lamp looks up at the lit window of No. 9 in the fog`} className={s.fill} fallback={<SafeImg src={m.key} alt="" className={s.fill} fallback={<span className={s.imgFallback} />} />} />
 							</div>
 							<figcaption>
 								Whoever goes in tonight
