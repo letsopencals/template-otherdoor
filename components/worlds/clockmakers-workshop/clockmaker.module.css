@@ -2464,6 +2464,10 @@
 	.woundTrack {
 		width: 64px;
 	}
+	/* room above the clock for the cuckoo's balloon, clear of the hero buttons */
+	.heroMachine {
+		margin-top: 52px;
+	}
 	.balloon {
 		left: auto;
 		right: 2%;
