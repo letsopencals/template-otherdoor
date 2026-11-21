@@ -455,7 +455,7 @@ export const siteConfig = {
 				{ label: 'A map nobody else has', rooms: { 'cartographers-tomb': 3 } },
 			],
 		},
-	] satisfies QuizQuestion[],
+	] as QuizQuestion[],
 
 	groups: [
 		{ key: 'team', title: 'Team days', body: 'Book two or three rooms side by side at the same venue, race the clock and compare times over drinks in the Map Room. Up to 22 explorers at the Vaults, 18 at the Bond.', cta: 'Plan a team day' },

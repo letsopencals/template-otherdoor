@@ -1,0 +1,105 @@
+.wrap {
+	display: grid;
+	justify-items: center;
+	gap: 22px;
+}
+.body {
+	position: relative;
+	display: flex;
+	align-items: center;
+	padding: 18px 26px;
+	background: linear-gradient(180deg, #6e4f17 0%, #e9cf86 18%, #b88a35 48%, #f3e2a6 62%, #7a5a1c 100%);
+	border-radius: 14px;
+	box-shadow: inset 0 0 0 2px #5a3f12, 0 20px 40px -18px rgba(40, 20, 0, 0.6);
+	transition: gap 0.8s ease;
+}
+.cap {
+	width: 34px;
+	height: 96px;
+	background: linear-gradient(180deg, #5a3f12, #c8a04a 30%, #8c6a24 70%, #3d2a0a);
+	border-radius: 8px;
+	box-shadow: inset 0 0 0 2px #3d2a0a;
+	transition: transform 0.9s cubic-bezier(0.3, 0.9, 0.3, 1.2);
+}
+.open .capL {
+	transform: translateX(-26px);
+}
+.open .capR {
+	transform: translateX(26px);
+}
+.rings {
+	display: flex;
+	gap: 6px;
+	margin: 0 10px;
+}
+.ring {
+	display: grid;
+	grid-template-rows: 30px 64px 30px;
+	width: clamp(40px, 9vw, 58px);
+	background: linear-gradient(90deg, #4a3410, #d9b964 30%, #f6e6b0 50%, #c8a04a 70%, #4a3410);
+	border-radius: 6px;
+	box-shadow: inset 0 0 0 1px #3d2a0a;
+}
+.ring button {
+	background: none;
+	border: 0;
+	color: #3d2a0a;
+	cursor: pointer;
+	font-size: 0.9rem;
+}
+.ring button:hover {
+	color: #7a1e22;
+}
+.window {
+	position: relative;
+	overflow: hidden;
+	display: grid;
+	place-items: center;
+	background: linear-gradient(180deg, #2a1c06, #5a3f12 30%, #2a1c06);
+	box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.6);
+	touch-action: none;
+}
+.letter {
+	font-family: var(--font-display);
+	font-size: clamp(1.8rem, 5vw, 2.4rem);
+	color: #f3e2a6;
+	line-height: 1;
+	animation: roll 0.25s ease;
+}
+@keyframes roll {
+	from {
+		transform: translateY(var(--from, -60%));
+		opacity: 0.2;
+	}
+}
+.scroll {
+	max-width: 520px;
+	padding: 26px 28px;
+	text-align: center;
+	background: #fbf3dc;
+	box-shadow: var(--paper-shadow);
+	animation: unroll 0.9s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+	transform-origin: top;
+}
+@keyframes unroll {
+	from {
+		transform: scaleY(0.05);
+		opacity: 0;
+	}
+}
+.code {
+	display: inline-block;
+	margin: 10px 0;
+	padding: 8px 18px;
+	font-family: var(--font-type);
+	font-size: 2rem;
+	letter-spacing: 0.3em;
+	border: 2px dashed #7a1e22;
+	color: #7a1e22;
+}
+@media (prefers-reduced-motion: reduce) {
+	.letter,
+	.scroll {
+		animation: none;
+	}
+}
