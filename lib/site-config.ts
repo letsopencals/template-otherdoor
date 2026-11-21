@@ -40,7 +40,7 @@ export interface WorldMedia {
 	poster?: string;
 	/** 3:4 key art (the store's key art wins when present). */
 	key?: string;
-	/** World stills (wide establishing first). */
+	/** World stills, wide establishing first. Some worlds read them by position, so keep each room's order. */
 	stills?: string[];
 }
 
@@ -87,6 +87,11 @@ export interface RoomPresentation {
 	beats: Array<{ title: string; body: string }>;
 	/** What to wear for this room (the thank-you page). */
 	wear: string;
+	/**
+	 * Optional heading for the shared BookingPanel on this room's page (default "Book this room").
+	 * Set it when the world already frames the panel with its own title, so the two don't repeat.
+	 */
+	bookingHeading?: string;
 	media: WorldMedia;
 }
 
@@ -206,7 +211,13 @@ export const siteConfig = {
 				{ title: 'Inside the room', body: 'Two chambers of carved stone, roots and torchlight under the Cowgate, built by hand in our own workshop.' },
 			],
 			wear: 'Clothes you can kneel and crawl in. Closed shoes.',
-			media: { loop: '/worlds/jaguar-temple/hero.mp4', poster: '/worlds/jaguar-temple/hero-poster.jpg', key: '/worlds/jaguar-temple/key.jpg' },
+			bookingHeading: 'Pick your session',
+			media: {
+				loop: '/worlds/jaguar-temple/hero.mp4',
+				poster: '/worlds/jaguar-temple/hero-poster.jpg',
+				key: '/worlds/jaguar-temple/key.jpg',
+				stills: ['/worlds/jaguar-temple/wide.jpg', '/worlds/jaguar-temple/idol.jpg', '/worlds/jaguar-temple/stone-door.jpg', '/worlds/jaguar-temple/light-shafts.jpg', '/worlds/jaguar-temple/layer-foliage.jpg'],
+			},
 		},
 		'gaslight-no-9': {
 			title: 'The Gaslight Affair at No. 9',
@@ -235,7 +246,13 @@ export const siteConfig = {
 				{ title: 'Inside the room', body: 'A gaslit study, rebuilt drawer by drawer, down to the soot on the mantel.' },
 			],
 			wear: 'Anything you like.',
-			media: { loop: '/worlds/gaslight-no-9/hero.mp4', poster: '/worlds/gaslight-no-9/hero-poster.jpg', key: '/worlds/gaslight-no-9/key.jpg' },
+			bookingHeading: 'Choose your evening',
+			media: {
+				loop: '/worlds/gaslight-no-9/hero.mp4',
+				poster: '/worlds/gaslight-no-9/hero-poster.jpg',
+				key: '/worlds/gaslight-no-9/key.jpg',
+				stills: ['/worlds/gaslight-no-9/wide.jpg', '/worlds/gaslight-no-9/study-window.jpg', '/worlds/gaslight-no-9/case-file.jpg', '/worlds/gaslight-no-9/evidence-wall.jpg', '/worlds/gaslight-no-9/plate-fog.jpg'],
+			},
 		},
 		'protocol-zero': {
 			title: 'Protocol Zero',
@@ -264,11 +281,12 @@ export const siteConfig = {
 				{ title: 'Inside the room', body: 'White light, cold steel and a server corridor that hums. Our most intense room: 14 and up.' },
 			],
 			wear: 'Comfortable clothes. Some flashing light in the finale.',
+			bookingHeading: 'Book a session',
 			media: {
 				loop: '/worlds/protocol-zero/hero.mp4',
 				poster: '/worlds/protocol-zero/hero-poster.jpg',
 				key: '/worlds/protocol-zero/key.jpg',
-				stills: ['/worlds/protocol-zero/wide.jpg', '/worlds/protocol-zero/server-aisle.jpg', '/worlds/protocol-zero/terminal.jpg', '/worlds/protocol-zero/core.jpg'],
+				stills: ['/worlds/protocol-zero/wide.jpg', '/worlds/protocol-zero/server-aisle.jpg', '/worlds/protocol-zero/terminal.jpg', '/worlds/protocol-zero/core.jpg', '/worlds/protocol-zero/plate-glitch.jpg'],
 			},
 		},
 		'kepler-station': {
@@ -333,7 +351,13 @@ export const siteConfig = {
 				{ title: 'Inside the room', body: 'A pop-art penthouse in primary colours. Friendly, fast and loud: the best first room we have.' },
 			],
 			wear: 'Dress up if you like: cocktail hour is encouraged.',
-			media: { loop: '/worlds/hotel-lumiere/hero.mp4', poster: '/worlds/hotel-lumiere/hero-poster.jpg', key: '/worlds/hotel-lumiere/key.jpg', stills: ['/worlds/hotel-lumiere/vault.jpg'] },
+			bookingHeading: 'Book the job',
+			media: {
+				loop: '/worlds/hotel-lumiere/hero.mp4',
+				poster: '/worlds/hotel-lumiere/hero-poster.jpg',
+				key: '/worlds/hotel-lumiere/key.jpg',
+				stills: ['/worlds/hotel-lumiere/wide.jpg', '/worlds/hotel-lumiere/vault.jpg', '/worlds/hotel-lumiere/laser-corridor.jpg', '/worlds/hotel-lumiere/balcony-crew.jpg', '/worlds/hotel-lumiere/plate-sunset.jpg'],
+			},
 		},
 		'clockmakers-workshop': {
 			title: 'The Clockmaker’s Workshop',
@@ -363,7 +387,13 @@ export const siteConfig = {
 				{ title: 'Inside the room', body: 'Warm walnut, copper and a hundred moving parts. Made for families with children 7 and up.' },
 			],
 			wear: 'Anything comfortable. Grown-ups play too.',
-			media: { loop: '/worlds/clockmakers-workshop/hero.mp4', poster: '/worlds/clockmakers-workshop/hero-poster.jpg', key: '/worlds/clockmakers-workshop/key.jpg' },
+			bookingHeading: 'Pick your time',
+			media: {
+				loop: '/worlds/clockmakers-workshop/hero.mp4',
+				poster: '/worlds/clockmakers-workshop/hero-poster.jpg',
+				key: '/worlds/clockmakers-workshop/key.jpg',
+				stills: ['/worlds/clockmakers-workshop/wide.jpg', '/worlds/clockmakers-workshop/toys.jpg', '/worlds/clockmakers-workshop/giant-clock.jpg', '/worlds/clockmakers-workshop/cuckoo.jpg', '/worlds/clockmakers-workshop/layer-gears.jpg'],
+			},
 		},
 	} satisfies Record<string, RoomPresentation>,
 

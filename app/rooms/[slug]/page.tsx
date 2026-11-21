@@ -49,6 +49,7 @@ export default async function RoomPage({ params, searchParams }: { params: Param
 			initialDate={one(sp.date)}
 			initialTime={one(sp.time)}
 			initialTeam={Number.isFinite(team) && team > 0 ? team : null}
+			heading={roomPresentation(room.slug)?.bookingHeading}
 		/>
 	);
 
