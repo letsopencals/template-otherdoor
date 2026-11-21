@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 144" width="120" height="144"><title>OTHERDOOR</title><g>
+  <defs>
+    <linearGradient id="mslit" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F2A65A" stop-opacity="0.75"/>
+      <stop offset="0.55" stop-color="#FFD9A0"/>
+      <stop offset="1" stop-color="#F2A65A"/>
+    </linearGradient>
+    <linearGradient id="mspill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F2A65A" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#F2A65A" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <polygon points="72,114 86,114 108,130 76,130" fill="url(#mspill)"/>
+  <rect x="72" y="18" width="14" height="96" fill="url(#mslit)"/>
+  <rect x="34" y="14" width="56" height="100" fill="none" stroke="#EFE7DA" stroke-width="6"/>
+  <polygon points="24,24 72,18 72,114 24,122" fill="#EFE7DA"/>
+  <circle cx="64" cy="70" r="2.6" fill="#120E17"/>
+</g></svg>

@@ -1,0 +1,20 @@
+OTHERDOOR v2 media: groups A (Kepler Station), B (home) and C (logo) are placed. 2026-11-21.
+
+A  public/worlds/kepler-station/: hero.mp4 (16:9 8 s faststart, 4.5 MB), hero-poster.jpg, wide.jpg, command-deck.jpg,
+   airlock-corridor.jpg, detail-lever.jpg, plate-starfield.jpg, key.jpg, MEDIA.md (one line per file)
+   dataset images/products/: v2-key-kepler-station.jpg, v2-kepler-station-1.jpg, v2-kepler-station-2.jpg, v2-kepler-station-3.jpg
+B  public/home/: hero.mp4 (16:9 8 s faststart, 2.7 MB), hero-poster.jpg, corridor.jpg (2400 px), lobby.jpg, MEDIA.md
+C  public/logo.svg (horizontal lockup, ivory on transparent, for the dark shell), public/logo-mark.svg (door mark only),
+   public/logo-512.png, public/logo-1024.png (square lockup on #120E17), app/icon.png (256, mark on dark rounded square)
+   dataset images/storefront/v2-logo.jpg; frontend apps/dashboard/public/seed-logos/escape_rooms.jpg (overwritten)
+   removed: public/compass-mark.svg, public/compass-icon.svg
+   Logo colours: ivory #EFE7DA, amber slit #F2A65A -> #FFD9A0, background #120E17. Wordmark: Tenor Sans outlines (no font needed).
+Still to come: worlds for protocol-zero, jaguar-temple, gaslight-no-9, hotel-lumiere, clockmakers-workshop (+ key art),
+staff, add-ons, banner, gallery (public/home/v2-gallery-*.jpg), cover bases.
+
+UPDATE (later, same day): Gemini prepaid credits ran out (3 consecutive 402s, twice). Also placed so far:
+  public/worlds/protocol-zero/ (hero + 4 stills), jaguar-temple/ (hero + 5 stills), gaslight-no-9/ (hero + 5 stills),
+  hotel-lumiere/ (provisional hero + vault only), public/home/v2-gallery-{1,2,4,7,8}.jpg. Each folder has MEDIA.md.
+  Dataset: staff-members/v2-<gm>.jpg x6, products/team-portrait.jpg, products/lobby-board.jpg, storefront/v2-banner.jpg.
+  NOT done: clockmakers-workshop world, five v2-key-* (all but kepler), v2-protocol-zero-1..3, v2-gallery-9/10,
+  hotel-lumiere wide/laser-corridor/balcony-crew/plate-sunset, protocol-zero plate-glitch, cover bases.
