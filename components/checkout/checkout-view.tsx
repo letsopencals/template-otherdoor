@@ -27,6 +27,20 @@ function Question({ q, value, onChange, disabled }: { q: CheckoutQuestionRespons
 	const label = title(q);
 	const hint = q.translations?.[0]?.description || '';
 	const id = `q-${q.id}`;
+	// A file or a star rating can't be answered in this form; the store asks for those another way.
+	if (q.type === 'file-upload' || q.type === 'rating') return null;
+	if (q.type === 'checkbox' && !options.length) {
+		return (
+			<label className={s.check} htmlFor={id}>
+				<input id={id} type="checkbox" required={q.required} disabled={disabled} checked={value === 'true'} onChange={(e) => onChange(e.target.checked ? 'true' : '')} />
+				<span className={s.fieldLabel}>
+					{label}
+					{q.required ? <span className={s.req}> *</span> : null}
+					{hint ? <span className={s.checkHint}>{hint}</span> : null}
+				</span>
+			</label>
+		);
+	}
 	return (
 		<label className={s.field} htmlFor={id}>
 			<span className={s.fieldLabel}>
@@ -185,7 +199,8 @@ export function CheckoutView() {
 								<span>{total}</span>
 							</div>
 						</div>
-						{cs.status === 'none' ? (
+						{/* A code changes the total, so it's closed once the card payment has been set up for that total. */}
+						{cs.status === 'none' && c.step !== 'payment' ? (
 							<form
 								className={s.code}
 								onSubmit={async (e) => {

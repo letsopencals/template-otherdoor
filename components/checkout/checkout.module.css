@@ -82,6 +82,25 @@
 	display: grid;
 	gap: 7px;
 }
+.check {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	cursor: pointer;
+}
+.check input {
+	flex: none;
+	width: 20px;
+	height: 20px;
+	margin-top: 1px;
+	accent-color: var(--door);
+}
+.checkHint {
+	display: block;
+	margin-top: 3px;
+	font-weight: 400;
+	color: var(--color-ink-3);
+}
 .fieldLabel {
 	font-size: 0.86rem;
 	font-weight: 500;
