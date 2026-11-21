@@ -15,6 +15,7 @@ const WORLDS: Record<string, ComponentType<RoomWorldProps>> = {
 	'kepler-station': dynamic(() => import('./kepler-station')),
 	'hotel-lumiere': dynamic(() => import('./hotel-lumiere')),
 	'gaslight-no-9': dynamic(() => import('./gaslight-no-9')),
+	'protocol-zero': dynamic(() => import('./protocol-zero')),
 };
 
 const GenericWorld = dynamic(() => import('./_placeholder/placeholder-world'));
