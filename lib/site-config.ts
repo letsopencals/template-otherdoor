@@ -176,7 +176,6 @@ export const siteConfig = {
 		heroLoop: '/home/hero.mp4',
 		heroPoster: '/home/hero-poster.jpg',
 		lobby: '/home/lobby.jpg',
-		gallery: Array.from({ length: 8 }, (_, i) => `/images/gallery-${i + 1}.jpg`),
 	},
 
 	rooms: {

@@ -243,7 +243,7 @@
 	color: var(--k-teal);
 }
 @media (max-width: 760px) {
-	.hudTop span:first-child {
+	.hudTop > span:first-child {
 		display: none;
 	}
 }
@@ -270,9 +270,13 @@
 	display: block;
 }
 .title span:last-child {
+	/* the second line is lit from below like a HUD readout, not outlined */
+	background: linear-gradient(180deg, #e6eefa 10%, var(--k-teal) 75%, rgba(46, 196, 201, 0.35));
+	-webkit-background-clip: text;
+	background-clip: text;
 	color: transparent;
-	-webkit-text-stroke: 1.2px rgba(230, 238, 250, 0.85);
 	text-shadow: none;
+	filter: drop-shadow(0 0 24px rgba(46, 196, 201, 0.35));
 }
 .tagline {
 	margin-top: 22px;
@@ -336,8 +340,9 @@
 }
 .heroStats dd {
 	margin-top: 4px;
-	font-family: var(--k-display);
-	font-size: 1.15rem;
+	font-family: var(--font-mono);
+	font-size: 1.25rem;
+	font-variant-numeric: tabular-nums;
 }
 .heroGauge {
 	position: absolute;

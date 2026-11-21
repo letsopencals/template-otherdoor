@@ -50,11 +50,12 @@ export default function KeplerStation({ room, presentation: p, photos, gameMaste
 				</div>
 				<div className={`wrap ${s.heroInner}`}>
 					<p className={s.kicker}>
-						Door 04 · {p.genre} · {p.year} · {room.venue?.name ?? 'Otherdoor Leith'}
+						Door {String(p.order).padStart(2, '0')} · {p.genre} · {p.year} · {room.venue?.name ?? 'Otherdoor Leith'}
 					</p>
 					<h1 className={s.title}>
-						<span>Kepler</span>
-						<span>Station</span>
+						{titleLines(room.title).map((line) => (
+							<span key={line}>{line}</span>
+						))}
 					</h1>
 					<p className={s.tagline}>{p.tagline}</p>
 					<div className={s.heroActions}>
@@ -246,6 +247,12 @@ export default function KeplerStation({ room, presentation: p, photos, gameMaste
 			) : null}
 		</div>
 	);
+}
+
+/** "Kepler Station" → ["Kepler", "Station"]: the first word on its own line, the rest below. */
+function titleLines(title: string): string[] {
+	const [first, ...rest] = title.split(' ');
+	return rest.length ? [first ?? title, rest.join(' ')] : [title];
 }
 
 function Bars({ n }: { n: number }) {
