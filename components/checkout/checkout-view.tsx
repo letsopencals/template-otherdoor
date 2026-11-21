@@ -189,7 +189,7 @@ export function CheckoutView() {
 								<div key={d.id}>
 									<span>
 										{d.title}
-										{d.code ? ` (${d.code})` : ''}
+										{d.code && d.code.toUpperCase() !== d.title.toUpperCase() ? ` (${d.code})` : ''}
 									</span>
 									<span>−{formatPrice(d.totalAmount)}</span>
 								</div>

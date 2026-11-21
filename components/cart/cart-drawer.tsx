@@ -124,7 +124,7 @@ export function CartView({ cart, timeRemaining, removeItem, applyDiscountCode, r
 						<div key={d.id} className={s.row}>
 							<span>
 								{d.title}
-								{d.code ? ` (${d.code})` : ''}
+								{d.code && d.code.toUpperCase() !== d.title.toUpperCase() ? ` (${d.code})` : ''}
 							</span>
 							<span>−{formatPrice(d.totalAmount)}</span>
 						</div>
