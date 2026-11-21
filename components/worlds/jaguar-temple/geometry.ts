@@ -82,7 +82,10 @@ export function monstera(seed: number): LeafGeo {
 	const T: Pt = [120 + bend, 22];
 	const C: Pt = [120 + bend * 0.85, 150];
 	const W = 100 + rand() * 10;
-	const side = { 1: 0.86 + rand() * 0.18, [-1]: 0.86 + rand() * 0.18 } as Record<number, number>;
+	const side = {
+		1: 0.86 + rand() * 0.18,
+		[-1]: 0.86 + rand() * 0.18,
+	} as Record<number, number>;
 	const width = (t: number) => W * Math.pow(Math.sin(Math.PI * Math.min(1, (t + 0.1) / 1.1)), 0.8) * (1.08 - 0.32 * t);
 	const mid = (t: number) => quad(B, C, T, t);
 	const nrm = (t: number): Pt => {
@@ -93,7 +96,11 @@ export function monstera(seed: number): LeafGeo {
 
 	const slitsFor = (s: number) => {
 		const k = 5 + Math.floor(rand() * 2);
-		return Array.from({ length: k }, (_, i) => ({ t: 0.13 + ((i + 0.5) / k) * 0.74 + (rand() - 0.5) * 0.04, depth: 0.5 + rand() * 0.28, s }));
+		return Array.from({ length: k }, (_, i) => ({
+			t: 0.13 + ((i + 0.5) / k) * 0.74 + (rand() - 0.5) * 0.04,
+			depth: 0.5 + rand() * 0.28,
+			s,
+		}));
 	};
 	const R = slitsFor(1);
 	const L = slitsFor(-1);
@@ -145,7 +152,13 @@ export function monstera(seed: number): LeafGeo {
 	}
 	const ribPts = Array.from({ length: 11 }, (_, i) => mid(i / 10));
 	const rib = `M${fmt([120, 320])}Q${fmt([120 + bend * 0.05, 304])} ${fmt(B)}` + ribPts.map((p) => `L${fmt(p)}`).join('');
-	return { viewBox: '0 0 240 320', blade, rib, veins: veins.join(''), origin: '50% 100%' };
+	return {
+		viewBox: '0 0 240 320',
+		blade,
+		rib,
+		veins: veins.join(''),
+		origin: '50% 100%',
+	};
 }
 
 /* ------------------------------------------------------------------ Palm frond */
@@ -179,7 +192,13 @@ export function palm(seed: number): LeafGeo {
 		}
 	}
 	const rib = `M${fmt(S)}C${fmt(c1)} ${fmt(c2)} ${fmt(E)}`;
-	return { viewBox: '0 0 320 320', blade: blades.join(''), rib, veins: veins.join(''), origin: '4% 96%' };
+	return {
+		viewBox: '0 0 320 320',
+		blade: blades.join(''),
+		rib,
+		veins: veins.join(''),
+		origin: '4% 96%',
+	};
 }
 
 /* ------------------------------------------------------------------ Fern */
@@ -220,14 +239,26 @@ export function fern(seed: number): LeafGeo {
 		}
 	}
 	const rib = `M${fmt(S)}C${fmt(c1)} ${fmt(c2)} ${fmt(E)}`;
-	return { viewBox: '0 0 320 320', blade: blades.join(''), rib, veins: veins.join(''), origin: '5% 94%' };
+	return {
+		viewBox: '0 0 320 320',
+		blade: blades.join(''),
+		rib,
+		veins: veins.join(''),
+		origin: '5% 94%',
+	};
 }
 
 /* ------------------------------------------------------------------ Liana */
 
 export interface LianaGeo {
 	vine: string;
-	leaves: Array<{ x: number; y: number; r: number; k: number; tone: 0 | 1 | 2 }>;
+	leaves: Array<{
+		x: number;
+		y: number;
+		r: number;
+		k: number;
+		tone: 0 | 1 | 2;
+	}>;
 	tendrils: string;
 	height: number;
 }
@@ -251,7 +282,10 @@ export function liana(len: number, seed: number): LianaGeo {
 		vine += `C${fmt([a[0], my])} ${fmt([b[0], my])} ${fmt(b)}`;
 	}
 	const xAt = (yy: number) => {
-		const i = Math.max(1, pts.findIndex((p) => p[1] >= yy));
+		const i = Math.max(
+			1,
+			pts.findIndex((p) => p[1] >= yy),
+		);
 		const a = pts[i - 1]!;
 		const b = pts[i] ?? a;
 		const t = b[1] === a[1] ? 0 : (yy - a[1]) / (b[1] - a[1]);
@@ -263,7 +297,13 @@ export function liana(len: number, seed: number): LianaGeo {
 	for (let ly = 26; ly < len - 6; ly += 22 + rand() * 30) {
 		const x = xAt(ly);
 		const left = i++ % 2 === 0;
-		leaves.push({ x: r1(x), y: r1(ly), r: Math.round((left ? 58 : -58) + (rand() - 0.5) * 46), k: r1(0.5 + rand() * 0.55 + (ly / len) * 0.25), tone: rand() > 0.66 ? 2 : rand() > 0.5 ? 1 : 0 });
+		leaves.push({
+			x: r1(x),
+			y: r1(ly),
+			r: Math.round((left ? 58 : -58) + (rand() - 0.5) * 46),
+			k: r1(0.5 + rand() * 0.55 + (ly / len) * 0.25),
+			tone: rand() > 0.66 ? 2 : rand() > 0.5 ? 1 : 0,
+		});
 		if (rand() > 0.82) {
 			const dx = left ? -1 : 1;
 			tendrils.push(`M${fmt([x, ly])}c${r1(dx * 10)} 4 ${r1(dx * 14)} 16 ${r1(dx * 6)} 20s${r1(-dx * 10)} -6 ${r1(-dx * 4)} -10`);

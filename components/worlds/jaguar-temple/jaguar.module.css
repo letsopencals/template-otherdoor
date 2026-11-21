@@ -268,9 +268,7 @@
 	position: absolute;
 	inset: 0;
 	z-index: 1;
-	background:
-		radial-gradient(ellipse 60% 45% at 50% 46%, rgba(240, 201, 74, 0.1), transparent 70%),
-		linear-gradient(180deg, rgba(4, 10, 6, 0.55) 0%, rgba(4, 10, 6, 0.05) 35%, rgba(4, 10, 6, 0.25) 62%, #0a1c12 100%);
+	background: radial-gradient(ellipse 60% 45% at 50% 46%, rgba(240, 201, 74, 0.1), transparent 70%), linear-gradient(180deg, rgba(4, 10, 6, 0.55) 0%, rgba(4, 10, 6, 0.05) 35%, rgba(4, 10, 6, 0.25) 62%, #0a1c12 100%);
 }
 .rays {
 	position: absolute;
@@ -651,8 +649,12 @@
 	color: #1c2a1c;
 	transform: rotate(-1.4deg);
 	box-shadow: 0 24px 40px -22px rgba(0, 0, 0, 0.9);
-	-webkit-mask: radial-gradient(circle 5px at 0 50%, transparent 98%, #000) left / 51% 100% no-repeat, radial-gradient(circle 5px at 100% 50%, transparent 98%, #000) right / 51% 100% no-repeat;
-	mask: radial-gradient(circle 5px at 0 50%, transparent 98%, #000) left / 51% 100% no-repeat, radial-gradient(circle 5px at 100% 50%, transparent 98%, #000) right / 51% 100% no-repeat;
+	-webkit-mask:
+		radial-gradient(circle 5px at 0 50%, transparent 98%, #000) left / 51% 100% no-repeat,
+		radial-gradient(circle 5px at 100% 50%, transparent 98%, #000) right / 51% 100% no-repeat;
+	mask:
+		radial-gradient(circle 5px at 0 50%, transparent 98%, #000) left / 51% 100% no-repeat,
+		radial-gradient(circle 5px at 100% 50%, transparent 98%, #000) right / 51% 100% no-repeat;
 }
 .cableHead {
 	font-family: var(--font-mono);
@@ -678,10 +680,7 @@
 	position: relative;
 	padding: 30px 30px 34px;
 	border-radius: 6px 14px 14px 6px;
-	background:
-		radial-gradient(ellipse at 20% 0%, rgba(255, 255, 255, 0.06), transparent 60%),
-		repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.06) 0 2px, transparent 2px 5px),
-		linear-gradient(135deg, #1d3324, #10221a 60%, #0b1812);
+	background: radial-gradient(ellipse at 20% 0%, rgba(255, 255, 255, 0.06), transparent 60%), repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.06) 0 2px, transparent 2px 5px), linear-gradient(135deg, #1d3324, #10221a 60%, #0b1812);
 	box-shadow:
 		inset 6px 0 0 #0a140e,
 		inset 7px 0 0 rgba(255, 255, 255, 0.05),
@@ -779,9 +778,7 @@
 	aspect-ratio: 1;
 	border-radius: 50%;
 	background:
-		radial-gradient(circle at 62% 38%, rgba(150, 150, 120, 0.35) 0 9%, transparent 10%),
-		radial-gradient(circle at 36% 62%, rgba(150, 150, 120, 0.3) 0 13%, transparent 14%),
-		radial-gradient(circle at 58% 70%, rgba(150, 150, 120, 0.22) 0 6%, transparent 7%),
+		radial-gradient(circle at 62% 38%, rgba(150, 150, 120, 0.35) 0 9%, transparent 10%), radial-gradient(circle at 36% 62%, rgba(150, 150, 120, 0.3) 0 13%, transparent 14%), radial-gradient(circle at 58% 70%, rgba(150, 150, 120, 0.22) 0 6%, transparent 7%),
 		radial-gradient(circle at 34% 30%, #fffdf0, #ece6c8 55%, #c6c09e);
 	box-shadow:
 		0 0 18px 4px rgba(240, 236, 210, 0.28),
@@ -791,9 +788,7 @@
 .faceShade {
 	position: absolute;
 	inset: 0;
-	background:
-		linear-gradient(180deg, #0c2016 0%, rgba(12, 32, 22, 0) 22%, rgba(12, 32, 22, 0) 55%, #101d13 100%),
-		linear-gradient(90deg, rgba(5, 12, 8, 0.82) 0%, rgba(5, 12, 8, 0.4) 45%, rgba(5, 12, 8, 0) 70%);
+	background: linear-gradient(180deg, #0c2016 0%, rgba(12, 32, 22, 0) 22%, rgba(12, 32, 22, 0) 55%, #101d13 100%), linear-gradient(90deg, rgba(5, 12, 8, 0.82) 0%, rgba(5, 12, 8, 0.4) 45%, rgba(5, 12, 8, 0) 70%);
 }
 .faceCopy {
 	position: relative;
@@ -805,6 +800,36 @@
 .steps {
 	position: relative;
 	padding: clamp(90px, 14vh, 160px) 0 clamp(90px, 14vh, 160px);
+}
+.steps {
+	background: radial-gradient(ellipse 60% 50% at 50% 55%, rgba(125, 154, 69, 0.08), transparent 70%);
+}
+.fliesSteps {
+	z-index: 0;
+}
+.stepsFernL,
+.stepsFernR {
+	position: absolute;
+	width: clamp(240px, 26vw, 420px);
+	pointer-events: none;
+	opacity: 0.9;
+}
+.stepsFernL {
+	left: -5vw;
+	bottom: 26%;
+	rotate: -8deg;
+}
+.stepsFernR {
+	right: -6vw;
+	top: 8%;
+	scale: -1 1;
+	rotate: 12deg;
+}
+.stepsHead,
+.stair,
+.trials {
+	position: relative;
+	z-index: 1;
 }
 .stepsHead {
 	max-width: 900px;
@@ -825,10 +850,7 @@
 	display: grid;
 	align-content: start;
 	gap: 4px;
-	background:
-		linear-gradient(180deg, rgba(255, 245, 210, 0.1) 0, rgba(255, 245, 210, 0) 6px),
-		radial-gradient(ellipse at 30% 20%, rgba(255, 255, 255, 0.05), transparent 60%),
-		linear-gradient(180deg, #37342a, #24221a 70%, #1a1913);
+	background: linear-gradient(180deg, rgba(255, 245, 210, 0.1) 0, rgba(255, 245, 210, 0) 6px), radial-gradient(ellipse at 30% 20%, rgba(255, 255, 255, 0.05), transparent 60%), linear-gradient(180deg, #37342a, #24221a 70%, #1a1913);
 	border-top: 1px solid rgba(255, 240, 200, 0.22);
 	box-shadow:
 		inset -1px 0 0 rgba(0, 0, 0, 0.5),
@@ -961,9 +983,7 @@
 .hallShade {
 	position: absolute;
 	inset: 0;
-	background:
-		linear-gradient(180deg, #15190f 0%, rgba(21, 25, 15, 0.4) 18%, rgba(21, 19, 11, 0.55) 70%, #0f0b06 100%),
-		radial-gradient(ellipse at 50% 30%, rgba(240, 190, 90, 0.12), transparent 60%);
+	background: linear-gradient(180deg, #15190f 0%, rgba(21, 25, 15, 0.4) 18%, rgba(21, 19, 11, 0.55) 70%, #0f0b06 100%), radial-gradient(ellipse at 50% 30%, rgba(240, 190, 90, 0.12), transparent 60%);
 }
 .shafts {
 	position: absolute;
@@ -1360,8 +1380,7 @@
 	inset: 0;
 	pointer-events: none;
 	background:
-		radial-gradient(ellipse 34% 60% at 50% 55%, transparent 40%, rgba(8, 5, 2, 0.55) 100%),
-		linear-gradient(90deg, rgba(8, 5, 2, 0.88) 0%, rgba(8, 5, 2, 0.2) 30%, rgba(8, 5, 2, 0) 40%, rgba(8, 5, 2, 0) 60%, rgba(8, 5, 2, 0.2) 70%, rgba(8, 5, 2, 0.88) 100%),
+		radial-gradient(ellipse 34% 60% at 50% 55%, transparent 40%, rgba(8, 5, 2, 0.55) 100%), linear-gradient(90deg, rgba(8, 5, 2, 0.88) 0%, rgba(8, 5, 2, 0.2) 30%, rgba(8, 5, 2, 0) 40%, rgba(8, 5, 2, 0) 60%, rgba(8, 5, 2, 0.2) 70%, rgba(8, 5, 2, 0.88) 100%),
 		linear-gradient(180deg, #110c06 0%, rgba(17, 12, 6, 0) 18%, rgba(17, 12, 6, 0) 84%, #120c06 100%);
 }
 .doorCopy {
@@ -1404,9 +1423,7 @@
 	width: min(340px, 26vw);
 	padding: 24px 22px 20px;
 	border-radius: 12px 12px 4px 4px;
-	background:
-		linear-gradient(180deg, rgba(255, 240, 200, 0.08), rgba(255, 240, 200, 0) 30%),
-		linear-gradient(180deg, rgba(42, 38, 28, 0.92), rgba(24, 21, 15, 0.94));
+	background: linear-gradient(180deg, rgba(255, 240, 200, 0.08), rgba(255, 240, 200, 0) 30%), linear-gradient(180deg, rgba(42, 38, 28, 0.92), rgba(24, 21, 15, 0.94));
 	box-shadow:
 		inset 0 1px 0 rgba(255, 240, 200, 0.18),
 		inset 0 -2px 0 rgba(0, 0, 0, 0.5),
@@ -1438,9 +1455,7 @@
 	flex: none;
 	border-radius: 50%;
 	cursor: pointer;
-	background:
-		radial-gradient(circle at 38% 30%, rgba(255, 245, 215, 0.2), transparent 55%),
-		radial-gradient(circle, #5b5543 0%, #3d392c 62%, #29261d 100%);
+	background: radial-gradient(circle at 38% 30%, rgba(255, 245, 215, 0.2), transparent 55%), radial-gradient(circle, #5b5543 0%, #3d392c 62%, #29261d 100%);
 	box-shadow:
 		inset 0 2px 1px rgba(255, 240, 200, 0.2),
 		inset 0 -3px 6px rgba(0, 0, 0, 0.6),
@@ -1576,9 +1591,7 @@
 	content: '';
 	position: absolute;
 	inset: 0;
-	background:
-		linear-gradient(180deg, #120d07 0%, rgba(18, 13, 7, 0) 25%, rgba(18, 13, 7, 0) 65%, #120d07 100%),
-		linear-gradient(90deg, rgba(18, 13, 7, 0.85), rgba(18, 13, 7, 0.1) 55%);
+	background: linear-gradient(180deg, #120d07 0%, rgba(18, 13, 7, 0) 25%, rgba(18, 13, 7, 0) 65%, #120d07 100%), linear-gradient(90deg, rgba(18, 13, 7, 0.85), rgba(18, 13, 7, 0.1) 55%);
 }
 .torch {
 	position: absolute;
@@ -1703,10 +1716,7 @@
 .chamber {
 	position: relative;
 	padding: clamp(110px, 16vh, 180px) 0 clamp(90px, 14vh, 160px);
-	background:
-		linear-gradient(180deg, #140e07, rgba(20, 14, 7, 0) 160px),
-		radial-gradient(ellipse 50% 50% at 75% 35%, rgba(224, 165, 38, 0.2), transparent 70%),
-		radial-gradient(ellipse 60% 40% at 20% 90%, rgba(180, 110, 20, 0.14), transparent 70%);
+	background: linear-gradient(180deg, #140e07, rgba(20, 14, 7, 0) 160px), radial-gradient(ellipse 50% 50% at 75% 35%, rgba(224, 165, 38, 0.2), transparent 70%), radial-gradient(ellipse 60% 40% at 20% 90%, rgba(180, 110, 20, 0.14), transparent 70%);
 }
 .chamberGrid {
 	position: relative;
@@ -1778,10 +1788,7 @@
 	position: relative;
 	padding: 52px 16px 16px;
 	border-radius: 18px 18px 8px 8px;
-	background:
-		radial-gradient(ellipse at 30% 0%, rgba(255, 240, 200, 0.12), transparent 50%),
-		repeating-linear-gradient(8deg, rgba(0, 0, 0, 0.05) 0 3px, transparent 3px 9px),
-		linear-gradient(180deg, #4a4535, #2e2b21 40%, #221f17);
+	background: radial-gradient(ellipse at 30% 0%, rgba(255, 240, 200, 0.12), transparent 50%), repeating-linear-gradient(8deg, rgba(0, 0, 0, 0.05) 0 3px, transparent 3px 9px), linear-gradient(180deg, #4a4535, #2e2b21 40%, #221f17);
 	box-shadow:
 		inset 0 1px 0 rgba(255, 240, 200, 0.3),
 		inset 0 0 0 1px rgba(0, 0, 0, 0.4),
@@ -2115,9 +2122,7 @@
 		transform-origin: 50% 60%;
 	}
 	.doorShade {
-		background:
-			linear-gradient(180deg, #110c06 0%, rgba(17, 12, 6, 0) 16%, rgba(17, 12, 6, 0) 40%, rgba(11, 8, 4, 0.95) 62%, #0b0804 100%),
-			radial-gradient(ellipse 50% 40% at 50% 34%, transparent 40%, rgba(8, 5, 2, 0.6) 100%);
+		background: linear-gradient(180deg, #110c06 0%, rgba(17, 12, 6, 0) 16%, rgba(17, 12, 6, 0) 40%, rgba(11, 8, 4, 0.95) 62%, #0b0804 100%), radial-gradient(ellipse 50% 40% at 50% 34%, transparent 40%, rgba(8, 5, 2, 0.6) 100%);
 	}
 	.doorCopy {
 		left: 16px;
@@ -2169,7 +2174,9 @@
 	.runCopy {
 		top: 10%;
 	}
-	.chamberLeaf {
+	.chamberLeaf,
+	.stepsFernL,
+	.stepsFernR {
 		display: none;
 	}
 	.tablet {

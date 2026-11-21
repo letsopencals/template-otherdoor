@@ -20,7 +20,11 @@ export interface LeafSpot {
 	wide?: boolean;
 }
 
-const ORIGIN: Record<LeafKind, [string, string]> = { monstera: ['50%', '100%'], palm: ['4%', '96%'], fern: ['5%', '94%'] };
+const ORIGIN: Record<LeafKind, [string, string]> = {
+	monstera: ['50%', '100%'],
+	palm: ['4%', '96%'],
+	fern: ['5%', '94%'],
+};
 
 /**
  * Foreground leaves for a layer: a left cluster and its mirror on the right. Inside a
@@ -44,7 +48,16 @@ function spot(l: LeafSpot, i: number) {
 			key={`${l.kind}-${l.seed}-${i}`}
 			className={s.leafSpot}
 			data-wide={l.wide ? '' : undefined}
-			style={{ left: `${l.x}%`, top: `${l.y}%`, '--w': l.w, '--ox': ox, '--oy': oy, '--r': `${l.r}deg` } as CSSProperties}
+			style={
+				{
+					left: `${l.x}%`,
+					top: `${l.y}%`,
+					'--w': l.w,
+					'--ox': ox,
+					'--oy': oy,
+					'--r': `${l.r}deg`,
+				} as CSSProperties
+			}
 		>
 			<Leaf kind={l.kind} seed={l.seed} tone={l.tone} rim={l.rim ?? 'moon'} className={s.leafSvg} style={{ animationDelay: `${-(l.d ?? i * 1.3)}s` }} />
 		</div>

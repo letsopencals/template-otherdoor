@@ -109,7 +109,18 @@ export function Descent({ layers, className, style, children }: { layers: Layer[
 			<nav className={s.plumb} aria-label="Descend to a layer">
 				<span className={s.rope} aria-hidden />
 				{layers.map((l, i) => (
-					<a key={l.id} href={`#${l.id}`} className={s.knot} data-on={i === active ? '' : undefined} data-past={i < active ? '' : undefined} style={{ '--k': knots[i] ?? i / Math.max(1, layers.length - 1) } as CSSProperties}>
+					<a
+						key={l.id}
+						href={`#${l.id}`}
+						className={s.knot}
+						data-on={i === active ? '' : undefined}
+						data-past={i < active ? '' : undefined}
+						style={
+							{
+								'--k': knots[i] ?? i / Math.max(1, layers.length - 1),
+							} as CSSProperties
+						}
+					>
 						<i aria-hidden />
 						<span>
 							<b>{l.name}</b> −{l.depth} m

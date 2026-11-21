@@ -51,54 +51,261 @@ const LIANAS: LianaSpec[] = [
 
 /* Leaf frames, one composition per layer (the right side mirrors the left unless given). */
 const HERO_FRAME: LeafSpot[] = [
-	{ kind: 'monstera', seed: 4, tone: 'near', x: -2, y: 40, w: 'clamp(220px, 26vw, 420px)', r: 64, rim: 'moon' },
-	{ kind: 'palm', seed: 8, tone: 'mid', x: -4, y: 96, w: 'clamp(260px, 30vw, 480px)', r: -28, wide: true },
-	{ kind: 'fern', seed: 6, tone: 'near', x: -3, y: 104, w: 'clamp(240px, 30vw, 460px)', r: -14 },
-	{ kind: 'monstera', seed: 9, tone: 'mid', x: 4, y: 112, w: 'clamp(200px, 22vw, 360px)', r: 38, wide: true },
+	{
+		kind: 'monstera',
+		seed: 4,
+		tone: 'near',
+		x: -2,
+		y: 40,
+		w: 'clamp(220px, 26vw, 420px)',
+		r: 64,
+		rim: 'moon',
+	},
+	{
+		kind: 'palm',
+		seed: 8,
+		tone: 'mid',
+		x: -4,
+		y: 96,
+		w: 'clamp(260px, 30vw, 480px)',
+		r: -28,
+		wide: true,
+	},
+	{
+		kind: 'fern',
+		seed: 6,
+		tone: 'near',
+		x: -3,
+		y: 104,
+		w: 'clamp(240px, 30vw, 460px)',
+		r: -14,
+	},
+	{
+		kind: 'monstera',
+		seed: 9,
+		tone: 'mid',
+		x: 4,
+		y: 112,
+		w: 'clamp(200px, 22vw, 360px)',
+		r: 38,
+		wide: true,
+	},
 ];
 const HERO_FRAME_R: LeafSpot[] = [
-	{ kind: 'monstera', seed: 12, tone: 'near', x: -3, y: 30, w: 'clamp(220px, 25vw, 400px)', r: 78 },
-	{ kind: 'fern', seed: 14, tone: 'mid', x: -4, y: 100, w: 'clamp(240px, 30vw, 460px)', r: -18, wide: true },
-	{ kind: 'palm', seed: 2, tone: 'near', x: -5, y: 104, w: 'clamp(260px, 32vw, 500px)', r: -34 },
+	{
+		kind: 'monstera',
+		seed: 12,
+		tone: 'near',
+		x: -3,
+		y: 30,
+		w: 'clamp(220px, 25vw, 400px)',
+		r: 78,
+	},
+	{
+		kind: 'fern',
+		seed: 14,
+		tone: 'mid',
+		x: -4,
+		y: 100,
+		w: 'clamp(240px, 30vw, 460px)',
+		r: -18,
+		wide: true,
+	},
+	{
+		kind: 'palm',
+		seed: 2,
+		tone: 'near',
+		x: -5,
+		y: 104,
+		w: 'clamp(260px, 32vw, 500px)',
+		r: -34,
+	},
 ];
 const UNDER_L: LeafSpot[] = [
-	{ kind: 'monstera', seed: 21, tone: 'near', x: -4, y: 22, w: 'clamp(260px, 30vw, 480px)', r: 102 },
-	{ kind: 'palm', seed: 22, tone: 'mid', x: -6, y: 60, w: 'clamp(300px, 34vw, 540px)', r: -6 },
-	{ kind: 'monstera', seed: 23, tone: 'mid', x: 0, y: 92, w: 'clamp(240px, 27vw, 430px)', r: 70, wide: true },
-	{ kind: 'fern', seed: 24, tone: 'near', x: -5, y: 108, w: 'clamp(280px, 32vw, 500px)', r: -20 },
+	{
+		kind: 'monstera',
+		seed: 21,
+		tone: 'near',
+		x: -4,
+		y: 22,
+		w: 'clamp(260px, 30vw, 480px)',
+		r: 102,
+	},
+	{
+		kind: 'palm',
+		seed: 22,
+		tone: 'mid',
+		x: -6,
+		y: 60,
+		w: 'clamp(300px, 34vw, 540px)',
+		r: -6,
+	},
+	{
+		kind: 'monstera',
+		seed: 23,
+		tone: 'mid',
+		x: 0,
+		y: 92,
+		w: 'clamp(240px, 27vw, 430px)',
+		r: 70,
+		wide: true,
+	},
+	{
+		kind: 'fern',
+		seed: 24,
+		tone: 'near',
+		x: -5,
+		y: 108,
+		w: 'clamp(280px, 32vw, 500px)',
+		r: -20,
+	},
 ];
 const UNDER_R: LeafSpot[] = [
-	{ kind: 'palm', seed: 25, tone: 'near', x: -6, y: 16, w: 'clamp(300px, 34vw, 540px)', r: 14 },
-	{ kind: 'monstera', seed: 26, tone: 'mid', x: -3, y: 56, w: 'clamp(260px, 29vw, 460px)', r: 96 },
-	{ kind: 'fern', seed: 27, tone: 'mid', x: -4, y: 96, w: 'clamp(280px, 32vw, 500px)', r: -10, wide: true },
+	{
+		kind: 'palm',
+		seed: 25,
+		tone: 'near',
+		x: -6,
+		y: 16,
+		w: 'clamp(300px, 34vw, 540px)',
+		r: 14,
+	},
+	{
+		kind: 'monstera',
+		seed: 26,
+		tone: 'mid',
+		x: -3,
+		y: 56,
+		w: 'clamp(260px, 29vw, 460px)',
+		r: 96,
+	},
+	{
+		kind: 'fern',
+		seed: 27,
+		tone: 'mid',
+		x: -4,
+		y: 96,
+		w: 'clamp(280px, 32vw, 500px)',
+		r: -10,
+		wide: true,
+	},
 ];
 const FACE_L: LeafSpot[] = [
-	{ kind: 'fern', seed: 31, tone: 'near', x: -6, y: 30, w: 'clamp(280px, 32vw, 520px)', r: 8 },
-	{ kind: 'monstera', seed: 32, tone: 'near', x: -3, y: 74, w: 'clamp(260px, 30vw, 480px)', r: 84 },
-	{ kind: 'palm', seed: 33, tone: 'mid', x: -6, y: 104, w: 'clamp(300px, 36vw, 560px)', r: -24, wide: true },
+	{
+		kind: 'fern',
+		seed: 31,
+		tone: 'near',
+		x: -6,
+		y: 30,
+		w: 'clamp(280px, 32vw, 520px)',
+		r: 8,
+	},
+	{
+		kind: 'monstera',
+		seed: 32,
+		tone: 'near',
+		x: -3,
+		y: 74,
+		w: 'clamp(260px, 30vw, 480px)',
+		r: 84,
+	},
+	{
+		kind: 'palm',
+		seed: 33,
+		tone: 'mid',
+		x: -6,
+		y: 104,
+		w: 'clamp(300px, 36vw, 560px)',
+		r: -24,
+		wide: true,
+	},
 ];
 const HALL_L: LeafSpot[] = [
-	{ kind: 'monstera', seed: 41, tone: 'lit', rim: 'gold', x: -4, y: 28, w: 'clamp(240px, 28vw, 440px)', r: 96 },
-	{ kind: 'fern', seed: 42, tone: 'gold', rim: 'gold', x: -5, y: 70, w: 'clamp(260px, 30vw, 480px)', r: -4, wide: true },
-	{ kind: 'monstera', seed: 43, tone: 'near', rim: 'gold', x: -2, y: 104, w: 'clamp(230px, 26vw, 420px)', r: 58 },
+	{
+		kind: 'monstera',
+		seed: 41,
+		tone: 'lit',
+		rim: 'gold',
+		x: -4,
+		y: 28,
+		w: 'clamp(240px, 28vw, 440px)',
+		r: 96,
+	},
+	{
+		kind: 'fern',
+		seed: 42,
+		tone: 'gold',
+		rim: 'gold',
+		x: -5,
+		y: 70,
+		w: 'clamp(260px, 30vw, 480px)',
+		r: -4,
+		wide: true,
+	},
+	{
+		kind: 'monstera',
+		seed: 43,
+		tone: 'near',
+		rim: 'gold',
+		x: -2,
+		y: 104,
+		w: 'clamp(230px, 26vw, 420px)',
+		r: 58,
+	},
 ];
 const HALL_R: LeafSpot[] = [
-	{ kind: 'palm', seed: 44, tone: 'gold', rim: 'gold', x: -6, y: 22, w: 'clamp(300px, 34vw, 540px)', r: 10, wide: true },
-	{ kind: 'monstera', seed: 45, tone: 'lit', rim: 'gold', x: -3, y: 66, w: 'clamp(240px, 28vw, 440px)', r: 88 },
+	{
+		kind: 'palm',
+		seed: 44,
+		tone: 'gold',
+		rim: 'gold',
+		x: -6,
+		y: 22,
+		w: 'clamp(300px, 34vw, 540px)',
+		r: 10,
+		wide: true,
+	},
+	{
+		kind: 'monstera',
+		seed: 45,
+		tone: 'lit',
+		rim: 'gold',
+		x: -3,
+		y: 66,
+		w: 'clamp(240px, 28vw, 440px)',
+		r: 88,
+	},
 ];
 
 const FLIES_HERO = fireflies(26, 5);
 const FLIES_UNDER = fireflies(34, 9);
 const FLIES_CHAMBER = fireflies(22, 13);
+const FLIES_STEPS = fireflies(14, 21);
 
 /** Dr. Vance's three faces (sun, serpent, eye) are inlaid on steps 4–6: the second hint. */
 const STEP_GLYPHS = [3, 5, 0, 1, 2, 4];
 
 const TRIALS = [
-	{ g: 2, title: 'Read the carvings', body: 'Every wall is a sentence. Learn the grammar of the glyphs before the torches gutter.' },
-	{ g: 5, title: 'Balance the offerings', body: 'Gold, jade and stone on the altar scales. One wrong weight and the floor remembers.' },
-	{ g: 3, title: 'Map the corridors', body: 'Two chambers, one way through. Chart it together or walk in circles.' },
-	{ g: 1, title: 'Outrun the stone', body: 'It has rolled for four hundred years. Tonight it rolls for you.' },
+	{
+		g: 2,
+		title: 'Read the carvings',
+		body: 'Every wall is a sentence. Learn the grammar of the glyphs before the torches gutter.',
+	},
+	{
+		g: 5,
+		title: 'Balance the offerings',
+		body: 'Gold, jade and stone on the altar scales. One wrong weight and the floor remembers.',
+	},
+	{
+		g: 3,
+		title: 'Map the corridors',
+		body: 'Two chambers, one way through. Chart it together or walk in circles.',
+	},
+	{
+		g: 1,
+		title: 'Outrun the stone',
+		body: 'It has rolled for four hundred years. Tonight it rolls for you.',
+	},
 ];
 
 export default function JaguarTemple({ room, presentation: p, photos, gameMaster, next, records, booking }: RoomWorldProps) {
@@ -117,9 +324,18 @@ export default function JaguarTemple({ room, presentation: p, photos, gameMaster
 
 	const steps = [
 		{ v: players, l: 'explorers', note: 'one price for the team' },
-		{ v: String(p.gameMinutes), l: 'minutes', note: `${minutesLabel(room.visitMinutes)} with the briefing` },
+		{
+			v: String(p.gameMinutes),
+			l: 'minutes',
+			note: `${minutesLabel(room.visitMinutes)} with the briefing`,
+		},
 		{ v: `${p.difficulty}/5`, l: 'difficulty', bar: p.difficulty },
-		{ v: `${p.fear}/5`, l: 'fear', bar: p.fear, note: 'dark corners, nothing jumps' },
+		{
+			v: `${p.fear}/5`,
+			l: 'fear',
+			bar: p.fear,
+			note: 'dark corners, nothing jumps',
+		},
 		{ v: `${p.minAge}+`, l: 'age', note: 'under-16s with an adult' },
 		{ v: `${p.successRate}%`, l: 'get out', note: `record ${p.record}` },
 	];
@@ -138,9 +354,39 @@ export default function JaguarTemple({ room, presentation: p, photos, gameMaster
 					<i />
 				</div>
 				<div className={s.birds} aria-hidden>
-					<Bird className={s.bird} style={{ '--y': '9%', '--t': '19s', '--o': '-4s', '--k': '1' } as CSSProperties} />
-					<Bird className={s.bird} style={{ '--y': '13%', '--t': '23s', '--o': '-6s', '--k': '.7' } as CSSProperties} />
-					<Bird className={s.bird} style={{ '--y': '6%', '--t': '27s', '--o': '-15s', '--k': '.55' } as CSSProperties} />
+					<Bird
+						className={s.bird}
+						style={
+							{
+								'--y': '9%',
+								'--t': '19s',
+								'--o': '-4s',
+								'--k': '1',
+							} as CSSProperties
+						}
+					/>
+					<Bird
+						className={s.bird}
+						style={
+							{
+								'--y': '13%',
+								'--t': '23s',
+								'--o': '-6s',
+								'--k': '.7',
+							} as CSSProperties
+						}
+					/>
+					<Bird
+						className={s.bird}
+						style={
+							{
+								'--y': '6%',
+								'--t': '27s',
+								'--o': '-15s',
+								'--k': '.55',
+							} as CSSProperties
+						}
+					/>
 				</div>
 				<Canopy className={s.canopy} />
 				<Flies items={FLIES_HERO} className={s.fliesHero} />
@@ -256,6 +502,9 @@ export default function JaguarTemple({ room, presentation: p, photos, gameMaster
 
 			{/* ─────────────────────────────── −38 m · The carved steps */}
 			<section id="jt-steps" className={s.steps} aria-labelledby="jt-steps-title">
+				<Flies items={FLIES_STEPS} className={s.fliesSteps} />
+				<Leaf kind="fern" seed={36} tone="near" rim="moon" className={s.stepsFernL} />
+				<Leaf kind="palm" seed={37} tone="near" rim="moon" className={s.stepsFernR} />
 				<div className={`wrap ${s.stepsHead}`}>
 					<p className={s.layerTag}>−38 m · The carved steps</p>
 					<h2 id="jt-steps-title" className={s.h2}>
@@ -374,9 +623,7 @@ export default function JaguarTemple({ room, presentation: p, photos, gameMaster
 						<h2 id="jt-chamber-title" className={s.h2}>
 							Claim your hour in the temple.
 						</h2>
-						<p className={s.lede}>
-							One price for the whole team, {players} explorers. Pick a night, a time and how many of you are coming down.
-						</p>
+						<p className={s.lede}>One price for the whole team, {players} explorers. Pick a night, a time and how many of you are coming down.</p>
 						<ol className={s.itinerary}>
 							<li>
 								<b>15 min before</b>
@@ -435,7 +682,21 @@ function Flies({ items, className }: { items: ReturnType<typeof fireflies>; clas
 	return (
 		<div className={`${s.flies} ${className ?? ''}`} aria-hidden>
 			{items.map((f, i) => (
-				<i key={i} style={{ left: `${f.x}%`, top: `${f.y}%`, width: f.s, height: f.s, animationDuration: `${f.d}s, ${r2(f.d * 0.37)}s`, animationDelay: `${f.o}s, ${r2(f.o * 0.5)}s`, '--dx': `${f.dx}px`, '--dy': `${f.dy}px` } as CSSProperties} />
+				<i
+					key={i}
+					style={
+						{
+							left: `${f.x}%`,
+							top: `${f.y}%`,
+							width: f.s,
+							height: f.s,
+							animationDuration: `${f.d}s, ${r2(f.d * 0.37)}s`,
+							animationDelay: `${f.o}s, ${r2(f.o * 0.5)}s`,
+							'--dx': `${f.dx}px`,
+							'--dy': `${f.dy}px`,
+						} as CSSProperties
+					}
+				/>
 			))}
 		</div>
 	);

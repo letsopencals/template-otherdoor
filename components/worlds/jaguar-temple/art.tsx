@@ -53,6 +53,13 @@ export function JungleDefs() {
 					<stop offset=".5" stopColor="#e9ffd8" stopOpacity=".03" />
 					<stop offset="1" stopColor="#e9ffd8" stopOpacity="0" />
 				</radialGradient>
+				{/* One half of a blade turned away from the light. */}
+				<linearGradient id="jt2-half" x1="0" y1=".5" x2="1" y2=".5">
+					<stop offset="0" stopColor="#000" stopOpacity="0" />
+					<stop offset=".48" stopColor="#000" stopOpacity="0" />
+					<stop offset=".54" stopColor="#000" stopOpacity=".32" />
+					<stop offset="1" stopColor="#000" stopOpacity=".5" />
+				</linearGradient>
 				<linearGradient id="jt2-vine" x1="0" y1="0" x2="1" y2="0">
 					<stop offset="0" stopColor="#1e2c15" />
 					<stop offset=".45" stopColor="#4f6230" />
@@ -77,9 +84,9 @@ export function JungleDefs() {
 					<stop offset="1" stopColor="#ffe08a" />
 				</linearGradient>
 				<radialGradient id="jt2-stone" cx=".5" cy=".5" r=".5">
-					<stop offset="0" stopColor="#6f6852" />
-					<stop offset=".7" stopColor="#4f4a3b" />
-					<stop offset="1" stopColor="#36322a" />
+					<stop offset="0" stopColor="#5e5845" />
+					<stop offset=".7" stopColor="#433e31" />
+					<stop offset="1" stopColor="#2c2922" />
 				</radialGradient>
 				<radialGradient id="jt2-stone-shade" cx=".34" cy=".3" r=".78">
 					<stop offset="0" stopColor="#ffd890" stopOpacity=".32" />
@@ -113,7 +120,12 @@ function geo(kind: LeafKind, seed: number): LeafGeo {
 	return g;
 }
 
-const RIB: Record<LeafTone, string> = { near: '#1f3d28', mid: '#8fc27a', lit: '#c8d98a', gold: '#d9c27a' };
+const RIB: Record<LeafTone, string> = {
+	near: '#1f3d28',
+	mid: '#8fc27a',
+	lit: '#c8d98a',
+	gold: '#d9c27a',
+};
 
 /** One crafted leaf: gradient body, a sheen, a rim light on one edge, midrib and veins. Sways from its stem. */
 export function Leaf({ kind, seed, tone = 'mid', rim = 'moon', className, style }: { kind: LeafKind; seed: number; tone?: LeafTone; rim?: 'moon' | 'gold' | 'none'; className?: string; style?: CSSProperties }) {
@@ -122,6 +134,7 @@ export function Leaf({ kind, seed, tone = 'mid', rim = 'moon', className, style 
 	return (
 		<svg viewBox={g.viewBox} className={className} style={{ transformOrigin: g.origin, ...style }} aria-hidden focusable="false">
 			<path d={g.blade} fillRule="evenodd" fill={`url(#jt2-${tone})`} />
+			{solid ? <path d={g.blade} fillRule="evenodd" fill="url(#jt2-half)" /> : null}
 			{solid ? <path d={g.blade} fillRule="evenodd" fill="url(#jt2-sheen)" /> : null}
 			{rim !== 'none' ? <path d={g.blade} fillRule="evenodd" fill="none" stroke={`url(#jt2-rim-${rim})`} strokeWidth={solid ? 2.2 : 1.1} /> : null}
 			<path d={g.veins} fill="none" stroke={RIB[tone]} strokeOpacity={tone === 'near' ? 0.5 : 0.28} strokeWidth={solid ? 1.1 : 0.7} />
@@ -188,12 +201,27 @@ export function Bird({ className, style }: { className?: string; style?: CSSProp
  * three of them in order: sun, serpent, eye (Vance sketched the order in her notebook).
  */
 export const GLYPHS: Array<{ name: string; d: string }> = [
-	{ name: 'sun', d: 'M20 13a7 7 0 1 0 .1 0Z M20 3v5 M20 32v5 M3 20h5 M32 20h5 M8 8l3.5 3.5 M28.5 28.5L32 32 M32 8l-3.5 3.5 M8 32l3.5-3.5' },
-	{ name: 'serpent', d: 'M5 30c0-7 7-7 10-3s10 4 10-3-8-9-3-14c3-3 8-2 10 0 M30 6.5h.1' },
-	{ name: 'eye', d: 'M3 20c7-10 27-10 34 0c-7 10-27 10-34 0Z M20 15a5 5 0 1 0 .1 0Z M20 4v5' },
+	{
+		name: 'sun',
+		d: 'M20 13a7 7 0 1 0 .1 0Z M20 3v5 M20 32v5 M3 20h5 M32 20h5 M8 8l3.5 3.5 M28.5 28.5L32 32 M32 8l-3.5 3.5 M8 32l3.5-3.5',
+	},
+	{
+		name: 'serpent',
+		d: 'M5 30c0-7 7-7 10-3s10 4 10-3-8-9-3-14c3-3 8-2 10 0 M30 6.5h.1',
+	},
+	{
+		name: 'eye',
+		d: 'M3 20c7-10 27-10 34 0c-7 10-27 10-34 0Z M20 15a5 5 0 1 0 .1 0Z M20 4v5',
+	},
 	{ name: 'steps', d: 'M4 34h32 M8 34v-7h24v7 M12 27v-7h16v7 M16 20v-7h8v7' },
-	{ name: 'rain', d: 'M5 9h30 M10 15v6 M20 15v10 M30 15v6 M10 27v4 M30 27v4 M20 30v4' },
-	{ name: 'paw', d: 'M20 22c-6 0-10 5-8 9 2 3 6 2 8 2s6 1 8-2c2-4-2-9-8-9Z M11 15a3 3.5 0 1 0 .1 0Z M17 9a3 3.5 0 1 0 .1 0Z M23 9a3 3.5 0 1 0 .1 0Z M29 15a3 3.5 0 1 0 .1 0Z' },
+	{
+		name: 'rain',
+		d: 'M5 9h30 M10 15v6 M20 15v10 M30 15v6 M10 27v4 M30 27v4 M20 30v4',
+	},
+	{
+		name: 'paw',
+		d: 'M20 22c-6 0-10 5-8 9 2 3 6 2 8 2s6 1 8-2c2-4-2-9-8-9Z M11 15a3 3.5 0 1 0 .1 0Z M17 9a3 3.5 0 1 0 .1 0Z M23 9a3 3.5 0 1 0 .1 0Z M29 15a3 3.5 0 1 0 .1 0Z',
+	},
 ];
 
 /** The answer to the door, as glyph indexes. */
@@ -213,32 +241,72 @@ export function Glyph({ i, gold = false, className }: { i: number; gold?: boolea
 /* ------------------------------------------------------------------ The rolling stone */
 
 const CRACKS = 'M40 70l18 14 9 22-6 18 M120 40l-10 20 4 16 M150 118l-24 6-12 18 M70 160l20-8 22 4 M60 40l8 10';
-const SPECKS = Array.from({ length: 46 }, (_, i) => {
+const SPECKS = Array.from({ length: 70 }, (_, i) => {
 	const a = i * 2.39996;
-	const rad = 18 + ((i * 37) % 70);
-	return { x: Math.round((100 + Math.cos(a) * rad) * 10) / 10, y: Math.round((100 + Math.sin(a) * rad) * 10) / 10, r: 0.8 + (i % 4) * 0.5 };
+	const rad = 10 + ((i * 37) % 82);
+	return {
+		x: Math.round((100 + Math.cos(a) * rad) * 10) / 10,
+		y: Math.round((100 + Math.sin(a) * rad) * 10) / 10,
+		r: 0.7 + (i % 5) * 0.45,
+	};
 });
+/** Weathered blotches (lichen, pits) that sell the scale of the stone. */
+const BLOTCHES = Array.from({ length: 9 }, (_, i) => {
+	const a = i * 1.9 + 0.4;
+	const rad = 26 + ((i * 23) % 50);
+	return {
+		x: Math.round((100 + Math.cos(a) * rad) * 10) / 10,
+		y: Math.round((100 + Math.sin(a) * rad) * 10) / 10,
+		rx: 8 + (i % 4) * 5,
+		ry: 5 + (i % 3) * 4,
+		rot: (i * 47) % 180,
+	};
+});
+/** An irregular, slightly lumpy outline (hand-cut, not a perfect sphere). */
+const OUTLINE = (() => {
+	const n = 28;
+	const pts = Array.from({ length: n }, (_, i) => {
+		const a = (i / n) * Math.PI * 2;
+		const r = 94 + Math.sin(i * 2.7) * 2.2 + Math.cos(i * 1.3) * 1.6;
+		return [Math.round((100 + Math.cos(a) * r) * 10) / 10, Math.round((100 + Math.sin(a) * r) * 10) / 10] as const;
+	});
+	const mid = (p: readonly [number, number], q: readonly [number, number]) => `${Math.round(((p[0] + q[0]) / 2) * 10) / 10} ${Math.round(((p[1] + q[1]) / 2) * 10) / 10}`;
+	let d = `M${mid(pts[n - 1]!, pts[0]!)}`;
+	for (let i = 0; i < n; i++) d += `Q${pts[i]![0]} ${pts[i]![1]} ${mid(pts[i]!, pts[(i + 1) % n]!)}`;
+	return `${d}Z`;
+})();
 
 /** The stone: a carved, cracked surface that spins (`.spin`) under fixed light and shadow. */
 export function Boulder({ className }: { className?: string }) {
 	return (
 		<svg viewBox="0 0 200 200" className={className} aria-hidden focusable="false">
+			<defs>
+				<clipPath id="jt2-boulder-clip">
+					<path d={OUTLINE} />
+				</clipPath>
+			</defs>
 			<g className={s.spin}>
-				<circle cx="100" cy="100" r="96" fill="url(#jt2-stone)" />
-				<circle cx="100" cy="100" r="70" fill="none" stroke="#2e2a21" strokeOpacity=".55" strokeWidth="9" />
-				<circle cx="100" cy="100" r="70" fill="none" stroke="#b9ad88" strokeOpacity=".22" strokeWidth="2" transform="translate(0 -3)" />
-				{[0, 60, 120, 180, 240, 300].map((deg, i) => (
-					<g key={deg} transform={`rotate(${deg} 100 100) translate(86 18) scale(.7)`}>
-						<path d={GLYPHS[i]!.d} fill="none" stroke="#2a261d" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round" />
-					</g>
-				))}
-				<path d={CRACKS} fill="none" stroke="#1c1a14" strokeWidth="2" strokeLinecap="round" />
-				{SPECKS.map((p, i) => (
-					<circle key={i} cx={p.x} cy={p.y} r={p.r} fill={i % 3 ? '#3c372c' : '#a69c7e'} fillOpacity=".6" />
-				))}
-				<path d="M30 120c10 8 22 10 30 4M140 60c8 4 14 12 14 20" fill="none" stroke="#4b6a2e" strokeWidth="5" strokeLinecap="round" strokeOpacity=".7" />
+				<path d={OUTLINE} fill="url(#jt2-stone)" />
+				<g clipPath="url(#jt2-boulder-clip)">
+					{BLOTCHES.map((b, i) => (
+						<ellipse key={i} cx={b.x} cy={b.y} rx={b.rx} ry={b.ry} transform={`rotate(${b.rot} ${b.x} ${b.y})`} fill={i % 3 ? '#1f1c15' : '#4d5a2c'} fillOpacity={i % 3 ? 0.35 : 0.4} />
+					))}
+					<circle cx="100" cy="100" r="68" fill="none" stroke="#17150f" strokeOpacity=".7" strokeWidth="10" />
+					<circle cx="100" cy="100" r="68" fill="none" stroke="#a89c78" strokeOpacity=".16" strokeWidth="1.6" transform="translate(0 -4)" />
+					{[0, 60, 120, 180, 240, 300].map((deg, i) => (
+						<g key={deg} transform={`rotate(${deg} 100 100) translate(87 20) scale(.66)`}>
+							<path d={GLYPHS[i]!.d} fill="none" stroke="#14120d" strokeOpacity=".85" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round" />
+							<path d={GLYPHS[i]!.d} fill="none" stroke="#a89c78" strokeOpacity=".18" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" transform="translate(0 -1.6)" />
+						</g>
+					))}
+					<path d={CRACKS} fill="none" stroke="#100e0a" strokeWidth="1.8" strokeLinecap="round" />
+					{SPECKS.map((p, i) => (
+						<circle key={i} cx={p.x} cy={p.y} r={p.r} fill={i % 3 ? '#221f18' : '#8d8366'} fillOpacity=".55" />
+					))}
+				</g>
 			</g>
-			<circle cx="100" cy="100" r="96" fill="url(#jt2-stone-shade)" />
+			<path d={OUTLINE} fill="url(#jt2-stone-shade)" />
+			<path d={OUTLINE} fill="none" stroke="#000" strokeOpacity=".5" strokeWidth="2" />
 		</svg>
 	);
 }

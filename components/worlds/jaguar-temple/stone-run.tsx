@@ -7,8 +7,8 @@ import s from './jaguar.module.css';
 
 /**
  * THE RUN. A corridor strip the stone rumbles across as you scroll: it rolls (rotation =
- * distance / radius, so it never skids), the corridor shudders with its speed, dust
- * kicks up behind it, and the line it rolls over cracks into view in its wake.
+ * distance / radius, so it never skids), the corridor shudders with its speed and dust
+ * kicks up behind it. It rolls over the words, between the copy and the torches.
  * Reduced motion: the stone rests at the far end and nothing shakes.
  */
 export function StoneRun({ wall, children }: { wall: string; children: ReactNode }) {

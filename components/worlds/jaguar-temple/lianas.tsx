@@ -60,7 +60,7 @@ export function Lianas({ items }: { items: LianaSpec[] }) {
 				// Damped spring toward the target angle (degrees).
 				st.v += (target - st.a) * 0.035;
 				st.v *= 0.93;
-				st.a += st.v;
+				st.a = Math.max(-12, Math.min(12, st.a + st.v));
 				if (Math.abs(st.v) > 0.01 || Math.abs(target - st.a) > 0.02) moving = true;
 				n.style.transform = `rotate(${st.a.toFixed(2)}deg)`;
 			});
@@ -78,7 +78,10 @@ export function Lianas({ items }: { items: LianaSpec[] }) {
 				const vx = (e.clientX - lastX) / Math.max(8, now - lastT);
 				nodes.forEach((n, i) => {
 					const cx = anchorX(n);
-					if (Math.abs(e.clientX - cx) < 70 && e.clientY - rect.top < n.offsetHeight + 40) state[i]!.v += Math.max(-1.6, Math.min(1.6, vx * 1.4));
+					if (Math.abs(e.clientX - cx) < 70 && e.clientY - rect.top < n.offsetHeight + 40) {
+						const st = state[i]!;
+						st.v = Math.max(-1.2, Math.min(1.2, st.v + vx * 0.5));
+					}
 				});
 			}
 			lastX = e.clientX;

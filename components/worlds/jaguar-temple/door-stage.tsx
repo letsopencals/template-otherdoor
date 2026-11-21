@@ -98,13 +98,32 @@ export function DoorStage({ door, idol, title, body }: { door: string; idol: str
 						</div>
 						<span className={s.doorDust} aria-hidden>
 							{DUST.map((d, i) => (
-								<i key={i} style={{ left: `${d.x}%`, animationDelay: `${d.o}s`, animationDuration: `${d.d}s`, width: d.w, height: d.w } as CSSProperties} />
+								<i
+									key={i}
+									style={
+										{
+											left: `${d.x}%`,
+											animationDelay: `${d.o}s`,
+											animationDuration: `${d.d}s`,
+											width: d.w,
+											height: d.w,
+										} as CSSProperties
+									}
+								/>
 							))}
 						</span>
 					</div>
 					<span className={s.lintelDust} aria-hidden>
 						{DUST.slice(0, 8).map((d, i) => (
-							<i key={i} style={{ left: `${d.x}%`, animationDelay: `${d.o * 0.7}s` } as CSSProperties} />
+							<i
+								key={i}
+								style={
+									{
+										left: `${d.x}%`,
+										animationDelay: `${d.o * 0.7}s`,
+									} as CSSProperties
+								}
+							/>
 						))}
 					</span>
 				</div>
@@ -128,7 +147,16 @@ export function DoorStage({ door, idol, title, body }: { door: string; idol: str
 					</p>
 					<div className={s.dials}>
 						{dials.map((d, i) => (
-							<button key={i} type="button" className={s.dial} onClick={() => turn(i)} disabled={mode !== 'sealed'} aria-label={`Face ${i + 1}: ${GLYPHS[d]!.name}. Turn it.`} style={{ '--turn': `${-d * 60}deg` } as CSSProperties} data-ok={mode === 'solved' ? '' : undefined}>
+							<button
+								key={i}
+								type="button"
+								className={s.dial}
+								onClick={() => turn(i)}
+								disabled={mode !== 'sealed'}
+								aria-label={`Face ${i + 1}: ${GLYPHS[d]!.name}. Turn it.`}
+								style={{ '--turn': `${-d * 60}deg` } as CSSProperties}
+								data-ok={mode === 'solved' ? '' : undefined}
+							>
 								<span className={s.dialRing} aria-hidden>
 									{GLYPHS.map((g, j) => (
 										<span key={g.name} data-top={j === d ? '' : undefined} style={{ '--a': `${j * 60}deg` } as CSSProperties}>
@@ -154,4 +182,9 @@ export function DoorStage({ door, idol, title, body }: { door: string; idol: str
 	);
 }
 
-const DUST = Array.from({ length: 18 }, (_, i) => ({ x: Math.round(((i * 37) % 100) * 10) / 10, d: Math.round((1.8 + ((i * 7) % 10) / 6) * 100) / 100, o: Math.round(((i * 0.37) % 2.6) * 100) / 100, w: 3 + (i % 4) * 2 }));
+const DUST = Array.from({ length: 18 }, (_, i) => ({
+	x: Math.round(((i * 37) % 100) * 10) / 10,
+	d: Math.round((1.8 + ((i * 7) % 10) / 6) * 100) / 100,
+	o: Math.round(((i * 0.37) % 2.6) * 100) / 100,
+	w: 3 + (i % 4) * 2,
+}));

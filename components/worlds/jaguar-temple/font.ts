@@ -5,4 +5,9 @@ import { Rakkas } from 'next/font/google';
  * terminals that reads like letters chiselled into stone (unused by any other template,
  * demo or world).
  */
-export const rakkas = Rakkas({ subsets: ['latin', 'latin-ext'], weight: '400', variable: '--font-jaguar', display: 'swap' });
+export const rakkas = Rakkas({
+	subsets: ['latin', 'latin-ext'],
+	weight: '400',
+	variable: '--font-jaguar',
+	display: 'swap',
+});
