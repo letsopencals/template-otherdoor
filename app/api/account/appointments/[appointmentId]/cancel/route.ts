@@ -20,7 +20,7 @@ export async function PUT(
 			body: { notifyCustomer: true },
 			headers: auth.headers,
 		});
-		// Places changed: the Floor, events and slot-rack ranges are cached under this tag.
+		// Sessions changed: room and workshop availability is cached under this tag.
 		revalidateTag('availability');
 		return NextResponse.json(publicPayload(data));
 	} catch (err) {

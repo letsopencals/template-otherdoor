@@ -15,7 +15,7 @@ export async function DELETE(
 	try {
 		const token = await getAccessToken();
 		const { data } = await CartService.removeItem({ path: { itemId }, headers: { Authorization: `Bearer ${token ?? ''}` } });
-		// Places changed: the Floor, events and slot-rack ranges are cached under this tag.
+		// Sessions changed: room and workshop availability is cached under this tag.
 		revalidateTag('availability');
 		return NextResponse.json(publicPayload(data));
 	} catch (err) {

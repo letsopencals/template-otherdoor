@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import type { CartResponse } from '@opencals/storefront-sdk';
 import { useCart } from '@/contexts/cart-context';
 import { useSatchelUi } from '@/contexts/satchel-ui-context';
 import { expeditionOf } from '@/lib/expedition';
@@ -23,8 +24,23 @@ export function SatchelDrawer() {
 	);
 }
 
-export function SatchelContents({ onClose }: { onClose?: () => void }) {
+function SatchelContents({ onClose }: { onClose?: () => void }) {
 	const { cart, timeRemaining, removeItem, applyDiscountCode, removeDiscountCode, discountCodeError } = useCart();
+	return <SatchelView cart={cart} timeRemaining={timeRemaining} removeItem={removeItem} applyDiscountCode={applyDiscountCode} removeDiscountCode={removeDiscountCode} discountCodeError={discountCodeError} onClose={onClose} />;
+}
+
+export interface SatchelViewProps {
+	cart: CartResponse | null;
+	timeRemaining: number | null;
+	removeItem: (id: string) => Promise<void>;
+	applyDiscountCode: (code: string) => Promise<boolean>;
+	removeDiscountCode: () => Promise<void>;
+	discountCodeError: { message?: string } | null;
+	onClose?: () => void;
+}
+
+/** The satchel itself, driven by props (the drawer passes the live cart; /preview passes a fixture). */
+export function SatchelView({ cart, timeRemaining, removeItem, applyDiscountCode, removeDiscountCode, discountCodeError, onClose }: SatchelViewProps) {
 	const [code, setCode] = useState('');
 	const [busy, setBusy] = useState<string | null>(null);
 	const items = cart?.items ?? [];
