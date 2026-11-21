@@ -5,8 +5,9 @@ Each room page `/rooms/<slug>` is its own immersive landing page with its own de
 is the world's.
 
 ```
-app/rooms/[slug]/page.tsx      reads the store, builds the props, wires the BookingPanel
-components/worlds/registry.tsx slug → next/dynamic(() => import('./<slug>'))
+components/worlds/room-page.tsx RoomPage: reads the store, builds the props, wires the BookingPanel
+app/rooms/<slug>/page.tsx       one route file per built world (imports only that world)
+app/rooms/[slug]/page.tsx       any other store room: the generic world (_placeholder)
 components/worlds/<slug>/      YOUR FOLDER: index.tsx (default export) + CSS module + art
 lib/worlds.ts                  RoomWorldProps (the types below) + the --bp-* variable list
 lib/world-props.ts             how the props are built (store + lib/site-config.ts)
@@ -99,8 +100,8 @@ account.
 
 ## Rules
 
-1. **Own folder only**: `components/worlds/<slug>/**`. Plus one line in `registry.tsx` if you add a
-   world for a new slug. Don't edit `app/globals.css`, the shell, `lib/*` or another world. If you
+1. **Own folder only**: `components/worlds/<slug>/**`. Plus a three-line route file
+   `app/rooms/<slug>/page.tsx` if you add a world for a new slug. Don't edit `app/globals.css`, the shell, `lib/*` or another world. If you
    need a contract change, ask.
 2. **Own styles**: a CSS module (`*.module.css`) or classes scoped under your world root. No global
    selectors (`:global(body)`, `html`, bare element selectors outside your root). Tailwind utilities
@@ -138,11 +139,14 @@ account.
 
 1. Create `components/worlds/<slug>/index.tsx` with
    `export default function MyWorld(props: RoomWorldProps) { … }` (replace the placeholder).
-2. If the slug is new, add `'<slug>': dynamic(() => import('./<slug>'))` to `registry.tsx` and the
-   room's presentation to `lib/site-config.ts` → `rooms` (palette, headerTone, stats, beats).
+2. If the slug is new, copy `app/rooms/kepler-station/page.tsx` to `app/rooms/<slug>/page.tsx`
+   (change `SLUG` and the import) and add the room's presentation to `lib/site-config.ts` → `rooms`
+   (palette, headerTone, stats, beats). A route file per world, not a slug → `next/dynamic` map:
+   a dynamic import inside a Server Component does not split the bundle, so every room page would
+   ship all six worlds' JS and CSS.
 3. Render `{props.booking}` once and set the `--bp-*` variables on your root.
 
-A store room with no registry entry falls back to `_placeholder/placeholder-world.tsx` (the generic
+A store room without a route file falls back to `_placeholder/placeholder-world.tsx` (the generic
 world in the dark shell, lit by the room's glow, using `media.poster`).
 
 ## Status

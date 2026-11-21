@@ -73,7 +73,7 @@ from the media run; `components/brand/logo.tsx` inlines the mark so the slit tak
 
 Contract: `components/worlds/README.md` (props, the `--bp-*` variables, header tones, rules) and
 `lib/worlds.ts`. Each room world:
-- lives in `components/worlds/<slug>/` and is registered in `components/worlds/registry.tsx`;
+- lives in `components/worlds/<slug>/` and has its own route file `app/rooms/<slug>/page.tsx` (so each world's JS and CSS ship only on its page);
 - is **built on cinematic media** (`public/worlds/<slug>/`: `hero.mp4` + `hero-poster.jpg`,
   `key.jpg`, and named stills described in that folder's `MEDIA.md`) with code motion on top
   (canvas, SVG/CSS overlays, scroll choreography); no flat vector scenes as the main imagery;
