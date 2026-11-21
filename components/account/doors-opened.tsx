@@ -22,6 +22,7 @@ export interface SigilRoom {
 	glow: string;
 	keyArt: string | null;
 	art?: string | null;
+	poster?: string | null;
 }
 
 type Appt = AppointmentShape & { status?: string | null; product?: AppointmentShape['product'] & { cancelGap?: number; rescheduleGap?: number; allowCustomerCancel?: boolean; allowCustomerReschedule?: boolean } };
@@ -40,7 +41,7 @@ export function DoorsOpened({ rooms, fixture }: { rooms: SigilRoom[]; fixture?: 
 	const { upcoming, past } = useMemo(() => splitLog(entries, now), [entries, now]);
 	const opened = useMemo(() => openedDoors(entries, now), [entries, now]);
 	const left = rooms.filter((r) => opened[r.slug] === undefined).length;
-	const name = session?.customer?.firstName ?? (fixture ? 'Ada' : null);
+	const name = fixture ? "Ada" : (session?.customer?.firstName ?? null);
 
 	return (
 		<section className="pool wrap pb-24 pt-[calc(var(--header-h)+48px)]">
@@ -71,7 +72,7 @@ export function DoorsOpened({ rooms, fixture }: { rooms: SigilRoom[]; fixture?: 
 						return (
 							<Link key={r.slug} href={`/rooms/${r.slug}`} className={s.door} data-open={isOpen} style={{ '--slit': r.glow } as CSSProperties}>
 								<span className={s.frame}>
-									<DoorArt sources={[r.keyArt, r.art]} alt="" glow={r.glow} className={s.art} />
+									<DoorArt sources={[r.keyArt, r.art, r.poster]} alt="" glow={r.glow} className={s.art} />
 									<span className={s.leaf} />
 								</span>
 								<span className={`slit ${s.sill}`} aria-hidden />

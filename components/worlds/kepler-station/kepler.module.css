@@ -229,6 +229,7 @@
 }
 .hudTop {
 	position: absolute;
+	white-space: nowrap;
 	top: calc(var(--header-h) + 30px);
 	left: 0;
 	right: 0;
@@ -442,8 +443,11 @@
 	z-index: -2;
 	transform-origin: 73% 47%;
 	transform: translate3d(calc(var(--p) * -23%), calc(var(--p) * 3%), 0) scale(calc(0.42 + var(--p) * 1.05)) rotate(calc((1 - var(--p)) * 9deg));
-	-webkit-mask-image: radial-gradient(34% 52% at 73% 47%, #000 72%, transparent 100%);
-	mask-image: radial-gradient(34% 52% at 73% 47%, #000 72%, transparent 100%);
+	/* isolate the ring on the starfield plate; the linear fade hides the picture's right edge */
+	-webkit-mask-image: radial-gradient(34% 52% at 73% 47%, #000 72%, transparent 100%), linear-gradient(90deg, #000 86%, transparent 98%);
+	-webkit-mask-composite: source-in;
+	mask-image: radial-gradient(34% 52% at 73% 47%, #000 72%, transparent 100%), linear-gradient(90deg, #000 86%, transparent 98%);
+	mask-composite: intersect;
 	will-change: transform;
 }
 .dockVignette {

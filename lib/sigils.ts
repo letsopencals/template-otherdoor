@@ -6,6 +6,6 @@ import type { SigilRoom } from '@/components/account/doors-opened';
 export function sigilRooms(c: Catalogue): SigilRoom[] {
 	return c.rooms.map((r) => {
 		const p = roomPresentation(r.slug);
-		return { slug: r.slug, title: r.title, genre: p?.genre ?? "", year: p?.year ?? "", glow: (p?.palette ?? FALLBACK_PALETTE).glow, keyArt: r.images[0] ?? null, art: p?.media.key ?? p?.media.poster ?? null };
+		return { slug: r.slug, title: r.title, genre: p?.genre ?? "", year: p?.year ?? "", glow: (p?.palette ?? FALLBACK_PALETTE).glow, keyArt: r.images[0] ?? null, art: p?.media.key ?? null, poster: p?.media.poster ?? null };
 	});
 }
