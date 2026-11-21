@@ -18,6 +18,7 @@ import { DoorCard } from "@/components/cart/door-card";
 import { DateStrip } from '@/components/booking/date-strip';
 import { SessionButtons } from '@/components/booking/session-buttons';
 import b from '@/components/booking/booking.module.css';
+import { refreshAvailability } from '@/lib/availability-refresh';
 
 const utc = (ms: number) => {
 	const iso = new Date(ms).toISOString();
@@ -50,6 +51,7 @@ export function VisitDetail({ id, initialAction }: { id: string; initialAction: 
 			setMsg(ok);
 			setMode(null);
 			await mutate();
+			refreshAvailability();
 			router.refresh();
 		} catch (err) {
 			setMsg(err instanceof Error ? err.message : 'That didn’t go through.');
@@ -108,11 +110,10 @@ function MovePicker({ appt, kind, roomKey, seats, busy, onMove }: { appt: Appoin
 	const len = Math.round((Date.parse(appt.to) - own) / 60_000);
 	const sessions = useMemo<Session[]>(() => {
 		const ranges = data?.[roomKey] ?? [];
-		// Merged availability counts this booking as taken: add its own window back.
-		const mine: FreeRange = { start: own, end: Date.parse(appt.to), attendees: 0, maxAttendees: 1 };
-		const list = kind === 'room' ? roomSessions([...ranges, mine], { durationMin: len, now }) : workshopSessions(ranges, { durationMin: len, now, seats });
+		// Sessions are on the wall-clock grid, so the booking's own window never overlaps another session.
+		const list = kind === 'room' ? roomSessions(ranges, { durationMin: len, now }) : workshopSessions(ranges, { durationMin: len, now, seats });
 		return list.filter((x) => x.start !== own);
-	}, [data, roomKey, own, appt.to, kind, len, now, seats]);
+	}, [data, roomKey, own, kind, len, now, seats]);
 	const days = useMemo(() => byDate(sessions), [sessions]);
 	const dates = useMemo(() => localDates(today(now), siteConfig.horizonDays), [now]);
 	const counts = useMemo(() => Object.fromEntries(dates.map((d) => [d, days[d]?.length ?? 0])), [dates, days]);

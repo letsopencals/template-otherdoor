@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useCart } from '@/contexts/cart-context';
 import { useCartUi } from '@/contexts/cart-ui-context';
 import type { CreateAppointmentAddOn } from '@opencals/storefront-sdk';
+import { refreshAvailability } from '@/lib/availability-refresh';
 
 export interface BookRequest {
 	productId: string;
@@ -66,7 +67,8 @@ export function useAddToCart() {
 				if (body?.cart) setCart(body.cart);
 				flash();
 				if (open) setOpen(true);
-				// Sessions changed: refresh server-rendered availability.
+				// Sessions changed: re-read availability (SWR) and the server-rendered props.
+				refreshAvailability();
 				router.refresh();
 				return true;
 			} catch {

@@ -72,8 +72,8 @@ export function WorkshopBooker({ w, initialRanges, renderedAt }: { w: WorkshopVi
 					</button>
 				</div>
 			</div>
-			{error ? <p className={s.error}>{error}</p> : null}
-			{added ? <p className={s.ok}>Added to your doors: {added}</p> : null}
+			{error ? <p role="alert" className={s.error}>{error}</p> : null}
+			{added ? <p role="status" className={s.ok}>Added to your doors: {added}</p> : null}
 			<div className={s.bar}>
 				<div className={s.total}>
 					<span className={s.totalAmount}>{formatPrice(w.price * seats)}</span>
@@ -88,7 +88,7 @@ export function WorkshopBooker({ w, initialRanges, renderedAt }: { w: WorkshopVi
 					disabled={!pick || pending}
 					onClick={async () => {
 						if (!pick) return;
-						const ok = await add({ productId: w.productId, locationId: w.locationId, staffMemberId: w.staffMemberId, start: pick.start, end: pick.end, numberOfAttendees: seats });
+						const ok = await add({ productId: w.productId, locationId: w.locationId, staffMemberId: pick.staffMemberId ?? w.staffMemberId, start: pick.start, end: pick.end, numberOfAttendees: seats });
 						if (ok) {
 							setAdded(`${w.title}, ${localDateParts(pick.date).long} at ${pick.time}, ${seats} ${seats === 1 ? 'seat' : 'seats'}.`);
 							setPick(null);

@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import type { CartResponse as Cart, DiscountCodeErrorResponse } from '@opencals/storefront-sdk';
 import { useCartExpiry } from '@/hooks/use-cart-expiry';
+import { refreshAvailability } from '@/lib/availability-refresh';
 
 const CART_ID_KEY = '@opencals/cart';
 
@@ -124,6 +125,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 			});
 			if (res.ok) {
 				setCartState(await res.json());
+				refreshAvailability();
 			}
 		},
 		[cartId],

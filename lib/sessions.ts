@@ -19,6 +19,8 @@ export interface FreeRange {
 	end: number;
 	attendees: number;
 	maxAttendees: number;
+	/** Staff free for this window (workshops; merged availability spans every host). */
+	staffMemberIds?: string[];
 }
 
 export interface Session {
@@ -32,6 +34,8 @@ export interface Session {
 	left: number;
 	/** Capacity (workshops). */
 	capacity: number;
+	/** A host free for this session (workshops), when the API names one. */
+	staffMemberId?: string | null;
 }
 
 const MINUTE = 60_000;
@@ -52,6 +56,7 @@ export function toRanges(slots: readonly CurrentAvailabilitySlot[] | null | unde
 			end: Math.ceil(instant(r.toDate, r.toTime) / MINUTE) * MINUTE,
 			attendees: r.attendees ?? 0,
 			maxAttendees: r.maxAttendees ?? 1,
+			...(r.staffMemberIds?.length ? { staffMemberIds: [...r.staffMemberIds] } : {}),
 		}))
 		.filter((r) => Number.isFinite(r.start) && Number.isFinite(r.end) && r.end > r.start)
 		.sort((a, b) => a.start - b.start);
@@ -94,7 +99,7 @@ export function workshopSessions(ranges: readonly FreeRange[], { durationMin, no
 		for (let t = r.start; t + len <= r.end; t += len) {
 			if (t <= now || out.has(t)) continue;
 			const p = localParts(t);
-			out.set(t, { start: t, end: t + len, date: p.date, time: p.time, left, capacity: r.maxAttendees });
+			out.set(t, { start: t, end: t + len, date: p.date, time: p.time, left, capacity: r.maxAttendees, staffMemberId: r.staffMemberIds?.[0] ?? null });
 		}
 	}
 	return [...out.values()].sort((a, b) => a.start - b.start);

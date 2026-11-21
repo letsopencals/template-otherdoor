@@ -13,5 +13,5 @@ export async function GET(request: NextRequest) {
 	const venue = request.nextUrl.searchParams.get('venue');
 	if (venue && !SLUG.test(venue)) return NextResponse.json({ error: 'Invalid venue' }, { status: 400 });
 	const ranges = await getRoomRanges(venue || null);
-	return NextResponse.json(ranges, { headers: { 'Cache-Control': 'private, max-age=30' } });
+	return NextResponse.json(ranges, { headers: { 'Cache-Control': 'private, no-cache' } });
 }
