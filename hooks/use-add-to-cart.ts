@@ -33,7 +33,7 @@ function message(status: number, body: { error?: string; message?: string } | nu
 	return raw || 'That didn’t go through. Try again.';
 }
 
-/** POST one booking to the cart, flash the satchel and open it. */
+/** POST one booking to the cart, flash the cart button and open Your doors. */
 export function useAddToCart() {
 	const router = useRouter();
 	const { cartId, setCart } = useCart();

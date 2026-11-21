@@ -174,7 +174,7 @@ async function roomEntries(venueSlug: string | null): Promise<Array<readonly [st
  * pool), cached 60 s and tagged `availability`. Booking, cart removal,
  * cancelling and moving revalidate the tag.
  */
-const cachedRoomRanges = unstable_cache(async (venueSlug: string | null) => loadRanges(await roomEntries(venueSlug), true), ['compass-room-ranges-v1'], {
+const cachedRoomRanges = unstable_cache(async (venueSlug: string | null) => loadRanges(await roomEntries(venueSlug), true), ['otherdoor-room-ranges-v1'], {
 	revalidate: 60,
 	tags: ['availability', 'rooms-availability'],
 });
@@ -196,7 +196,7 @@ async function workshopEntries(): Promise<Array<readonly [string, string]>> {
 	return (await getCatalogue()).workshops.map((w) => [w.slug, w.productId] as const);
 }
 
-const cachedWorkshopRanges = unstable_cache(async () => loadRanges(await workshopEntries(), true), ['compass-workshop-ranges-v1'], {
+const cachedWorkshopRanges = unstable_cache(async () => loadRanges(await workshopEntries(), true), ['otherdoor-workshop-ranges-v1'], {
 	revalidate: 60,
 	tags: ['availability', 'workshops-availability'],
 });

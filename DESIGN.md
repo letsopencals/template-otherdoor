@@ -1,111 +1,94 @@
-# THE GILDED COMPASS: design contract
+# OTHERDOOR: design contract
 
-"Every room is a story you walk into." A gilded explorers' society in Edinburgh. The site is its
-**library and cabinet of curiosities**: each room is an illustrated adventure **volume** on a shelf,
-and opening a volume walks you into that room's own world.
+Immersive escape rooms in Edinburgh. **The brand idea is the door**: every room is a door into
+another world. The shell (header, home, booking, cart, checkout, account) is genre-neutral, dark,
+rich and modern. All genre lives behind the doors, in the six room worlds at `/rooms/<slug>`, each
+with its own palette, display font, layout grammar and motion.
 
-Light-first and warm, never black-minimal: parchment and vellum paper, ink-green and oxblood bands,
-gold-leaf foil, engraved rules, marbled endpapers, wax seals, brass instruments and maps.
+v1 (parchment and treasure-hunt styling) was rejected and is kept
+only in the `v0-parchment` tag. Nothing from it survives in the rendering layer.
 
-## Tokens
+## The shell
 
-| Token | Value | Use |
-|---|---|---|
-| `--parchment` | `#F4EAD5` | page ground |
-| `--vellum` | `#FBF6EA` | cards, solid header, letter paper |
-| `--ink-green` | `#1E3A30` | bands, primary buttons |
-| `--deep-ink` | `#15201B` | text, footer |
-| `--oxblood` | `#7A1E22` | seals, accents, prices on tags |
-| `--gold` | `#C8A04A` | foil (`--foil` gradient: `#8C6A24 → #E9CF86 → #B88A35 → #F3E2A6 → #9A7430`) |
-| `--patina` | `#2F6F6A` | links, focus, free sessions |
-| `--sepia` | `#8A6A43` | engraved rules, hairlines, captions |
+**Mood.** A members' club after midnight crossed with a gallery. Layered darks (blue-black
+`#0c0a12`, aubergine `#1f1329`, warm umber `#1e150f`), never pure black; film grain over everything
+(an animated SVG-noise overlay at 5.5% opacity); soft volumetric light; smoked glass with metal
+hairlines (gradient borders through a mask); generous space; big confident type.
 
-Type (all verified unused in `templates/*` and `demos/sites/*`, Nov 2026):
-- **IM Fell English** (`--font-display`): headlines, room titles, the letter.
-- **IM Fell English SC** (`--font-engraved`): small-caps engraved labels, chapter folios, nav.
-- **Mulish** (`--font-ui`): body, buttons, forms, every booking control.
-- **Courier Prime** (`--font-type`): typewritten notes, references, codes, call times.
+**The one recurring light: the light under a door.** `--door` on `<html>` is a registered colour
+property (`@property`, so it animates). It defaults to a warm lamp `#f2c46d`. Whenever a room is in
+focus (a door hovered in the corridor, a card in the doors menu, a row in Tonight, a room world
+open, the winning door in the picker) the shell borrows that room's `palette.glow` through
+`lib/door-light.ts`. The light shows up as:
+- the 2 px **slit** under doors, cards and the button edge (`.slit`, `.btn` bottom glow);
+- the **label** sliver before every mono label (`.label::before`);
+- the **sill** under section heads, which stretches when the section enters the viewport;
+- the **pool** of light behind sections (`.lamp::before`) and the vanishing point of the hero;
+- the logo's door slit, the header's bottom hairline and the cart count.
 
-Shapes: buttons are **bevelled plates** (a 2px inset gold hairline on ink green, square corners with
-3px clipped corners via `clip-path`), never pills. Cards are paper with a deckle shadow and an
-engraved double rule, never rounded with offset shadows.
+Door lights (`palette.glow`, all distinct hues): Jaguar Temple gold `#F0C94A`, Gaslight No. 9 jade
+`#6FD3A8`, Protocol Zero alert red `#FF4358`, Kepler Station ion teal `#3ED2D6`, Hôtel Lumière pop
+pink `#FF5FA2`, Clockmaker's Workshop copper `#F2A55A`.
 
-## Motion vocabulary (all original to this template)
+**Type.**
+- Display: **Funnel Display** (300–700), mixed case, tight tracking (−0.025 to −0.045 em). Big.
+- UI: **Mona Sans** (variable).
+- Mono: **Spline Sans Mono** for labels, numbers, times and door plates, lowercase/sentence case.
+  No letterspaced uppercase labels anywhere in the shell (that is NOIR's voice).
+- All three verified unused across `templates/*` and `demos/sites/*` and absent from the ban list.
 
-Pointer lantern (radial CSS mask that reveals an SVG invisible-ink layer), spring-swung compass
-needle, book spines that slide out of the shelf, foil sheen that follows the pointer
-(`--sheen-x` custom property on a linear-gradient), cryptex rings that rotate letter by letter,
-ink-bleed reveals (an SVG `feTurbulence` + `feDisplacementMap` mask animated once on intersection),
-dotted-route drawing for the quiz path, wax seal cracking, envelope flap and letter unfold, passport
-stamps pressing in. Everything respects `prefers-reduced-motion` (lantern becomes a static reveal,
-the seal shows broken, the letter shows open). No animation libraries, no Lenis, no motion kit.
+**Tokens** (`app/globals.css` `@theme`): `night-0…3`, `aubergine`, `umber`, `ink` `#f1ecf4`,
+`ink-2` `#c3bacd` (10.5:1 on night-1), `ink-3` `#948aa3` (6.0:1), `line`, `line-2`, `lamp`, `ember`.
 
-## Pages
+**Shapes.** Door-shaped corners: 10 px top, 4 px bottom on buttons, cards and frames (`border-radius:
+10px 10px 4px 4px`). Buttons: `.btn` is a lit doorway (ivory fill, the room's light glowing under
+the bottom edge); `.btn-glass` is smoked glass with a hairline. Never pills, never square slabs.
 
-- **Home**: lantern map hero (compass needle, tagline, "Open a volume" + "Plan an expedition") →
-  the Shelf (six spines) → Tonight's expeditions (live next sessions, plain buttons) → Which room are
-  you? (path quiz on a map) → the Cryptex (code `GILDED`) → Hall of Fame (record ledger) → the two
-  houses (Vaults, Bond) → game masters (cabinet cards) → groups band → FAQ (index-card accordion).
-- **/rooms**: the full shelf, then one catalogue "plate" per room with stats and a link into its world.
-- **/rooms/[slug]**: the room world (see below).
-- **/book** "Plan an expedition": venue tabs, date strip, one row per room with plain session
-  buttons; tapping a time opens team size + add-ons inline with the total and "Add to satchel".
-- **/workshops**: two workshops, date strip, sessions with seats left, seats stepper, per-head price.
-- **/venues/[slug]**, **/groups**, **/faq**: content pages in the house style.
-- **The Satchel** (drawer): each booking is a **luggage tag** strung on a strap.
-- **/checkout** "Letter of Passage": one page letter. Satchel tags clipped along the top, then the
-  letter: team name and questions written into the letter's lines, then the bearer's details, then
-  payment. One primary action per section, no accordion, no sticky summary card.
-- **/thank-you**: the **sealed invitation**: envelope + wax seal, tap breaks the seal, the letter
-  unfolds with team, room, date, call time (15 min before), venue + map + getting there, what to
-  wear, phones-away note, add to calendar, manage, "book your next volume".
-- **/account** "The Explorer's Logbook": upcoming expeditions (move/cancel within the 24 h rule),
-  the **passport page** (one stamp slot per room from the store's room groups; played rooms inked
-  with the date, the rest outlined: "4 volumes left"), past expeditions.
-- **/login**, **/preview/[screen]** (invitation, logbook, satchel fixtures).
+**Motion.** No motion library, no fade-up reveals, no parallax kit. The shell's own motion:
+doors opening in 3D (`rotateY` from the hinge), light switching on (pools and sills, triggered by
+`components/ui/lamp.tsx`; content is never hidden), the door light cross-fading between rooms, the
+corridor's FLIP re-order, the flashlight mask, the keypad press and shake, the thank-you unlock.
+Every animation has a reduced-motion fallback that shows the finished state.
+
+**Logo.** A door frame and a door leaf ajar (two offset shapes) with the light in the slit and
+spilling across the floor, plus the OTHERDOOR wordmark. `public/logo-mark.svg` (and the lockups)
+from the media run; `components/brand/logo.tsx` inlines the mark so the slit takes `--door`.
 
 ## How this differs from every other template
 
-- **Navigation model.** A top header that is transparent over the home hero and over every room
-  world, solid vellum on scroll, whose "Rooms" item pulls a **shelf of book spines** down from the
-  header instead of a menu list. The satchel is a leather bag icon with a brass count. No other
-  template navigates by a shelf of objects; no mega-menu, no side rail, no bottom bar.
-- **Section rhythm.** Chapters, not sections: each band opens with an engraved small-caps folio
-  ("Chapter III · The Shelf") between double rules, and bands are separated by **marbled endpaper
-  strips** (SVG turbulence). Paper bands alternate with ink-green and oxblood cloth bands. There is
-  no eyebrow-pill → H2 → three-card grid anywhere.
-- **Booking interaction.** Classic and plain (date strip directly above tappable time buttons,
-  team-size buttons with group price and "£x pp", total and the primary action always in view). The
-  difference is the model, not the controls: one row per **room** with its colour spine, team size is
-  chosen after the time, and every room world embeds the same panel skinned by its CSS variables.
-- **Cart.** The Satchel: luggage tags on a strap (room, date, session, team, add-ons, price), not a
-  contact sheet, day sheet, barbell or list of cards.
-- **Checkout.** A **Letter of Passage**: the questions are lines of a letter in IM Fell with the
-  answers written in, the satchel tags clipped above. Not a release form, not a step accordion with a
-  sticky summary.
-- **Confirmation artifact.** A sealed envelope with a wax seal that breaks and unfolds into an
-  invitation. Not a ticket, call sheet, race bib, day-sheet printout or flippable card.
-- **Account.** The Explorer's Logbook with a **passport of room stamps**, not a roll, training log,
-  week plan or ticket.
+| | Otherdoor |
+|---|---|
+| **Navigation** | One header, transparent over heroes and worlds, frosted glass on scroll (the blur lives on a child layer so the menus aren't clipped). "Rooms" opens a full-width **doors menu**: six tall door cards with key art and their light, plus an aside of routes. The cart button is a lit doorway: **Your doors**. Phones get a full-screen menu with a door thumbnail per room. |
+| **Home** | **The Corridor**: six physical doors (lacquered leaves, recessed panels, frosted transom showing the world, number plate, year, knob) in a dark hall over the home loop. Hover/focus opens a door from its hinge, plays that world's muted loop inside and spills its light across the floor; the whole shell takes the colour. Phones: a vertical stack of doors, first tap opens, second enters. Mood filters re-order the doors (FLIP). |
+| **Section rhythm** | Asymmetric heads (mono number + label, big display title left, lede bottom-right, a sill of light under). Sections are separated by light, not by bands or rules: each "lamp" switches its pool on as it arrives. No eyebrow-pill/3-card grids. |
+| **Play** | A **keypad lock** (clues on the doors, in the dark room and in the small print; the code reveals the discount), **"Which door is yours?"** (six mini doors whose light grows with each answer; the winner opens), a **flashlight** room (the cursor's torch reveals words and keypad clues). |
+| **Booking** | Plain on purpose (usability rule): on room pages the shared BookingPanel (date strip directly above session buttons, team-size buttons with group price and £pp, extras, total + "Add to your doors" in a sticky bar). `/book`: venue filter + one date strip, one row per room with a door thumbnail and plain session buttons; team size opens inline. Workshops: date strip, sessions, seats stepper. No themed pickers or dials. |
+| **Cart** | **Your doors**: a drawer of slim door cards, each with a door-shaped key-art thumb and its leading edge lit in the world's colour; a hold bar of light counting down. |
+| **Checkout** | One dark page, top to bottom: the door cards across the top, then 01 Your team (the store's questions as plain labelled fields), 02 Contact, 03 Payment (ledger, code, method radios, Stripe via `next/dynamic`). Beside it, the first door you picked stands open (decoration, not a summary). No step accordion, no sticky summary. |
+| **Confirmation** | **The door unlocks**: a lock keys in the booking reference and unlocks, the door swings open onto the room's key art, then "You're in, <team>.", **Arrive by** (call time, 15 min early) in the room's light, room/team/where/what to wear/phones away/extras, calendar, manage, and **Open another door**. Reduced motion: shown open. |
+| **Account** | **Doors opened**: every room as a door; the ones you've played stand open on their key art, lit in their colour with the date; the rest stay closed ("3 doors left"). Coming up (door cards with move/cancel under the 24 h rule) and past visits. |
+| **Palette / type** | Aubergine-blue-black with a single borrowed light, Funnel Display + Mona Sans + Spline Sans Mono. Not NOIR (black + champagne, extended caps) and not METTLE (rubber + LED, condensed caps). |
 
-Banned and absent: every font, motion and page shape in the ban list
-(`templates/_skills/build-opencals-template/references/uniqueness.md`), plus Afterglow (Syne,
-Outfit, Fragment Mono; story rings, viewfinder, contact sheet, call sheet, release form, "Your
-roll") and METTLE (day lanes, barbell cart, race bib, training log, plate colours, LED readouts).
+## The world system
 
-## The room worlds (`/rooms/[slug]`)
+Contract: `components/worlds/README.md` (props, the `--bp-*` variables, header tones, rules) and
+`lib/worlds.ts`. Each room world:
+- lives in `components/worlds/<slug>/` and is registered in `components/worlds/registry.tsx`;
+- is **built on cinematic media** (`public/worlds/<slug>/`: `hero.mp4` + `hero-poster.jpg`,
+  `key.jpg`, and named stills described in that folder's `MEDIA.md`) with code motion on top
+  (canvas, SVG/CSS overlays, scroll choreography); no flat vector scenes as the main imagery;
+- has its own display font (one per world, verified unused), palette and interactive moment;
+- contains a full-screen hero, a 3–5 scene scroll story, the stats, photos, the game master, the
+  booking panel (skinned only with `--bp-*`) and the next-door teaser.
 
-Each room page is its own immersive landing page. Only the shared header, the booking panel's
-behaviour and the footer are common; the contract lives in `components/worlds/README.md`.
+Built: **Kepler Station** (2187): hero loop under a seeded parallax starfield canvas and HUD
+(beacon, window clock, falling life support); an incoming-signal transmission; a sticky
+**docking approach** (the station closes into the reticle as you scroll, range and closing speed
+count down, the briefing arrives as HUD messages); **airlock doors** parting onto the command deck
+with the life-support gauge and the two-deck map; lever detail and specs; CCTV photos; mission
+control comms; the docking log; the mission brief beside the panel; a hatch to the next door.
+Display: **Michroma**. Palette: indigo `#04071a`, ion teal `#2ec4c9`, warning amber `#f2a33a`,
+nebula magenta `#b3367a`.
 
-| Room | World | Palette | Signature moments |
-|---|---|---|---|
-| The Jaguar Temple | 1936 jungle expedition | moss `#2E4A2A`, jade, gold `#D9A520`, stone | lianas swing down, monstera leaves part, fireflies and mist, the carved door grinds open (scroll-scrubbed) on the golden idol, a rolling-stone run |
-| The Gaslight Affair at No. 9 | 1891 Victorian detective | bottle green, amber, soot, paper | drifting fog, gas-lamp flicker, the evidence board pins its cards with red string, a magnifier over a newspaper, typewritten case file, rain on glass |
-| The Cartographer's Tomb (Epic) | 1922 desert excavation | sand, lapis `#1F3F8F`, gold, terracotta | drifting sand, a torch beam over original reliefs, a map unrolls on scroll, the sarcophagus lid slides, two chambers |
-| The Leviathan Dive | 1870 brass submarine | verdigris, brass, abyss | scroll = descent: a fathom gauge, teal to abyss, rivets, a porthole, bubbles, sonar ping, the oxygen dial, a tentacle passing |
-| The Hôtel Lumière Job | 1963 Riviera heist, comic book | pop red `#E63022`, cyan, yellow, Riviera blue, ink | comic panels sliding in with halftone, balloons, original sound effects, a laser grid you scroll through, crew cards, a safe dial (this world only) |
-| The Clockmaker's Workshop | clockwork toymaker, family 7+ | walnut, copper, brass | gears turning with scroll, a cuckoo popping at section change, wind-up toys, a music-box drum, blueprints |
-
-Until the world agents land, every slug renders a placeholder world (themed hero + story + the
-booking panel) so each route works.
+To build: Jaguar Temple, Gaslight No. 9, Protocol Zero, Hôtel Lumière, Clockmaker's Workshop
+(they render the generic world `_placeholder` until then).

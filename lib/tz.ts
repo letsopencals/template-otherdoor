@@ -1,7 +1,7 @@
 import moment from 'moment-timezone';
 import { siteConfig } from '@/lib/site-config';
 
-/** Wall-clock helpers in the society's zone (Europe/London). Pure; DST-aware. */
+/** Wall-clock helpers in the venue's zone (Europe/London). Pure; DST-aware. */
 
 const TZ = siteConfig.timezone;
 const formatters = new Map<string, Intl.DateTimeFormat>();

@@ -12,7 +12,7 @@ interface CartUi {
 
 const CartUiContext = createContext<CartUi | null>(null);
 
-/** Open state of the Satchel drawer (the cart), shared by the header and every booking surface. */
+/** Open state of the Your doors drawer (the cart), shared by the header and every booking surface. */
 export function CartUiProvider({ children }: { children: ReactNode }) {
 	const [open, setOpen] = useState(false);
 	const [flashKey, setFlashKey] = useState(0);

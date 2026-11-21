@@ -403,7 +403,7 @@ export const siteConfig = {
 		'morag-fairbairn': { name: 'Morag Fairbairn', title: 'Head game master · Kepler Station', room: 'kepler-station', bio: 'Morag designed both decks of Kepler Station and watches every Epic from mission control. She is the calm voice on the comms when life support dips below twenty.' },
 		'callum-rennie': { name: 'Callum Rennie', title: 'Game master · Protocol Zero', room: 'protocol-zero', bio: 'Callum builds the electronics behind every room and wrote VESTA’s lines. If the AI sounds like it is enjoying itself, that is Callum.' },
 		'eilidh-baxter': { name: 'Eilidh Baxter', title: 'Workshop lead · Hôtel Lumière', room: 'hotel-lumiere', bio: 'Eilidh trained as a stage magician and can open most padlocks faster than you can find the key. She runs the Hôtel Lumière Job and teaches Lockpicking 101.' },
-		'fergus-drummond': { name: 'Fergus Drummond', title: 'Game master · The Clockmaker’s Workshop', room: 'clockmakers-workshop', bio: 'A clock restorer from Stockbridge with a shelf of wind-up toys. Fergus built the workshop’s music box and has a gentle hint ready for every age.' },
+		'fergus-drummond': { name: 'Fergus Drummond', title: 'Game master · The Clockmaker’s Workshop', room: 'clockmakers-workshop', bio: 'A clock restorer from Stockbridge with a cabinet of wind-up toys. Fergus built the workshop’s music box and has a gentle hint ready for every age.' },
 	} satisfies Record<string, GameMaster>,
 
 	workshops: {

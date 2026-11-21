@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { grossSubtotal, linePrice, visibleDiscounts } from '@/lib/cart-lines';
 
-describe('satchel maths', () => {
+describe('cart maths', () => {
 	it('rebuilds the gross from original subtotals, skipping cancelled lines', () => {
 		expect(grossSubtotal([
 			{ originalSubtotal: 108, addOnItems: [{ originalSubtotal: 45 }, { originalSubtotal: 15 }] },

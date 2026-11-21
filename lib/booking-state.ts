@@ -31,10 +31,10 @@ export function awaitingOfAll(appts: readonly Appt[]): Awaiting | null {
 }
 
 export function awaitingLabel(r: Awaiting): string {
-	return r === 'awaiting_payment' ? 'Awaiting payment' : 'Awaiting the society’s OK';
+	return r === 'awaiting_payment' ? 'Awaiting payment' : 'Awaiting confirmation';
 }
 
-/** Order payment state in the logbook's words. Never blank, never a raw value. */
+/** Order payment state in the account's words. Never blank, never a raw value. */
 export function paymentLabel(o: Partial<Pick<OrderListItemResponse, 'isFullyPaid' | 'paymentStatus' | 'refundStatus'>>): string {
 	if (o.paymentStatus === 'voided') return 'Cancelled — not charged';
 	if (o.refundStatus === 'fully-refunded') return 'Refunded';
@@ -51,7 +51,7 @@ export function safeInvoiceUrl(url: string | null | undefined): string | null {
 // Checkout → thank-you hand-off. Submit returns the payment instructions once; the
 // invitation reads them back from this tab's sessionStorage (a reload keeps them, a new device
 // doesn't: then the page points to the email).
-const KEY = 'compass:checkout:';
+const KEY = 'otherdoor:checkout:';
 
 export interface CheckoutHandoff {
 	instructions: PaymentInstructions | null;

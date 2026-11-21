@@ -115,11 +115,11 @@ interface CheckoutContextValue {
 	setError: (error: string | null) => void;
 	handleSaveCustomer: (e: React.FormEvent) => Promise<void>;
 	handleSaveAnswers: (e: React.FormEvent) => Promise<void>;
-	/** The Letter of Passage: save the customer, then the answers, in one submit. */
+	/** One submit: save the customer, then the answers, in one submit. */
 	handleSign: (e: React.FormEvent) => Promise<void>;
 	handleStartCheckout: (providerName: PaymentProviderName) => Promise<void>;
 	handleSubmitCheckout: (stripePaymentIntentId?: string) => Promise<boolean>;
-	/** After CART_EXPIRED: drop the cart and go back to the expedition board. */
+	/** After CART_EXPIRED: drop the cart and go back to the booking page. */
 	restartFromBoard: () => void;
 	extendCart: () => void;
 }
@@ -287,7 +287,7 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
 		[answers, questions, cartHeaders],
 	);
 
-	// Letter of Passage: customer + answers in one go (same calls as steps 1 and 2, in order).
+	// Customer + answers in one go (same calls as steps 1 and 2, in order).
 	const handleSign = useCallback(
 		async (e: React.FormEvent) => {
 			e.preventDefault();
@@ -333,7 +333,7 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
 				return false;
 			}
 			if (err.code === 'CART_ALREADY_CHECKED_OUT') {
-				// This satchel is already booked (another tab, a retried request): show that booking.
+				// This cart is already booked (another tab, a retried request): show that booking.
 				setCheckoutComplete(true);
 				clearCart();
 				router.push(err.orderId ? `/thank-you?orderId=${encodeURIComponent(err.orderId)}` : '/thank-you');

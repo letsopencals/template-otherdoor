@@ -1,7 +1,7 @@
 import type { CartItem, CartResponse } from '@opencals/storefront-sdk';
 
 /**
- * The Satchel (cart) maths. The API's `subtotal` (cart and order) is already net
+ * The cart maths. The API's `subtotal` (cart and order) is already net
  * of discounts and has no gross field, so the gross is rebuilt from each line's
  * and add-on's `originalSubtotal`, in whole pence, skipping cancelled bookings.
  */
@@ -33,7 +33,7 @@ export function visibleDiscounts(cart: Pick<CartResponse, 'appliedDiscounts'> | 
 	return (cart?.appliedDiscounts ?? []).filter((d) => Math.abs(d.totalAmount) >= 0.005);
 }
 
-/** Bookings in the satchel. */
+/** Bookings in the cart. */
 export function cartCount(cart: Pick<CartResponse, 'items'> | null | undefined): number {
 	return cart?.items?.length ?? 0;
 }
