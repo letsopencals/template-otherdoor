@@ -21,20 +21,20 @@ type Seg = { x1: number; y1: number; x2: number; y2: number; on: boolean };
 
 /** Beam positions at time t (seconds). Pure, so the first paint can use t = 0. */
 function beamsAt(t: number): Seg[] {
-	const sweep = (pivotX: number, pivotY: number, a: number): Seg => {
+	const sweep = (pivotX: number, pivotY: number, a: number, on: boolean): Seg => {
 		const len = (FLOOR - TOP) / Math.max(0.2, Math.abs(Math.sin(a)));
 		const dir = pivotY < (TOP + FLOOR) / 2 ? 1 : -1;
-		return { x1: pivotX, y1: pivotY, x2: pivotX + Math.cos(a) * len * dir, y2: pivotY + Math.abs(Math.sin(a)) * len * dir, on: true };
+		return { x1: pivotX, y1: pivotY, x2: pivotX + Math.cos(a) * len * dir, y2: pivotY + Math.abs(Math.sin(a)) * len * dir, on };
 	};
 	const x1 = 250 + Math.sin(t * 1.1) * 70;
 	const yh = 250 + Math.sin(t * 0.9 + 1) * 130;
-	const blink = (t % 2.6) < 1.7;
+	// Every full-height beam has a timed gap (a clean run is about waiting for it).
 	return [
-		{ x1, y1: TOP, x2: x1 + 30, y2: FLOOR, on: true },
-		sweep(430, TOP, Math.PI / 2 + Math.sin(t * 0.8) * 0.62),
+		{ x1, y1: TOP, x2: x1 + 30, y2: FLOOR, on: t % 3 < 1.9 },
+		sweep(430, TOP, Math.PI / 2 + Math.sin(t * 0.8) * 0.62, (t + 1) % 3.4 < 2.2),
 		{ x1: 470, y1: yh, x2: 660, y2: yh + Math.sin(t * 1.7) * 26, on: true },
-		{ x1: 712, y1: TOP, x2: 698, y2: FLOOR, on: blink },
-		sweep(830, FLOOR, Math.PI / 2 + Math.sin(t * 0.7 + 2) * 0.58),
+		{ x1: 712, y1: TOP, x2: 698, y2: FLOOR, on: t % 2.6 < 1.7 },
+		sweep(830, FLOOR, Math.PI / 2 + Math.sin(t * 0.7 + 2) * 0.58, (t + 2) % 3.2 < 2),
 		{ x1: 140, y1: 404, x2: 880, y2: 396, on: true },
 	];
 }
@@ -64,6 +64,8 @@ export function LaserGrid() {
 	const [cleans, setCleans] = useState(0);
 	const [tap, setTap] = useState<{ x: number; y: number; hit: boolean; k: number } | null>(null);
 	const [still, setStill] = useState(false);
+	const lastPt = useRef<{ x: number; y: number } | null>(null);
+	const tripRef = useRef<() => void>(() => undefined);
 
 	const setRunBoth = useCallback((r: Run) => {
 		runRef.current = r;
@@ -99,6 +101,9 @@ export function LaserGrid() {
 			if (!t0.current) t0.current = now;
 			segs.current = beamsAt((now - t0.current) / 1000);
 			draw();
+			// A beam sweeping over a pointer that holds still trips it too.
+			const p = lastPt.current;
+			if (p && runRef.current === 'armed' && segs.current.some((g) => g.on && distToSeg(p.x, p.y, g) < 10)) tripRef.current();
 			raf.current = requestAnimationFrame(loop);
 		};
 		const io = new IntersectionObserver(([e]) => {
@@ -127,23 +132,31 @@ export function LaserGrid() {
 	const hitAt = (x: number, y: number) => segs.current.some((g) => g.on && distToSeg(x, y, g) < 10);
 
 	const trip = () => {
+		lastPt.current = null;
 		setTrips((n) => n + 1);
 		setRunBoth('tripped');
 		if (resetTimer.current) clearTimeout(resetTimer.current);
 		resetTimer.current = setTimeout(() => setRunBoth('idle'), 1600);
 	};
 
+	tripRef.current = trip;
+
 	const onMove = (e: React.PointerEvent) => {
 		if (e.pointerType === 'touch') return;
 		const p = toSvg(e);
 		if (!p || runRef.current === 'tripped') return;
-		if (p.x < 120 && p.y > TOP && p.y < FLOOR) {
+		lastPt.current = p;
+		const inBand = p.y > TOP && p.y < FLOOR;
+		if (p.x < 120 && inBand) {
 			if (runRef.current !== 'armed') setRunBoth('armed');
 			return;
 		}
 		if (runRef.current !== 'armed') return;
+		// Ceiling and floor are out of bounds: no sneaking round the beams.
+		if (!inBand) return setRunBoth('idle');
 		if (hitAt(p.x, p.y)) return trip();
 		if (p.x > 890) {
+			lastPt.current = null;
 			setCleans((n) => n + 1);
 			setRunBoth('clean');
 			if (resetTimer.current) clearTimeout(resetTimer.current);
@@ -152,6 +165,7 @@ export function LaserGrid() {
 	};
 
 	const onLeave = () => {
+		lastPt.current = null;
 		if (runRef.current === 'armed') setRunBoth('idle');
 	};
 
@@ -256,7 +270,7 @@ export function LaserGrid() {
 				</button>
 			</div>
 			<p className={s.laserHint}>
-				<span className={s.hintMouse}>Bring your pointer in through the door on the left, then get to the case on the right without touching red.</span>
+				<span className={s.hintMouse}>Bring your pointer in through the door on the left, then get to the case on the right without touching red. Beams blink off: wait for your gap.</span>
 				<span className={s.hintTouch}>Tap anywhere in the corridor to test a spot. Hit a beam and the alarm goes.</span>
 				{still ? <span> The beams are holding still for you.</span> : null}
 			</p>

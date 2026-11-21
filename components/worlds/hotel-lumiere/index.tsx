@@ -268,7 +268,7 @@ export default function HotelLumiere({ room, presentation: p, photos, gameMaster
 						<div className={s.note} data-slam style={{ '--d': '160ms' } as CSSProperties}>
 							<p className={s.noteHead}>From the planner’s pocket</p>
 							<p className={s.noteBody}>
-								Right to <b>19</b>, then <b>63</b>, then <b>9</b>.
+								Stop on <b>19</b>, then <b>63</b>, then <b>9</b>.
 								<br />
 								The year, then the issue.
 							</p>
@@ -295,10 +295,10 @@ export default function HotelLumiere({ room, presentation: p, photos, gameMaster
 						Tricky but fair. The best first room we have.
 					</Ad>
 					<Ad tone="cyan" big={`${p.fear}/5`} label="fear">
-						Hardly any! No jump scares, just a nervous laugh.
+						Hardly any! A nervous laugh at most.
 					</Ad>
 					<Ad tone="paper" big={`${p.minAge}+`} label="ages">
-						Under-16s play with an adult on the team.
+						Under-16s play with at least one adult on the team.
 					</Ad>
 					<Ad tone="blue" big={`${p.successRate}%`} label="escape">
 						Will <em>your</em> crew make the encore?
@@ -363,11 +363,11 @@ export default function HotelLumiere({ room, presentation: p, photos, gameMaster
 							<p className={s.planLede}>The price is for the whole crew, not per head. Choose a night, a time, and how many of you are in on it: up to {p.maxPlayers}.</p>
 							<ol className={s.planSteps}>
 								<li>
-									<b>21:45</b>
-									<span>Arrive at {venue}, 15 minutes early. Cocktail-hour briefing with {plannerFirst}.</span>
+									<b>−15 min</b>
+									<span>Arrive at {venue} 15 minutes before your time. Cocktail-hour briefing with {plannerFirst}.</span>
 								</li>
 								<li>
-									<b>22:00</b>
+									<b>Your time</b>
 									<span>The band strikes up. {p.gameMinutes} minutes in the penthouse.</span>
 								</li>
 								<li>

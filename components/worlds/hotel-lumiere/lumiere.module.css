@@ -1039,15 +1039,15 @@
 @keyframes drive {
 	0% {
 		translate: 70% 0;
-		skew: -12deg 0;
+		transform: skewX(-12deg);
 	}
 	70% {
 		translate: -3% 0;
-		skew: 4deg 0;
+		transform: skewX(4deg);
 	}
 	100% {
 		translate: 0 0;
-		skew: 0deg 0;
+		transform: none;
 	}
 }
 .carSfx {
@@ -1088,7 +1088,7 @@
 	background: var(--paper);
 	transform: skewX(-4deg);
 }
-.crewCard > * {
+.crewText {
 	transform: skewX(4deg);
 }
 .crewCard[data-tone='pink'] {
@@ -1104,7 +1104,7 @@
 .crewArt {
 	position: relative;
 	aspect-ratio: 1 / 0.95;
-	margin: 0 -10px;
+	margin: 0;
 	border-bottom: var(--frame) solid var(--ink);
 	background:
 		radial-gradient(circle, var(--tone-dot) 30%, transparent 33%) 0 0 / 9px 9px,
@@ -1119,6 +1119,8 @@
 	width: 78%;
 	height: auto;
 	translate: -50% 0;
+	transform: skewX(4deg);
+	transform-origin: 50% 100%;
 	transition: translate 0.35s var(--pop);
 }
 .crewCard:hover .crewSvg {
@@ -1207,6 +1209,7 @@
 	mix-blend-mode: multiply;
 }
 .plannerArt .crewSvg {
+	transform: none;
 	width: 82%;
 }
 .plannerText {
@@ -1466,6 +1469,9 @@
 		display: inline;
 	}
 }
+.laser :focus-visible {
+	outline-color: var(--yellow);
+}
 .laserCap {
 	top: 12px;
 	left: 12px;
@@ -1491,6 +1497,8 @@
 		var(--cyan);
 }
 .safe {
+	user-select: none;
+	-webkit-user-select: none;
 	display: grid;
 	grid-template-columns: minmax(0, 420px) minmax(180px, 1fr);
 	gap: clamp(18px, 3vw, 34px);
@@ -1607,7 +1615,7 @@
 	cursor: grabbing;
 }
 .dial:focus-visible {
-	outline: 4px solid var(--yellow);
+	outline: 4px solid var(--ink);
 	outline-offset: 4px;
 }
 .dialFace {
@@ -2336,6 +2344,9 @@
 		right: 8px;
 		width: 108px;
 	}
+	.coverBurst span {
+		font-size: 0.6rem;
+	}
 	.coverStamp {
 		display: none;
 	}
@@ -2565,6 +2576,10 @@
 	}
 	.safe[data-open] .spark {
 		opacity: 1;
+	}
+	.click,
+	.tapMark {
+		display: none;
 	}
 	.safe[data-open] .safeDoor {
 		opacity: 0;

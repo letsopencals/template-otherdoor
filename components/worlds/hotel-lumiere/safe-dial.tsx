@@ -161,7 +161,7 @@ export function SafeDial() {
 							<circle key={`${x}${y}`} cx={x} cy={y} r="6" fill="#C9D3DD" stroke={INK} strokeWidth="2.5" />
 						))}
 						<rect x="282" y="120" width="22" height="80" rx="6" fill="#C9D3DD" stroke={INK} strokeWidth="3" />
-						<text x="160" y="300" textAnchor="middle" className={s.safeMaker}>HÔTEL LUMIÈRE</text>
+						<text x="160" y="282" textAnchor="middle" className={s.safeMaker}>HÔTEL LUMIÈRE</text>
 					</svg>
 					<svg
 						ref={svgRef}
