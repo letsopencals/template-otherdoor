@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { useState, type CSSProperties, type ReactNode } from 'react';
+import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
 import type { CheckoutQuestionResponse, CustomerProviderCatalogItem, PaymentProviderName } from '@opencals/storefront-sdk';
 import { useCheckout } from '@/contexts/checkout-context';
 import { useCart } from '@/contexts/cart-context';
@@ -99,13 +99,21 @@ function Block({ n, head, note, done, onEdit, children, locked }: { n: string; h
  */
 export function CheckoutView() {
 	const c = useCheckout();
-	const { cart, applyDiscountCode, discountCodeError } = useCart();
+	const { cart: liveCart, applyDiscountCode, discountCodeError } = useCart();
 	const [method, setMethod] = useState<PaymentProviderName | null>(null);
 	const [code, setCode] = useState('');
+	// Placing the order empties the cart before the thank-you page loads: keep showing the doors
+	// being confirmed (not "Free" and an empty ledger) until the redirect.
+	const [kept, setKept] = useState(liveCart);
+	useEffect(() => {
+		if (liveCart?.items?.length) setKept(liveCart);
+	}, [liveCart]);
+	const placing = (c.submitting || c.checkoutComplete) && !liveCart?.items?.length;
+	const cart = placing ? kept : liveCart;
 	const signed = c.step === 'payment-select' || c.step === 'payment';
 	const chosen = method ?? (c.providers.length === 1 ? (c.providers[0]?.name ?? null) : null);
 	const total = formatPrice(cart?.total ?? 0);
-	const items = c.items;
+	const items = placing ? (kept?.items ?? []) : c.items;
 	const cs = codeState(cart);
 
 	if (!cart && !c.checkoutComplete) {
