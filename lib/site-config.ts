@@ -229,7 +229,7 @@ export const siteConfig = {
 			gameMaster: 'hamish-lorimer',
 			next: 'protocol-zero',
 			beats: [
-				{ title: 'The case', body: 'Professor Ambrose Quill locked his study at No. 9 Heriot Row from the inside, and was never seen again.' },
+				{ title: 'The case', body: 'Professor Ambrose Quayle locked his study at No. 9 Heriot Row from the inside, and was never seen again.' },
 				{ title: 'The stakes', body: 'The inspector arrives in an hour and wants a name. Every clue is in the room. So is the door he used.' },
 				{ title: 'What you’ll do', body: 'Read the evidence, test alibis against the gas bill, decode the professor’s inventions and name the culprit.' },
 				{ title: 'Inside the room', body: 'A gaslit study, rebuilt drawer by drawer, down to the soot on the mantel.' },

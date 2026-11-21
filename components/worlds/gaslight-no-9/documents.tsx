@@ -35,7 +35,7 @@ export function IntroCard() {
 			<p className={s.introNo}>
 				Case <span>No. 9</span>
 			</p>
-			<h2 className={s.introTitle}>The disappearance of Professor Ambrose Quill, inventor</h2>
+			<h2 className={s.introTitle}>The disappearance of Professor Ambrose Quayle, inventor</h2>
 			<p className={s.introMeta}>Opened Wednesday 18 November 1891, 6.10 a.m.</p>
 			<ul className={s.introList}>
 				<li>
@@ -80,7 +80,7 @@ function NewspaperPage({ title, setup, description }: { title: string; setup?: s
 						<b>The gas bill.</b> The Edinburgh Gas-Light Company confirms that consumption at No. 9 trebled in October. “Inventors,” said a clerk, “burn the midnight oil, and ours.”
 					</p>
 					<p className={s.ad}>
-						<b>Quill’s Patent Escapement.</b> Orders no longer accepted.
+						<b>Quayle’s Patent Escapement.</b> Orders no longer accepted.
 					</p>
 					<p className={s.ad}>
 						<b>Wanted:</b> a chimney sweep, discreet, for Heriot Row. Apply at No. 9.
