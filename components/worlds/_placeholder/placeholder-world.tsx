@@ -1,45 +1,41 @@
 import Link from 'next/link';
-import type { CSSProperties, ReactNode } from 'react';
+import type { CSSProperties } from 'react';
 import type { RoomWorldProps } from '@/lib/worlds';
 import { minutesLabel } from '@/lib/when';
 import { SafeImg } from '@/components/ui/safe-img';
+import { DoorArt } from '@/components/doors/door-art';
 import s from './placeholder-world.module.css';
 
 /**
- * The placeholder (and generic) world. Each room's world agent replaces
- * `components/worlds/<slug>/index.tsx` with the real thing; this stays as the
- * fallback for store rooms without a world folder.
+ * The generic world, in the dark shell, lit by the room's door colour. Every room
+ * without its own folder (and any store room this template doesn't know)
+ * renders this until its world agent replaces it.
  */
-export default function PlaceholderWorld({ room, presentation: p, photos, gameMaster, next, booking, emblem }: RoomWorldProps & { emblem?: ReactNode }) {
-	const vars = {
-		'--w-ground': p.palette.ground,
-		'--w-ink': p.palette.ink,
-		'--w-accent': p.palette.accent,
-		'--w-accent-ink': p.palette.accentInk,
-		'--w-second': p.palette.second,
-	} as CSSProperties;
-	const nextVars = next ? ({ '--n-ground': next.palette.ground, '--n-ink': next.palette.ink } as CSSProperties) : undefined;
+export default function PlaceholderWorld({ room, presentation: p, cover, photos, gameMaster, next, booking }: RoomWorldProps) {
+	const vars = { '--w-glow': p.palette.glow, '--slit': p.palette.glow } as CSSProperties;
 	return (
 		<div className={s.world} style={vars}>
 			<header className={s.hero}>
-				{emblem ? <div className={s.emblem} aria-hidden>{emblem}</div> : null}
-				<div className="wrap">
-					<p className={s.kicker}>
-						Volume {p.volume} · {p.genre}
-						{p.year ? `, ${p.year}` : ''}
+				<div className={s.heroArt} aria-hidden>
+					<DoorArt sources={[p.media.poster, cover, p.media.key]} alt="" glow={p.palette.glow} className={s.heroImg} loading="eager" />
+				</div>
+				<div className="wrap relative">
+					<p className="label">
+						{p.genre} · {p.year}
+						{room.venue ? ` · ${room.venue.short}` : ''}
 					</p>
 					<h1 className={s.title}>{room.title}</h1>
 					<p className={s.tagline}>{p.tagline}</p>
 					<dl className={s.stats}>
-						<div><dt>Players</dt><dd><b>{p.minPlayers}–{p.maxPlayers}</b></dd></div>
-						<div><dt>Game</dt><dd><b>{p.gameMinutes} min</b></dd></div>
-						<div><dt>Difficulty</dt><dd><b>{p.difficulty}/5</b></dd></div>
-						<div><dt>Fear</dt><dd><b>{p.fear}/5</b></dd></div>
-						<div><dt>Age</dt><dd><b>{p.minAge}+</b></dd></div>
-						<div><dt>Escape rate</dt><dd><b>{p.successRate}%</b></dd></div>
+						<div><dt>Players</dt><dd>{p.minPlayers}–{p.maxPlayers}</dd></div>
+						<div><dt>Game</dt><dd>{p.gameMinutes} min</dd></div>
+						<div><dt>Difficulty</dt><dd>{p.difficulty}/5</dd></div>
+						<div><dt>Fear</dt><dd>{p.fear}/5</dd></div>
+						<div><dt>Age</dt><dd>{p.minAge}+</dd></div>
+						<div><dt>Escape rate</dt><dd>{p.successRate}%</dd></div>
 					</dl>
-					<p style={{ marginTop: 28 }}>
-						<a className="plate plate-gold" href="#book">
+					<p className="mt-8">
+						<a className="btn btn-lg" href="#book">
 							Book from {room.fromPriceLabel}
 						</a>
 					</p>
@@ -50,11 +46,9 @@ export default function PlaceholderWorld({ room, presentation: p, photos, gameMa
 				<div className={s.story}>
 					{p.beats.map((b, i) => (
 						<article key={b.title} className={s.beat}>
-							<span className={s.beatNum}>{i + 1}</span>
-							<div>
-								<h3>{b.title}</h3>
-								<p>{b.body}</p>
-							</div>
+							<span className={s.beatNum}>{String(i + 1).padStart(2, '0')}</span>
+							<h3>{b.title}</h3>
+							<p>{b.body}</p>
 						</article>
 					))}
 				</div>
@@ -70,17 +64,18 @@ export default function PlaceholderWorld({ room, presentation: p, photos, gameMa
 			<section className="wrap">
 				<div className={s.bookWrap}>
 					<div>
-						<p className={s.kicker}>The briefing</p>
+						<p className="label">The briefing</p>
 						<p className={s.desc}>{room.description || p.tagline}</p>
-						<p className={s.desc} style={{ marginTop: 16 }}>
+						<p className={s.desc}>
 							{minutesLabel(room.visitMinutes)} visit: briefing, {p.gameMinutes} minutes in the room, then photos and a debrief.
 							{room.venue ? ` At ${room.venue.name}.` : ''}
 						</p>
 						{gameMaster ? (
 							<div className={s.gm}>
-								<p className={s.kicker}>Your game master</p>
-								<p style={{ fontSize: '1.2rem' }}>
-									<b>{gameMaster.name}</b>, {gameMaster.title}
+								<p className="label">Your game master</p>
+								<p className="mt-3 text-[1.2rem]">
+									<b className="font-semibold">{gameMaster.name}</b>
+									<span className="block text-[0.9rem] text-ink-3">{gameMaster.title}</span>
 								</p>
 								<p className={s.desc}>{gameMaster.bio}</p>
 							</div>
@@ -91,9 +86,9 @@ export default function PlaceholderWorld({ room, presentation: p, photos, gameMa
 			</section>
 
 			{next ? (
-				<Link href={next.href} className={s.next} style={nextVars}>
+				<Link href={next.href} className={s.next} style={{ '--slit': next.palette.glow } as CSSProperties}>
 					<div className="wrap">
-						<p className={s.kicker}>Next volume · {next.genre}</p>
+						<p className="label">Next door · {next.genre}</p>
 						<h2>{next.title}</h2>
 						<p>{next.tagline}</p>
 					</div>

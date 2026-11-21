@@ -1,15 +1,17 @@
-/** Questions as index cards (native details/summary, no JS). */
+/** Questions as a quiet list (native details/summary, no JS). */
 export function FaqCards({ items }: { items: ReadonlyArray<{ q: string; a: string }> }) {
 	return (
-		<div className="grid gap-3">
-			{items.map((f, i) => (
-				<details key={f.q} className="group paper border-l-4 border-oxblood open:shadow-lg">
-					<summary className="flex min-h-[56px] cursor-pointer list-none items-center gap-4 px-5 py-3 [&::-webkit-details-marker]:hidden">
-						<span className="typed w-8 shrink-0 text-sepia">{String(i + 1).padStart(2, '0')}</span>
-						<span className="font-display flex-1 text-[1.3rem] leading-snug">{f.q}</span>
-						<span aria-hidden className="text-xl text-oxblood transition-transform group-open:rotate-45">+</span>
+		<div className="border-t border-line">
+			{items.map((f) => (
+				<details key={f.q} className="group border-b border-line">
+					<summary className="flex min-h-[64px] cursor-pointer list-none items-center gap-6 py-4 [&::-webkit-details-marker]:hidden">
+						<span className="font-display flex-1 text-[1.25rem] leading-snug tracking-tight md:text-[1.4rem]">{f.q}</span>
+						<span aria-hidden className="relative h-4 w-4 shrink-0">
+							<span className="absolute left-0 top-1/2 h-px w-4 bg-ink-2" />
+							<span className="absolute left-1/2 top-0 h-4 w-px bg-ink-2 transition-transform duration-300 group-open:scale-y-0" />
+						</span>
 					</summary>
-					<p className="px-5 pb-5 pl-[4.25rem] leading-relaxed text-[#3b2e1d]">{f.a}</p>
+					<p className="max-w-[62ch] pb-6 leading-relaxed text-ink-2">{f.a}</p>
 				</details>
 			))}
 		</div>

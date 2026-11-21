@@ -1,24 +1,24 @@
 /*
  * The booking controls (date strip, session buttons, team sizes, add-ons, the
  * total bar). Plain and classic on purpose. Skinned only through --bp-*
- * variables; every one has a house-style fallback. See components/worlds/README.md.
+ * variables; every one has a dark-shell fallback. See components/worlds/README.md.
  */
 
 .panel {
-	--_bg: var(--bp-bg, #fbf6ea);
-	--_ink: var(--bp-ink, #15201b);
-	--_muted: var(--bp-muted, #6f5a3e);
-	--_line: var(--bp-line, rgba(138, 106, 67, 0.35));
-	--_surface: var(--bp-surface, #f4ead5);
-	--_surface-ink: var(--bp-surface-ink, #15201b);
-	--_accent: var(--bp-accent, #1e3a30);
-	--_accent-ink: var(--bp-accent-ink, #fbf6ea);
-	--_focus: var(--bp-focus, #2f6f6a);
-	--_radius: var(--bp-radius, 4px);
+	--_bg: var(--bp-bg, #15121e);
+	--_ink: var(--bp-ink, #f1ecf4);
+	--_muted: var(--bp-muted, #a99fb7);
+	--_line: var(--bp-line, rgba(232, 222, 255, 0.14));
+	--_surface: var(--bp-surface, #1f1a2a);
+	--_surface-ink: var(--bp-surface-ink, #f1ecf4);
+	--_accent: var(--bp-accent, #f4efe8);
+	--_accent-ink: var(--bp-accent-ink, #120f18);
+	--_focus: var(--bp-focus, var(--door, #f2c46d));
+	--_radius: var(--bp-radius, 10px);
 	--_display: var(--bp-font-display, var(--font-display));
 	--_ui: var(--bp-font-ui, var(--font-ui));
-	--_shadow: var(--bp-shadow, 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 24px 50px -28px rgba(60, 40, 15, 0.5));
-	--_bar-bg: var(--bp-bar-bg, var(--_bg));
+	--_shadow: var(--bp-shadow, 0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 40px 90px -40px rgba(0, 0, 0, 0.85), 0 0 60px -30px var(--door, #f2c46d));
+	--_bar-bg: var(--bp-bar-bg, #1b1726);
 	--_bar-ink: var(--bp-bar-ink, var(--_ink));
 
 	position: relative;
@@ -47,7 +47,9 @@
 }
 .title {
 	font-family: var(--_display);
-	font-size: 1.6rem;
+	font-size: 1.65rem;
+	letter-spacing: -0.02em;
+	font-weight: 500;
 	line-height: 1.1;
 	margin: 0;
 }
@@ -68,15 +70,14 @@
 	justify-content: space-between;
 	align-items: baseline;
 	gap: 8px;
-	font-size: 0.78rem;
-	font-weight: 800;
-	letter-spacing: 0.08em;
-	text-transform: uppercase;
+	font-size: 0.8rem;
+	font-weight: 600;
+	letter-spacing: 0;
 	color: var(--_muted);
 	margin: 0 0 10px;
 }
 .labelNote {
-	font-weight: 600;
+	font-weight: 400;
 	letter-spacing: 0;
 	text-transform: none;
 	font-size: 0.8rem;
@@ -360,7 +361,7 @@
 	transition: filter 0.15s ease;
 }
 .cta:hover:not(:disabled) {
-	filter: brightness(1.1);
+	filter: brightness(1.06);
 }
 .cta:disabled {
 	opacity: 0.55;
@@ -389,4 +390,38 @@
 	.cta {
 		padding: 0 16px;
 	}
+}
+
+/* ---- /book: venue filter and room thumbs (shell-only helpers) */
+.filter {
+	min-height: 42px;
+	padding: 0 16px;
+	border: 0;
+	border-radius: 8px;
+	font: inherit;
+	font-weight: 500;
+	font-size: 0.92rem;
+	color: var(--color-ink-2, #c3bacd);
+	background: rgba(255, 255, 255, 0.04);
+	box-shadow: inset 0 0 0 1px rgba(232, 222, 255, 0.12);
+	cursor: pointer;
+}
+.filter[aria-pressed='true'] {
+	color: #120f18;
+	background: #f4efe8;
+	box-shadow: 0 3px 0 -1px var(--door, #f2c46d);
+}
+.roomThumb {
+	display: block;
+	flex: 0 0 auto;
+	width: 52px;
+	height: 68px;
+	border-radius: 7px 7px 2px 2px;
+	overflow: hidden;
+	box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), 0 6px 0 -4px var(--slit), 0 12px 24px -12px var(--slit);
+}
+.roomThumb > * {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
 }

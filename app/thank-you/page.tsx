@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
-import { ThankYouView } from '@/components/invitation/thank-you-view';
+import { ThankYouView } from '@/components/thank-you/thank-you-view';
 
-export const metadata: Metadata = { title: 'Your invitation', robots: { index: false, follow: false } };
+export const metadata: Metadata = { title: 'You’re booked', robots: { index: false, follow: false } };
 
 type Search = Promise<{ orderId?: string | string[] }>;
 

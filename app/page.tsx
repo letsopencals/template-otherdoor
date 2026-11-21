@@ -1,169 +1,184 @@
 import Link from 'next/link';
+import type { CSSProperties } from 'react';
 import { getCatalogue, getRoomRanges } from '@/lib/server-data';
-import { shelfRooms } from '@/lib/shelf';
+import { doorRooms } from '@/lib/doors';
 import { gameMasterViews } from '@/lib/people';
-import { roomSessions } from '@/lib/sessions';
 import { siteConfig } from '@/lib/site-config';
 import { formatWholePrice } from '@/lib/format';
-import { dayLabel } from '@/lib/when';
-import { LanternHero } from '@/components/home/lantern-hero';
-import { CompassNeedle } from '@/components/home/compass-needle';
-import { ShelfSection } from '@/components/home/shelf-section';
+import { doorArt } from "@/components/doors/door-sources";
+import { CorridorHero } from '@/components/home/corridor-hero';
 import { Tonight } from '@/components/home/tonight';
-import { PathQuiz } from '@/components/home/path-quiz';
-import { Cryptex } from '@/components/home/cryptex';
+import { Keypad } from '@/components/home/keypad';
+import { WhichDoor } from '@/components/home/which-door';
+import { Flashlight } from '@/components/home/flashlight';
 import { HallOfFame } from '@/components/home/hall-of-fame';
-import { VenuePlate } from '@/components/venues/venue-plate';
 import { GameMasterCard } from '@/components/people/game-master-card';
-import { ChapterHead } from '@/components/ui/chapter-head';
+import { SectionHead } from '@/components/ui/section-head';
 import { FaqCards } from '@/components/ui/faq-cards';
+import { SafeImg } from '@/components/ui/safe-img';
+import { Lamp } from '@/components/ui/lamp';
+import { ArrowIcon } from '@/components/shell/icons';
+import s from '@/components/home/home.module.css';
 
 export const revalidate = 60;
 
 export default async function Home() {
 	const [catalogue, ranges] = await Promise.all([getCatalogue(), getRoomRanges(null)]);
-	const shelf = shelfRooms(catalogue);
+	const doors = doorRooms(catalogue);
 	const renderedAt = Date.now();
-
-	// The compass points at the next free session anywhere.
-	const next = catalogue.rooms
-		.map((r) => ({ r, s: roomSessions(ranges[r.slug] ?? [], { durationMin: r.durationMin, now: renderedAt })[0] }))
-		.filter((x) => x.s)
-		.sort((a, b) => a.s!.start - b.s!.start)[0];
-	const nextLabel = next ? { label: `${shelf.find((x) => x.slug === next.r.slug)?.short ?? next.r.title}, ${dayLabel(next.s!.start)} ${next.s!.time}`, href: `/rooms/${next.r.slug}?date=${next.s!.date}&time=${next.s!.time}#book` } : null;
-
-	const tonightRooms = catalogue.rooms.map((r) => {
-		const s = shelf.find((x) => x.slug === r.slug)!;
-		return { slug: r.slug, title: r.title, venueShort: s.venueShort, durationMin: r.durationMin, spine: s.palette.spine, foil: s.palette.foil, fromPrice: formatWholePrice(s.fromPrice) };
-	});
+	const tonightRooms = doors.map((d) => ({ slug: d.slug, number: d.number, title: d.title, venueShort: d.venueShort, durationMin: catalogue.rooms.find((r) => r.slug === d.slug)?.durationMin ?? 90, glow: d.palette.glow, fromPrice: formatWholePrice(d.fromPrice), art: doorArt(d) }));
 	const venues = Object.entries(siteConfig.venues);
 	const gms = gameMasterViews(catalogue);
+	const k = siteConfig.keypad;
 
 	return (
 		<>
-			<LanternHero mapSrc={siteConfig.media.heroMap} clue="The society’s word is what every room is. Six letters." compass={<CompassNeedle next={nextLabel} />} />
+			<CorridorHero doors={doors} />
 
-			<section id="shelf" className="wrap scroll-mt-24 py-24">
-				<ChapterHead n={1} label="The Shelf" title="Six volumes. Pull one out." lede="Every room is an illustrated adventure in the society’s library. Hover a spine, open the volume and walk into its world. Each one is a 60-minute game for a private team; the Cartographer’s Tomb runs 90." />
-				<div className="mt-14">
-					<ShelfSection shelf={shelf} />
-				</div>
-			</section>
-
-			<div className="marble" aria-hidden />
-			<section id="tonight" className="band-green scroll-mt-24 py-24">
+			<Lamp id="tonight" className="section scroll-mt-24" aria-labelledby="tonight-title">
 				<div className="wrap">
-					<ChapterHead n={2} label="Tonight’s expeditions" title="Who’s going in next?" lede="The next free sessions in every room, live. Tap a time to book it." />
-					<div className="mt-12 rounded-[2px] bg-parchment p-4 text-deep-ink shadow-2xl md:p-8">
-						<Tonight rooms={tonightRooms} initialRanges={ranges} renderedAt={renderedAt} />
-						<p className="mt-6 text-center">
-							<Link href="/book" className="plate">
-								See every session
-							</Link>
-						</p>
-					</div>
-				</div>
-			</section>
-			<div className="marble" aria-hidden />
-
-			<section className="wrap py-24">
-				<ChapterHead n={3} label="Which room are you?" title="Chart your route." lede="Four questions, one dotted line, and an X where your team belongs." />
-				<div className="mt-14">
-					<PathQuiz questions={siteConfig.quiz} rooms={shelf} />
-				</div>
-			</section>
-
-			<section className="band-oxblood py-24">
-				<div className="wrap">
-					<ChapterHead n={4} label="The Cryptex" title="A lock for the curious." lede="The word is hidden on this page. Open the cryptex and the society will reward you." />
+					<SectionHead n="01" label="Tonight" id="tonight-title" title="Who goes in next?" lede="The next free sessions in every room, live. Tap a time and it opens in that room’s booking panel." />
 					<div className="mt-12">
-						<Cryptex word={siteConfig.cryptex.word} code={siteConfig.cryptex.code} offer={siteConfig.cryptex.offer} clues={siteConfig.cryptex.clues} />
+						<Tonight rooms={tonightRooms} initialRanges={ranges} renderedAt={renderedAt} />
+					</div>
+					<p className="mt-8">
+						<Link href="/book" className="btn btn-glass">
+							Every session, every room <ArrowIcon />
+						</Link>
+					</p>
+				</div>
+			</Lamp>
+
+			<Lamp className="section" style={{ '--pool-x': '20%' } as CSSProperties}>
+				<div className="wrap">
+					<SectionHead n="02" label="How it works" title="Three steps to the other side." />
+					<ol className={s.steps}>
+						{siteConfig.steps.map((st, i) => (
+							<li key={st.title} className={s.step}>
+								<span className={s.stepNum}>{String(i + 1).padStart(2, '0')}</span>
+								<h3>{st.title}</h3>
+								<p>{st.body}</p>
+							</li>
+						))}
+					</ol>
+				</div>
+			</Lamp>
+
+			<Lamp id="which-door" className="section scroll-mt-24" style={{ '--pool-x': '75%' } as CSSProperties}>
+				<div className="wrap">
+					<SectionHead n="03" label="Which door is yours?" title="Four questions. One door opens." lede="Answer honestly. The light under each door shows how close it is to being yours." />
+					<div className="mt-14">
+						<WhichDoor questions={siteConfig.quiz} doors={doors} />
 					</div>
 				</div>
-			</section>
+			</Lamp>
 
-			<section className="wrap py-24">
-				<ChapterHead n={5} label="The Hall of Fame" title="The fastest escapes on record." />
-				<div className="mt-12">
-					<HallOfFame rooms={shelf.map((r) => ({ slug: r.slug, short: r.short }))} records={siteConfig.hallOfFame} />
+			<section className="section pt-0" aria-label="The dark room">
+				<div className="wrap">
+					<Flashlight lines={['Every room has a secret.', 'Most teams walk straight past it.', 'Bring a torch.']} hidden={['the keypad wants a year', 'the door furthest from tonight', 'it is written on the door']} />
 				</div>
 			</section>
 
-			<div className="marble" aria-hidden />
-			<section className="py-24">
+			<Lamp id="keypad" className="section pt-0 scroll-mt-24">
 				<div className="wrap">
-					<ChapterHead n={6} label="The two houses" title="Under the Old Town. On the Shore." />
-					<div className="mt-14 grid gap-10 md:grid-cols-2">
+					<SectionHead n="04" label="The lock" title="A lock for the curious." lede="Some locks you open with a key. This one you open with your eyes." />
+					<div className="mt-14">
+						<Keypad code={k.code} reward={k.reward} offer={k.offer} clues={k.clues} />
+					</div>
+				</div>
+			</Lamp>
+
+			<Lamp className="section" style={{ '--pool-x': '30%' } as CSSProperties}>
+				<div className="wrap">
+					<SectionHead n="05" label="Two venues" title="Under the Old Town. On the Shore." lede="Each venue has three rooms and a Lobby: a bar for the briefing, the team photo and the post-mortem." />
+					<div className={s.venues}>
 						{venues.map(([slug, v]) => (
-							<article key={slug} className="paper p-4">
-								<VenuePlate kind={v.key} className="block w-full" />
-								<div className="p-3 pt-6">
-									<p className="engraved text-sepia">{v.key === 'vaults' ? 'Three rooms below ground' : 'Three rooms and the Workshop Hall'}</p>
-									<h3 className="font-display mt-1 text-[2rem]">{v.name}</h3>
-									<p className="typed mt-1 text-[0.9rem]">
-										{v.address}, {v.postcode}
-									</p>
-									<p className="mt-4 leading-relaxed">{v.blurb}</p>
-									<p className="mt-3 text-[0.95rem]">
-										<b>{v.lounge.name}.</b> {v.lounge.body}
-									</p>
-									<p className="mt-5 flex flex-wrap gap-2">
-										<Link href={`/venues/${slug}`} className="plate plate-sm">
-											Visit the house
-										</Link>
-										<Link href={`/book?venue=${slug}`} className="plate plate-ghost plate-sm">
-											Its sessions
-										</Link>
-									</p>
-								</div>
+							<article key={slug} className={s.venue}>
+								<Link href={`/venues/${slug}`} className={s.venuePhoto}>
+									<SafeImg src={v.image} alt={`${v.name}, ${v.address}`} className={s.venueImg} fallback={<span className={s.venueFallback} />} />
+									<span className={s.venueKicker}>{v.kicker}</span>
+								</Link>
+								<h3>{v.name}</h3>
+								<p className="mono mt-1 text-[0.8rem] text-ink-3">
+									{v.address}, {v.postcode}
+								</p>
+								<p className="mt-4 leading-relaxed text-ink-2">{v.blurb}</p>
+								<p className="mt-5 flex flex-wrap gap-2">
+									<Link href={`/venues/${slug}`} className="btn btn-sm">
+										The venue
+									</Link>
+									<Link href={`/book?venue=${slug}`} className="btn btn-glass btn-sm">
+										Its sessions
+									</Link>
+								</p>
 							</article>
 						))}
 					</div>
 				</div>
-			</section>
+			</Lamp>
 
 			{gms.length ? (
-				<section className="wrap pb-24">
-					<ChapterHead n={7} label="The game masters" title="Your guides behind the glass." lede="Every team has a game master watching, cueing clues and sounding the final bell. Meet the society’s keepers." />
-					<div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-						{gms.map((gm) => (
-							<GameMasterCard key={gm.slug} gm={gm} />
-						))}
+				<Lamp className="section pt-0">
+					<div className="wrap">
+						<SectionHead n="06" label="Game masters" title="Someone is always watching." lede="Every game has a game master behind the glass: cueing clues, playing the voices, opening the last door." />
+						<div className={s.gms}>
+							{gms.map((gm) => (
+								<GameMasterCard key={gm.slug} gm={gm} />
+							))}
+						</div>
 					</div>
-				</section>
+				</Lamp>
 			) : null}
 
-			<section className="band-green py-24">
+			<Lamp className="section pt-0">
 				<div className="wrap">
-					<ChapterHead n={8} label="Parties of explorers" title="Team days, birthdays, stag and hen." />
-					<div className="mt-12 grid gap-px bg-[#d9c08a]/30 sm:grid-cols-2 lg:grid-cols-4">
-						{siteConfig.groups.map((g) => (
-							<div key={g.key} className="bg-ink-green p-7">
-								<h3 className="font-display text-[1.7rem] text-[#f1dfb2]">{g.title}</h3>
-								<p className="mt-3 text-[0.95rem] leading-relaxed text-[#e1d4b4]">{g.body}</p>
-							</div>
-						))}
+					<SectionHead n="07" label="Hall of Fame" title="The fastest escapes." lede="Sample records for this template. Your venue’s real times go here." />
+					<div className="mt-12">
+						<HallOfFame doors={doors.map((d) => ({ slug: d.slug, title: d.title, glow: d.palette.glow }))} records={siteConfig.hallOfFame} />
 					</div>
-					<p className="mt-10 text-center">
-						<Link href="/groups" className="plate plate-gold">
-							Plan a group visit
+				</div>
+			</Lamp>
+
+			<Lamp className="section pt-0">
+				<div className="wrap">
+					<div className={s.groups}>
+						<div className={s.groupsPhoto}>
+							<SafeImg src={siteConfig.media.lobby} alt="The Lobby at Otherdoor: a bar with velvet banquettes and a row of doors" className={s.groupsImg} fallback={<span className={s.venueFallback} />} />
+						</div>
+						<div>
+							<SectionHead stack n="08" label="Groups" title="Team days, birthdays, stag and hen." />
+							<div className={s.groupList}>
+								{siteConfig.groups.map((g) => (
+									<div key={g.key} className={s.group}>
+										<h3>{g.title}</h3>
+										<p>{g.body}</p>
+									</div>
+								))}
+							</div>
+							<p className="mt-8">
+								<Link href="/groups" className="btn">
+									Plan a group visit
+								</Link>
+							</p>
+						</div>
+					</div>
+				</div>
+			</Lamp>
+
+			<Lamp className="section pt-0">
+				<div className="wrap max-w-[1000px]">
+					<SectionHead n="09" label="Before you come" title="Questions people ask." />
+					<div className="mt-10">
+						<FaqCards items={siteConfig.faq.slice(0, 6)} />
+					</div>
+					<p className="mt-8 flex flex-wrap items-center justify-between gap-4">
+						<Link href="/faq" className="link">
+							All questions
 						</Link>
+						<span className="mono text-[0.74rem] text-ink-3">PS. The keypad wants four digits. Look at the doors.</span>
 					</p>
 				</div>
-			</section>
-
-			<section className="wrap max-w-4xl py-24">
-				<ChapterHead n={9} label="Before you come" title="Questions explorers ask." />
-				<div className="mt-12">
-					<FaqCards items={siteConfig.faq.slice(0, 6)} />
-				</div>
-				<p className="mt-8 text-center">
-					<Link href="/faq" className="underline underline-offset-4">
-						All questions
-					</Link>
-				</p>
-				<p className="typed mt-12 text-center text-[0.78rem] text-sepia">¹ The gilt letters on the shelf spell more than titles.</p>
-			</section>
+			</Lamp>
 		</>
 	);
 }

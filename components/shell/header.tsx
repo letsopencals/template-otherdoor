@@ -2,36 +2,41 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import type { ShelfRoom } from '@/lib/shelf';
+import { useEffect, useState, type CSSProperties } from 'react';
+import type { DoorRoom } from '@/lib/doors';
 import { roomPresentation, siteConfig } from '@/lib/site-config';
 import { useCart } from '@/contexts/cart-context';
-import { useSatchelUi } from '@/contexts/satchel-ui-context';
-import { satchelCount } from '@/lib/satchel';
-import { roman } from '@/lib/when';
+import { useCartUi } from '@/contexts/cart-ui-context';
+import { cartCount } from '@/lib/cart-lines';
+import { setBaseDoorLight, setDoorLight } from '@/lib/door-light';
 import { Logo } from '@/components/brand/logo';
-import { Spine } from '@/components/shelf/spine';
-import { Caret, CloseIcon, LogbookIcon, MenuIcon, SatchelIcon } from './icons';
+import { DoorArt } from '@/components/doors/door-art';
+import { doorArt } from '@/components/doors/door-sources';
+import { ArrowIcon, Caret, CloseIcon, DoorsIcon, MenuIcon, UserIcon } from './icons';
 import s from './header.module.css';
 
-/** Transparent over the home hero and every room world; solid vellum everywhere else and once scrolled. */
+/** Pages whose hero runs under the header: the home corridor and every room world. */
 function heroTone(pathname: string): 'light' | 'dark' | null {
 	if (pathname === '/') return 'light';
 	const m = /^\/rooms\/([^/]+)$/.exec(pathname);
-	if (m) return roomPresentation(m[1] as string)?.headerTone ?? 'dark';
+	if (m) return roomPresentation(m[1] as string)?.headerTone ?? 'light';
 	return null;
 }
 
-export function Header({ shelf }: { shelf: ShelfRoom[] }) {
+/**
+ * One header everywhere: transparent over heroes and worlds, frosted dark glass
+ * once the page scrolls (the blur sits on a child layer, so the doors menu and
+ * the phone menu are not clipped by a backdrop-filter containing block).
+ */
+export function Header({ doors }: { doors: DoorRoom[] }) {
 	const pathname = usePathname() ?? '/';
 	const tone = heroTone(pathname);
 	const [scrolled, setScrolled] = useState(false);
-	const [shelfOpen, setShelfOpen] = useState(false);
+	const [doorsOpen, setDoorsOpen] = useState(false);
 	const [menuOpen, setMenuOpen] = useState(false);
-	const [peek, setPeek] = useState<string | null>(null);
 	const { cart } = useCart();
-	const { setOpen, flashKey } = useSatchelUi();
-	const count = satchelCount(cart);
+	const { setOpen, flashKey } = useCartUi();
+	const count = cartCount(cart);
 
 	useEffect(() => {
 		const on = () => setScrolled(window.scrollY > 24);
@@ -40,15 +45,18 @@ export function Header({ shelf }: { shelf: ShelfRoom[] }) {
 		return () => window.removeEventListener('scroll', on);
 	}, []);
 
-	// Close menus on navigation and Escape.
+	// A room world lends its light to the whole shell.
 	useEffect(() => {
-		setShelfOpen(false);
+		const m = /^\/rooms\/([^/]+)$/.exec(pathname);
+		setBaseDoorLight(m ? (roomPresentation(m[1] as string)?.palette.glow ?? null) : null);
+		setDoorsOpen(false);
 		setMenuOpen(false);
 	}, [pathname]);
+
 	useEffect(() => {
 		const esc = (e: KeyboardEvent) => {
 			if (e.key === 'Escape') {
-				setShelfOpen(false);
+				setDoorsOpen(false);
 				setMenuOpen(false);
 			}
 		};
@@ -59,34 +67,43 @@ export function Header({ shelf }: { shelf: ShelfRoom[] }) {
 		document.documentElement.style.overflow = menuOpen ? 'hidden' : '';
 	}, [menuOpen]);
 
-	const solid = !tone || scrolled || shelfOpen;
-	const peeked = shelf.find((r) => r.slug === peek) ?? shelf[0];
+	const solid = !tone || scrolled || doorsOpen || menuOpen;
 
 	return (
-		<header className={s.header} data-solid={solid} data-tone={tone ?? 'dark'} onMouseLeave={() => setShelfOpen(false)}>
-			<a href="#main" className="sr-only-focusable absolute left-2 top-2 z-10 bg-vellum px-3 py-2">
+		<header
+			className={s.header}
+			data-solid={solid}
+			data-tone={solid ? 'light' : (tone ?? 'light')}
+			onMouseLeave={() => {
+				setDoorsOpen(false);
+				setDoorLight(null);
+			}}
+		>
+			<div className={s.glassLayer} aria-hidden />
+			<a href="#main" className="sr-only-focusable absolute left-2 top-2 z-10 rounded bg-night-2 px-3 py-2">
 				Skip to content
 			</a>
 			<div className={`wrap ${s.inner}`}>
-				<Logo tone={solid ? 'dark' : (tone ?? 'dark')} />
+				<Logo />
 				<nav className={s.nav} aria-label="Main">
-					<button type="button" className={s.navLink} aria-expanded={shelfOpen} aria-controls="shelf-menu" onClick={() => setShelfOpen((v) => !v)} onMouseEnter={() => setShelfOpen(true)}>
-						Rooms <Caret open={shelfOpen} />
+					<button type="button" className={s.navLink} aria-expanded={doorsOpen} aria-controls="doors-menu" onClick={() => setDoorsOpen((v) => !v)} onMouseEnter={() => setDoorsOpen(true)}>
+						Rooms <Caret open={doorsOpen} />
 					</button>
 					{siteConfig.nav.slice(1).map((n) => (
-						<Link key={n.href} href={n.href} className={s.navLink} aria-current={pathname.startsWith(n.href) ? 'page' : undefined} onMouseEnter={() => setShelfOpen(false)}>
+						<Link key={n.href} href={n.href} className={s.navLink} aria-current={pathname.startsWith(n.href) ? 'page' : undefined} onMouseEnter={() => setDoorsOpen(false)}>
 							{n.label}
 						</Link>
 					))}
 				</nav>
 				<div className={s.right}>
-					<Link href="/account" className={`${s.iconBtn} ${s.desktopOnly}`} aria-label="Your Explorer’s Logbook">
-						<LogbookIcon /> <span>Logbook</span>
+					<Link href="/account" className={`${s.iconBtn} ${s.desktopOnly}`} aria-label="Your account">
+						<UserIcon /> <span>Account</span>
 					</Link>
-					<button type="button" className={s.iconBtn} onClick={() => setOpen(true)} aria-label={`Open your satchel, ${count} ${count === 1 ? 'booking' : 'bookings'}`}>
+					<button type="button" className={s.cartBtn} onClick={() => setOpen(true)} aria-label={`Your doors: ${count} ${count === 1 ? 'booking' : 'bookings'}`}>
 						<span key={flashKey} className={flashKey ? s.flash : undefined} style={{ display: 'inline-flex' }}>
-							<SatchelIcon />
+							<DoorsIcon />
 						</span>
+						<span className={s.cartLabel}>Your doors</span>
 						{count ? <span className={s.count}>{count}</span> : null}
 					</button>
 					<button type="button" className={`${s.iconBtn} ${s.mobileOnly}`} onClick={() => setMenuOpen(true)} aria-label="Open the menu">
@@ -95,41 +112,48 @@ export function Header({ shelf }: { shelf: ShelfRoom[] }) {
 				</div>
 			</div>
 
-			{shelfOpen ? (
-				<div id="shelf-menu" className={s.shelf}>
-					<div className={`wrap ${s.shelfInner}`}>
-						<div>
-							<p className="folio folio-left">The society’s shelf · {shelf.length} volumes</p>
-							<div className={s.books}>
-								{shelf.length ? (
-									shelf.map((r) => <Spine key={r.slug} room={r} width={60} height={200} out={peek === r.slug} onFocus={() => setPeek(r.slug)} showLetter={false} />)
-								) : (
-									<p className="pb-8">The shelf is being restocked. See every room on the <Link href="/rooms" className="underline">rooms page</Link>.</p>
-								)}
-							</div>
+			{doorsOpen ? (
+				<div id="doors-menu" className={s.doorsMenu}>
+					<div className={`wrap ${s.doorsInner}`}>
+						<div className={s.doorsGrid}>
+							{doors.map((d) => (
+								<Link
+									key={d.slug}
+									href={`/rooms/${d.slug}`}
+									className={s.doorCard}
+									style={{ '--slit': d.palette.glow } as CSSProperties}
+									onMouseEnter={() => setDoorLight(d.palette.glow)}
+									onFocus={() => setDoorLight(d.palette.glow)}
+								>
+									<span className={s.doorArt}>
+										<DoorArt sources={doorArt(d)} alt="" glow={d.palette.glow} className={s.doorImg} />
+										<span className={s.doorNum}>{String(d.number).padStart(2, '0')}</span>
+										{d.epic ? <span className={s.badge}>The Epic</span> : null}
+									</span>
+									<span className={`slit ${s.doorSlit}`} aria-hidden />
+									<span className={s.doorTitle}>{d.title}</span>
+									<span className={s.doorMeta}>
+										{d.genre} · {d.year}
+									</span>
+								</Link>
+							))}
 						</div>
-						{peeked ? (
-							<div className={s.peek}>
-								<p className="engraved text-sepia">
-									Volume {roman(peeked.volume)} · {peeked.venueShort}
-								</p>
-								<p className={s.peekTitle}>{peeked.title}</p>
-								<p className="text-[0.92rem] text-[#4b3b26]">
-									{peeked.genre}
-									{peeked.year ? `, ${peeked.year}` : ''} · {peeked.players} players
-								</p>
-								<p className="mt-4 flex flex-wrap gap-2">
-									<Link href={`/rooms/${peeked.slug}`} className="plate plate-sm">
-										Open the volume
-									</Link>
-									<Link href="/rooms" className="plate plate-ghost plate-sm">
-										All rooms
-									</Link>
-								</p>
-							</div>
-						) : null}
+						<div className={s.doorsAside}>
+							<p className="label">Six doors, two venues</p>
+							<Link href="/rooms" className={s.asideLink}>
+								Compare every room <ArrowIcon />
+							</Link>
+							<Link href="/book" className={s.asideLink}>
+								Find a free session <ArrowIcon />
+							</Link>
+							<Link href="/#which-door" className={s.asideLink}>
+								Which door is yours? <ArrowIcon />
+							</Link>
+							<Link href="/workshops" className={s.asideLink}>
+								Lockpicking and cipher workshops <ArrowIcon />
+							</Link>
+						</div>
 					</div>
-					<div className={s.plank} />
 				</div>
 			) : null}
 
@@ -141,38 +165,30 @@ export function Header({ shelf }: { shelf: ShelfRoom[] }) {
 							<CloseIcon />
 						</button>
 					</div>
-					<div className="wrap pb-10">
-						<p className="folio folio-left mt-2">The rooms</p>
-						<div className={s.drawerLinks}>
-							{shelf.map((r) => (
-								<Link key={r.slug} href={`/rooms/${r.slug}`}>
-									<span>{r.title}</span>
-									<small>{r.venueShort}</small>
+					<div className="wrap pb-12">
+						<p className="label mt-2">The doors</p>
+						<div className={s.drawerDoors}>
+							{doors.map((d) => (
+								<Link key={d.slug} href={`/rooms/${d.slug}`} style={{ '--slit': d.palette.glow } as CSSProperties}>
+									<span className={s.drawerThumb}>
+										<DoorArt sources={doorArt(d)} alt="" glow={d.palette.glow} className={s.doorImg} />
+									</span>
+									<span className="min-w-0">
+										<span className={s.drawerTitle}>{d.title}</span>
+										<small>
+											{d.genre} · {d.year} · {d.venueShort}
+										</small>
+									</span>
 								</Link>
 							))}
 						</div>
-						<p className="folio folio-left mt-8">The society</p>
+						<p className="label mt-9">Otherdoor</p>
 						<div className={s.drawerLinks}>
-							<Link href="/book">
-								<span>Plan an expedition</span>
-								<small>All sessions</small>
-							</Link>
-							<Link href="/workshops">
-								<span>Workshops</span>
-								<small>Lockpicking, ciphers</small>
-							</Link>
-							<Link href="/groups">
-								<span>Groups</span>
-								<small>Team days, birthdays</small>
-							</Link>
-							<Link href="/faq">
-								<span>Questions</span>
-								<small>Before you come</small>
-							</Link>
-							<Link href="/account">
-								<span>Explorer’s Logbook</span>
-								<small>Your bookings</small>
-							</Link>
+							<Link href="/book">Book a session</Link>
+							<Link href="/workshops">Workshops</Link>
+							<Link href="/groups">Groups and parties</Link>
+							<Link href="/faq">Questions</Link>
+							<Link href="/account">Your account</Link>
 						</div>
 					</div>
 				</div>

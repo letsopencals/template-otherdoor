@@ -37,7 +37,7 @@ export function Drawer({ open, onClose, label, children, className = '', side = 
 	if (!open) return null;
 	return (
 		<div className="fixed inset-0 z-[70]" role="dialog" aria-modal="true" aria-label={label}>
-			<button type="button" aria-label="Close" className="absolute inset-0 cursor-default bg-[#15201b]/55 backdrop-blur-[2px]" onClick={onClose} />
+			<button type="button" aria-label="Close" className="absolute inset-0 cursor-default bg-[#05040a]/70 backdrop-blur-[3px]" onClick={onClose} />
 			<div ref={ref} className={`drawer-in absolute ${side === 'right' ? 'inset-y-0 right-0 w-full max-w-[460px]' : 'inset-x-0 bottom-0 max-h-[90dvh]'} flex flex-col ${className}`}>
 				{children}
 			</div>

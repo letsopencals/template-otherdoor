@@ -1,33 +1,33 @@
 import type { Metadata, Viewport } from 'next';
-import { IM_Fell_English, IM_Fell_English_SC, Mulish, Courier_Prime } from 'next/font/google';
+import { Funnel_Display, Mona_Sans, Spline_Sans_Mono } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import { Providers } from '@/components/providers';
 import { Header } from '@/components/shell/header';
 import { Footer } from '@/components/shell/footer';
-import { SatchelDrawer } from '@/components/satchel/satchel-drawer';
+import { CartDrawer } from '@/components/cart/cart-drawer';
 import { getCatalogue, getStoreSettings } from '@/lib/server-data';
-import { shelfRooms } from '@/lib/shelf';
+import { doorRooms } from '@/lib/doors';
 import { siteConfig } from '@/lib/site-config';
 import './globals.css';
 
-const fell = IM_Fell_English({ subsets: ['latin'], weight: '400', style: ['normal', 'italic'], variable: '--font-fell', display: 'swap' });
-const fellSc = IM_Fell_English_SC({ subsets: ['latin'], weight: '400', variable: '--font-fell-sc', display: 'swap' });
-const mulish = Mulish({ subsets: ['latin'], variable: '--font-mulish', display: 'swap' });
-const courier = Courier_Prime({ subsets: ['latin'], weight: ['400', '700'], variable: '--font-courier', display: 'swap' });
+const funnel = Funnel_Display({ subsets: ['latin'], weight: ['300', '400', '500', '600', '700'], variable: '--font-funnel', display: 'swap' });
+const mona = Mona_Sans({ subsets: ['latin'], variable: '--font-mona', display: 'swap' });
+const splineMono = Spline_Sans_Mono({ subsets: ['latin'], weight: ['400', '500'], variable: '--font-spline-mono', display: 'swap' });
 
 export const metadata: Metadata = {
 	metadataBase: new URL(siteConfig.url),
-	title: { default: `${siteConfig.name} · Adventure escape rooms in Edinburgh`, template: `%s · ${siteConfig.name}` },
+	title: { default: `${siteConfig.name} · Immersive escape rooms in Edinburgh`, template: `%s · ${siteConfig.name}` },
 	description: siteConfig.description,
 	openGraph: { siteName: siteConfig.name, type: 'website', locale: 'en_GB' },
 };
 
-export const viewport: Viewport = { themeColor: '#1e3a30', width: 'device-width', initialScale: 1 };
+export const viewport: Viewport = { themeColor: '#0c0a12', width: 'device-width', initialScale: 1, colorScheme: 'dark' };
 
 const jsonLd = {
 	'@context': 'https://schema.org',
 	'@type': ['EntertainmentBusiness', 'TouristAttraction'],
 	name: siteConfig.name,
+	slogan: siteConfig.tagline,
 	description: siteConfig.description,
 	url: siteConfig.url,
 	email: siteConfig.contact.email,
@@ -43,22 +43,15 @@ const jsonLd = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
 	const [settings, catalogue] = await Promise.all([getStoreSettings(), getCatalogue()]);
-	const shelf = shelfRooms(catalogue);
+	const doors = doorRooms(catalogue);
 	return (
-		<html lang="en-GB" className={`${fell.variable} ${fellSc.variable} ${mulish.variable} ${courier.variable}`}>
+		<html lang="en-GB" className={`${funnel.variable} ${mona.variable} ${splineMono.variable}`}>
 			<body>
-				{/* Shared SVG filters: ink-bleed for reveals. */}
-				<svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden>
-					<filter id="ink-bleed">
-						<feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="3" />
-						<feDisplacementMap in="SourceGraphic" scale="6" />
-					</filter>
-				</svg>
 				<Providers initialSettings={settings}>
-					<Header shelf={shelf} />
+					<Header doors={doors} />
 					<main id="main">{children}</main>
-					<Footer shelf={shelf} />
-					<SatchelDrawer />
+					<Footer doors={doors} />
+					<CartDrawer />
 				</Providers>
 				<script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }} />
 				<Analytics />

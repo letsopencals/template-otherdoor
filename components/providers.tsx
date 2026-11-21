@@ -5,7 +5,7 @@ import { SessionProvider } from 'next-auth/react';
 import { CartProvider } from '@/contexts/cart-context';
 import { TimezoneProvider } from '@/contexts/timezone-context';
 import { SettingsProvider } from '@/contexts/settings-context';
-import { SatchelUiProvider } from '@/contexts/satchel-ui-context';
+import { CartUiProvider } from '@/contexts/cart-ui-context';
 
 export function Providers({ children, initialSettings = null }: { children: React.ReactNode; initialSettings?: StorePublicSettings | null }) {
 	return (
@@ -13,7 +13,7 @@ export function Providers({ children, initialSettings = null }: { children: Reac
 			<SettingsProvider initialSettings={initialSettings}>
 				<TimezoneProvider>
 					<CartProvider>
-						<SatchelUiProvider>{children}</SatchelUiProvider>
+						<CartUiProvider>{children}</CartUiProvider>
 					</CartProvider>
 				</TimezoneProvider>
 			</SettingsProvider>

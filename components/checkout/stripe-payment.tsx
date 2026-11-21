@@ -6,25 +6,25 @@ import { Elements, PaymentElement, useElements, useStripe } from '@stripe/react-
 
 // House tokens as hex (Stripe's iframe can't read CSS variables).
 const APPEARANCE: Appearance = {
-	theme: 'flat',
+	theme: 'night',
 	variables: {
-		colorPrimary: '#1E3A30',
-		colorBackground: '#FFFDF6',
-		colorText: '#15201B',
-		colorTextSecondary: '#6F5A3E',
-		colorDanger: '#9B1C1C',
-		fontFamily: '"Mulish", system-ui, sans-serif',
+		colorPrimary: '#F2C46D',
+		colorBackground: '#15121E',
+		colorText: '#F1ECF4',
+		colorTextSecondary: '#A99FB7',
+		colorDanger: '#FF8A98',
+		fontFamily: '"Mona Sans", system-ui, sans-serif',
 		fontSizeBase: '15px',
-		borderRadius: '3px',
+		borderRadius: '9px',
 	},
 	rules: {
-		'.Input': { border: '1px solid rgba(138,106,67,.55)', boxShadow: 'none', padding: '12px' },
-		'.Input:focus': { border: '1px solid #2F6F6A', boxShadow: '0 0 0 2px rgba(47,111,106,.2)' },
-		'.Label': { fontWeight: '700', color: '#6F5A3E' },
-		'.Tab--selected': { border: '1px solid #1E3A30' },
+		'.Input': { border: '1px solid rgba(232,222,255,.16)', boxShadow: 'none', padding: '12px' },
+		'.Input:focus': { border: '1px solid #F2C46D', boxShadow: '0 0 0 3px rgba(242,196,109,.18)' },
+		'.Label': { fontWeight: '500', color: '#C3BACD' },
+		'.Tab--selected': { border: '1px solid #F2C46D' },
 	},
 };
-const FONTS: StripeElementsOptions['fonts'] = [{ cssSrc: 'https://fonts.googleapis.com/css2?family=Mulish:wght@400;700&display=swap' }];
+const FONTS: StripeElementsOptions['fonts'] = [{ cssSrc: 'https://fonts.googleapis.com/css2?family=Mona+Sans:wght@400;500;600&display=swap' }];
 
 /** Stripe card form. Loaded with next/dynamic; the publishable key comes only from checkout start. */
 export function StripePayment({ clientSecret, stripeAccountId, publishableKey, onSuccess, onError, disabled, payLabel, fallback }: { clientSecret: string; stripeAccountId?: string | null; publishableKey?: string | null; onSuccess: (paymentIntentId: string) => void; onError: (message: string) => void; disabled?: boolean; payLabel: string; fallback?: ReactNode }) {
@@ -32,7 +32,7 @@ export function StripePayment({ clientSecret, stripeAccountId, publishableKey, o
 	const options = useMemo<StripeElementsOptions>(() => ({ clientSecret, appearance: APPEARANCE, fonts: FONTS }), [clientSecret]);
 	if (!stripePromise) {
 		return (
-			<div role="alert" className="border-l-4 border-oxblood bg-[#f6e7d0] p-4 text-sm">
+			<div role="alert" className="rounded-[10px] bg-[#ff4358]/10 p-4 text-sm shadow-[inset_2px_0_0_#ff4358]">
 				Card payments aren’t switched on for this store yet{process.env.NODE_ENV === 'development' ? ' (connect Stripe in the Opencals dashboard)' : ''}.
 				{fallback}
 			</div>
@@ -67,10 +67,10 @@ function PayForm({ onSuccess, onError, disabled, payLabel }: { onSuccess: (id: s
 	return (
 		<form onSubmit={pay}>
 			<PaymentElement options={{ layout: 'tabs' }} />
-			<button type="submit" className="plate plate-gold mt-5 w-full" disabled={!stripe || busy || disabled}>
+			<button type="submit" className="btn btn-lg btn-block mt-5" disabled={!stripe || busy || disabled}>
 				{busy ? 'Sealing the payment…' : `Pay ${payLabel}`}
 			</button>
-			<p className="mt-3 text-xs text-sepia">Card details go straight to Stripe, encrypted. We never see your card number.</p>
+			<p className="mt-3 text-xs text-ink-3">Card details go straight to Stripe, encrypted. We never see your card number.</p>
 		</form>
 	);
 }

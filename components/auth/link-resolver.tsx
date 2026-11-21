@@ -38,11 +38,11 @@ export function LinkResolver({ token }: { token: string }) {
 			setStatus('error');
 		})();
 	}, [token, router]);
-	if (status === 'resolving') return <AuthCard kicker="One moment" title="Opening your letter…" />;
+	if (status === 'resolving') return <AuthCard kicker="One moment" title="Opening the door…" />;
 	const c = COPY[code];
 	return (
-		<AuthCard kicker="The reading room" title={c.title} intro={c.message}>
-			<Link href="/login" className="plate w-full">
+		<AuthCard kicker="Your account" title={c.title} intro={c.message}>
+			<Link href="/login" className="btn btn-block">
 				Sign in with a code
 			</Link>
 		</AuthCard>

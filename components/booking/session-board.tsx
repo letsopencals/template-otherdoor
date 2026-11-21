@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type CSSProperties } from "react";
 import useSWR from 'swr';
 import type { TeamOption } from '@/lib/rooms';
 import { roomSessions, byDate, type FreeRange, type Session } from '@/lib/sessions';
@@ -11,14 +11,17 @@ import { localDates, today } from '@/lib/tz';
 import { localDateParts, minutesLabel } from '@/lib/when';
 import { siteConfig } from '@/lib/site-config';
 import { useNow } from '@/hooks/use-now';
-import { useAddToSatchel } from '@/hooks/use-add-to-satchel';
+import { useAddToCart } from '@/hooks/use-add-to-cart';
 import { DateStrip } from './date-strip';
 import { SessionButtons, offerNote } from './session-buttons';
 import { TeamSizes } from './team-sizes';
 import { Meter } from '@/components/ui/meters';
+import { DoorArt } from "@/components/doors/door-art";
 import s from './booking.module.css';
 
 export interface BoardRoom {
+	glow: string;
+	art: Array<string | null | undefined>;
 	slug: string;
 	title: string;
 	genre: string;
@@ -28,19 +31,17 @@ export interface BoardRoom {
 	locationId: string | null;
 	venueSlug: string | null;
 	venueShort: string;
-	spine: string;
-	foil: string;
 	difficulty: number;
 	fear: number;
 	players: string;
 }
 
 /**
- * "Plan an expedition": venue tabs and one date strip on top, then one row per
+ * "Book": venue filter and one date strip on top, then one row per
  * room with plain session buttons. Tapping a time opens team size + total +
- * "Add to satchel" right under that row.
+ * "Add to your doors" right under that row.
  */
-export function ExpeditionBoard({ rooms, venues, initialRanges, renderedAt, initialVenue }: { rooms: BoardRoom[]; venues: Array<{ slug: string; short: string }>; initialRanges: Record<string, FreeRange[]>; renderedAt: number; initialVenue: string | null }) {
+export function SessionBoard({ rooms, venues, initialRanges, renderedAt, initialVenue }: { rooms: BoardRoom[]; venues: Array<{ slug: string; short: string }>; initialRanges: Record<string, FreeRange[]>; renderedAt: number; initialVenue: string | null }) {
 	const { data } = useSWR<Record<string, FreeRange[]>>('/api/rooms/availability', fetcher, { fallbackData: initialRanges, revalidateOnFocus: false });
 	const now = useNow(60_000)?.getTime() ?? renderedAt;
 	const [venue, setVenue] = useState<string | null>(initialVenue && venues.some((v) => v.slug === initialVenue) ? initialVenue : null);
@@ -53,7 +54,7 @@ export function ExpeditionBoard({ rooms, venues, initialRanges, renderedAt, init
 	const [pick, setPick] = useState<{ slug: string; session: Session } | null>(null);
 	const [team, setTeam] = useState<number | null>(null);
 	const [added, setAdded] = useState<string | null>(null);
-	const { add, pending, error, setError } = useAddToSatchel();
+	const { add, pending, error, setError } = useAddToCart();
 
 	const choose = (slug: string, x: Session) => {
 		setPick({ slug, session: x });
@@ -64,9 +65,9 @@ export function ExpeditionBoard({ rooms, venues, initialRanges, renderedAt, init
 
 	return (
 		<div>
-			<div className="flex flex-wrap items-center gap-2" role="group" aria-label="House">
-				{[{ slug: null as string | null, short: 'Both houses' }, ...venues].map((v) => (
-					<button key={v.slug ?? 'all'} type="button" aria-pressed={venue === v.slug} onClick={() => { setVenue(v.slug); setPick(null); }} className={`min-h-[44px] border px-4 font-bold transition ${venue === v.slug ? 'border-ink-green bg-ink-green text-vellum' : 'border-[#8a6a43]/50 bg-vellum hover:border-ink-green'}`}>
+			<div className="flex flex-wrap items-center gap-2" role="group" aria-label="Venue">
+				{[{ slug: null as string | null, short: "Both venues" }, ...venues].map((v) => (
+					<button key={v.slug ?? 'all'} type="button" aria-pressed={venue === v.slug} onClick={() => { setVenue(v.slug); setPick(null); }} className={s.filter}>
 						{v.short}
 					</button>
 				))}
@@ -89,24 +90,26 @@ export function ExpeditionBoard({ rooms, venues, initialRanges, renderedAt, init
 							<li key={r.slug} className={s.section}>
 								<div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] md:items-center">
 									<div className="flex items-start gap-4">
-										<span aria-hidden className="mt-1 h-16 w-4 shrink-0 rounded-[2px]" style={{ background: `linear-gradient(90deg, rgba(0,0,0,.3), transparent 40%, rgba(0,0,0,.25)), ${r.spine}`, boxShadow: `inset 0 4px 0 ${r.foil}, inset 0 -4px 0 ${r.foil}` }} />
+										<span aria-hidden className={s.roomThumb} style={{ "--slit": r.glow } as CSSProperties}>
+											<DoorArt sources={r.art} alt="" glow={r.glow} />
+										</span>
 										<div className="min-w-0">
-											<Link href={`/rooms/${r.slug}`} className="font-display text-[1.5rem] leading-tight hover:underline">
+											<Link href={`/rooms/${r.slug}`} className="font-display text-[1.45rem] leading-tight tracking-tight hover:text-white">
 												{r.title}
 											</Link>
-											<p className="text-[0.85rem] text-[#6f5a3e]">
+											<p className="mt-1 text-[0.85rem] text-ink-3">
 												{r.venueShort} · {r.players} players · {r.gameMinutes} min game · from {formatWholePrice(r.options[0]?.price ?? 0)}
 											</p>
 											<p className="mt-1 flex gap-4 text-[0.8rem]">
-												<Meter kind="candle" value={r.difficulty} label="Difficulty" tone="#7a1e22" />
-												<Meter kind="key" value={r.fear} label="Fear" tone="#1e3a30" />
+												<span className="inline-flex items-center gap-2 text-ink-3">Difficulty <Meter value={r.difficulty} label="Difficulty" tone={r.glow} /></span>
+												<span className="inline-flex items-center gap-2 text-ink-3">Fear <Meter value={r.fear} label="Fear" tone={r.glow} /></span>
 											</p>
 										</div>
 									</div>
 									<div>{list.length ? <SessionButtons sessions={list} selected={open ? pick.session.start : null} onSelect={(x) => choose(r.slug, x)} note={offerNote} /> : <p className={s.empty}>Fully booked this day.</p>}</div>
 								</div>
 								{open ? (
-									<div className="mt-4 border-t border-dashed border-[#8a6a43]/50 pt-4">
+									<div className="mt-4 border-t border-[rgba(232,222,255,0.1)] pt-4">
 										<p className={s.label}>
 											<span>
 												Team size · {localDateParts(pick.session.date).weekday} {pick.session.time}
@@ -115,7 +118,7 @@ export function ExpeditionBoard({ rooms, venues, initialRanges, renderedAt, init
 										</p>
 										<TeamSizes options={r.options} selected={team} onSelect={(n) => { setTeam(n); setAdded(null); }} />
 										{error ? <p className={`${s.error} !mx-0 mt-3`}>{error}</p> : null}
-										{added ? <p className={`${s.ok} !mx-0 mt-3`}>In your satchel: {added}</p> : null}
+										{added ? <p className={`${s.ok} !mx-0 mt-3`}>Added to your doors: {added}</p> : null}
 										<div className="mt-4 flex items-center gap-3">
 											<div className={s.total}>
 												<span className={s.totalAmount}>{option ? formatPrice(option.price) : 'Choose your team'}</span>
@@ -136,7 +139,7 @@ export function ExpeditionBoard({ rooms, venues, initialRanges, renderedAt, init
 													}
 												}}
 											>
-												{pending ? 'Adding…' : 'Add to satchel'}
+												{pending ? 'Adding…' : "Add to your doors"}
 											</button>
 										</div>
 									</div>
@@ -145,7 +148,7 @@ export function ExpeditionBoard({ rooms, venues, initialRanges, renderedAt, init
 						);
 					})}
 				</ol>
-				{added && !pick ? <p className={s.ok}>In your satchel: {added}</p> : null}
+				{added && !pick ? <p className={s.ok}>Added to your doors: {added}</p> : null}
 			</div>
 		</div>
 	);

@@ -1,10 +1,10 @@
 import { CheckoutProvider } from '@/contexts/checkout-context';
-import { LetterOfPassage } from '@/components/checkout/letter-of-passage';
+import { CheckoutView } from '@/components/checkout/checkout-view';
 
 export default function CheckoutPage() {
 	return (
 		<CheckoutProvider>
-			<LetterOfPassage />
+			<CheckoutView />
 		</CheckoutProvider>
 	);
 }

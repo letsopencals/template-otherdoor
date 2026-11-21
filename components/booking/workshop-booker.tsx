@@ -9,7 +9,7 @@ import { localDates, today } from '@/lib/tz';
 import { localDateParts, minutesLabel } from '@/lib/when';
 import { siteConfig } from '@/lib/site-config';
 import { useNow } from '@/hooks/use-now';
-import { useAddToSatchel } from '@/hooks/use-add-to-satchel';
+import { useAddToCart } from '@/hooks/use-add-to-cart';
 import { DateStrip } from './date-strip';
 import { SessionButtons } from './session-buttons';
 import s from './booking.module.css';
@@ -37,7 +37,7 @@ export function WorkshopBooker({ w, initialRanges, renderedAt }: { w: WorkshopVi
 	const active = date && counts[date] ? date : (dates.find((d) => counts[d]) ?? null);
 	const [pick, setPick] = useState<Session | null>(null);
 	const [added, setAdded] = useState<string | null>(null);
-	const { add, pending, error, setError } = useAddToSatchel();
+	const { add, pending, error, setError } = useAddToCart();
 	const list = active ? (sessions[active] ?? []) : [];
 	const max = Math.max(1, Math.min(pick?.left ?? w.seats, w.seats));
 
@@ -73,7 +73,7 @@ export function WorkshopBooker({ w, initialRanges, renderedAt }: { w: WorkshopVi
 				</div>
 			</div>
 			{error ? <p className={s.error}>{error}</p> : null}
-			{added ? <p className={s.ok}>In your satchel: {added}</p> : null}
+			{added ? <p className={s.ok}>Added to your doors: {added}</p> : null}
 			<div className={s.bar}>
 				<div className={s.total}>
 					<span className={s.totalAmount}>{formatPrice(w.price * seats)}</span>
@@ -95,7 +95,7 @@ export function WorkshopBooker({ w, initialRanges, renderedAt }: { w: WorkshopVi
 						}
 					}}
 				>
-					{!pick ? 'Choose a session' : pending ? 'Adding…' : 'Add to satchel'}
+					{!pick ? 'Choose a session' : pending ? 'Adding…' : 'Add to your doors'}
 				</button>
 			</div>
 		</div>

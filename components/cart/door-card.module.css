@@ -1,0 +1,103 @@
+.card {
+	position: relative;
+	display: grid;
+	grid-template-columns: 64px 1fr;
+	gap: 14px;
+	padding: 12px 14px 12px 12px;
+	border-radius: 12px 12px 4px 4px;
+	background: linear-gradient(100deg, color-mix(in srgb, var(--slit) 10%, transparent), rgba(255, 255, 255, 0.025) 45%);
+	box-shadow: inset 0 0 0 1px rgba(232, 222, 255, 0.1);
+	overflow: clip;
+}
+/* The lit edge: the light under this door, turned on its side. */
+.card::before {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 10px;
+	bottom: 10px;
+	width: 2px;
+	border-radius: 2px;
+	background: var(--slit);
+	box-shadow: 0 0 12px 2px color-mix(in srgb, var(--slit) 70%, transparent);
+}
+.thumb {
+	display: block;
+	width: 64px;
+	height: 84px;
+	border-radius: 8px 8px 2px 2px;
+	overflow: hidden;
+	background: #110e18;
+	box-shadow: 0 10px 20px -10px color-mix(in srgb, var(--slit) 60%, transparent);
+}
+.img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+.body {
+	min-width: 0;
+}
+.top {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 10px;
+}
+.title {
+	font-family: var(--font-display);
+	font-size: 1.12rem;
+	line-height: 1.15;
+	letter-spacing: -0.01em;
+}
+.price {
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+.when {
+	margin-top: 4px;
+	font-family: var(--font-mono);
+	font-size: 0.8rem;
+	color: var(--slit);
+}
+.meta,
+.extras {
+	margin-top: 2px;
+	font-size: 0.84rem;
+	color: var(--color-ink-2);
+}
+.extras {
+	color: var(--color-ink-3);
+}
+.actions {
+	margin-top: 8px;
+	display: flex;
+	gap: 14px;
+	font-size: 0.82rem;
+}
+.actions button,
+.actions a {
+	color: var(--color-ink-2);
+	background: none;
+	border: 0;
+	padding: 4px 0;
+	cursor: pointer;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+	text-decoration-color: rgba(255, 255, 255, 0.25);
+}
+.actions button:hover {
+	color: var(--color-ink);
+}
+.compact {
+	grid-template-columns: 44px 1fr;
+	padding: 10px 12px 10px 10px;
+}
+.compact .thumb {
+	width: 44px;
+	height: 58px;
+}
+.compact .title {
+	font-size: 1rem;
+}

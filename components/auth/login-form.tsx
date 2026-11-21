@@ -8,7 +8,7 @@ import { z } from 'zod';
 import { AuthCard } from './auth-card';
 
 const emailSchema = z.string().min(1, 'Email is required').email('Please enter a valid email');
-const field = 'mt-1 block h-12 w-full border border-[#8a6a43]/60 bg-[#fffdf6] px-3 text-[1rem] focus:border-patina focus:outline-none';
+const field = 'mt-1 block h-12 w-full rounded-[8px] border border-[rgba(232,222,255,0.16)] bg-white/[0.04] px-3 text-[1rem] text-ink placeholder:text-ink-3 focus:border-[var(--door)] focus:outline-none';
 
 /** Passwordless sign-in: email → 6-digit code (`login-code` provider). An account is made when a guest books. */
 export function LoginForm({ callbackUrl, initialEmail = '' }: { callbackUrl: string; initialEmail?: string }) {
@@ -62,40 +62,40 @@ export function LoginForm({ callbackUrl, initialEmail = '' }: { callbackUrl: str
 
 	return (
 		<AuthCard
-			kicker={step === 'email' ? 'The reading room' : 'A letter is on its way'}
-			title={step === 'email' ? 'Open your logbook' : 'Check your inbox'}
-			intro={step === 'email' ? 'Sign in to see your expeditions, move or cancel one, and collect your passport stamps. No password: we email you a code.' : `Enter the 6-digit code we sent to ${email}.`}
+			kicker={step === 'email' ? 'Your account' : 'Code sent'}
+			title={step === 'email' ? 'Sign in' : 'Check your inbox'}
+			intro={step === 'email' ? 'Sign in to see your bookings, move or cancel one, and see which doors you have opened. No password: we email you a code.' : `Enter the 6-digit code we sent to ${email}.`}
 			footer={
 				<>
-					No logbook yet? One is made when you book.{' '}
-					<Link href="/book" className="underline">
-						Plan an expedition
+					No account yet? One is made when you book.{' '}
+					<Link href="/book" className="link">
+						Book a session
 					</Link>
 				</>
 			}
 		>
-			{error ? <p className="mb-4 border-l-4 border-oxblood bg-[#f6e3d3] p-3 text-sm" role="alert">{error}</p> : null}
+			{error ? <p className="mb-4 rounded-[8px] border-l-2 border-[#ff4358] bg-[#ff4358]/10 p-3 text-sm" role="alert">{error}</p> : null}
 			{step === 'email' ? (
 				<form onSubmit={(e) => { e.preventDefault(); void send(); }} className="space-y-5">
-					<label className="block text-sm font-bold" htmlFor="login-email">
+					<label className="block text-sm font-medium text-ink-2" htmlFor="login-email">
 						Email
 						<input id="login-email" type="email" autoComplete="email" autoFocus value={email} onChange={(e) => setEmail(e.target.value)} className={field} placeholder="you@example.com" />
 					</label>
-					<button type="submit" className="plate w-full" disabled={loading}>
+					<button type="submit" className="btn btn-block" disabled={loading}>
 						{loading ? 'Sending…' : 'Email me a code'}
 					</button>
 				</form>
 			) : (
 				<form onSubmit={(e) => { e.preventDefault(); void verify(); }} className="space-y-5">
-					<input type="text" inputMode="numeric" autoComplete="one-time-code" autoFocus maxLength={6} value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))} aria-label="6-digit code" placeholder="000000" className={`${field} typed h-16 text-center text-2xl tracking-[0.6em]`} />
-					<button type="submit" className="plate w-full" disabled={loading}>
-						{loading ? 'Opening…' : 'Open my logbook'}
+					<input type="text" inputMode="numeric" autoComplete="one-time-code" autoFocus maxLength={6} value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))} aria-label="6-digit code" placeholder="000000" className={`${field} mono h-16 text-center text-2xl tracking-[0.6em]`} />
+					<button type="submit" className="btn btn-block" disabled={loading}>
+						{loading ? 'Opening…' : 'Sign in'}
 					</button>
 					<div className="flex justify-between text-sm">
 						<button type="button" className="underline disabled:opacity-40" disabled={cooldown > 0 || loading} onClick={() => void send()}>
 							{cooldown > 0 ? `Resend in ${cooldown}s` : 'Resend the code'}
 						</button>
-						<button type="button" className="underline" onClick={() => setStep('email')}>
+						<button type="button" className="link" onClick={() => setStep('email')}>
 							Different email
 						</button>
 					</div>

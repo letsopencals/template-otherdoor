@@ -11,7 +11,7 @@ import { localDates, today } from '@/lib/tz';
 import { localDateParts, minutesLabel } from '@/lib/when';
 import { siteConfig } from '@/lib/site-config';
 import { useNow } from '@/hooks/use-now';
-import { useAddToSatchel } from '@/hooks/use-add-to-satchel';
+import { useAddToCart } from '@/hooks/use-add-to-cart';
 import { DateStrip } from './date-strip';
 import { SessionButtons, offerNote } from './session-buttons';
 import { TeamSizes } from './team-sizes';
@@ -47,7 +47,7 @@ type Ranges = Record<string, FreeRange[]>;
 /**
  * The one booking panel: every room world embeds it, skinned by --bp-* variables.
  * Plain on purpose: the date strip sits directly above the session times, then
- * team size (group price + per head), extras, and the total with "Add to satchel"
+ * team size (group price + per head), extras, and the total with "Add to your doors"
  * always in view (the bar is sticky at the bottom of the panel).
  */
 export function BookingPanel({ room, initialRanges, addOns, renderedAt, initialDate, initialTime, initialTeam, heading }: BookingPanelProps) {
@@ -67,7 +67,7 @@ export function BookingPanel({ room, initialRanges, addOns, renderedAt, initialD
 	const [team, setTeam] = useState<number | null>(() => (initialTeam && room.options.some((o) => o.size === initialTeam) ? initialTeam : null));
 	const [picked, setPicked] = useState<Record<string, number>>({});
 	const [added, setAdded] = useState<string | null>(null);
-	const { add, pending, error, setError } = useAddToSatchel();
+	const { add, pending, error, setError } = useAddToCart();
 
 	const activeDate = date && counts[date] ? date : firstOpen;
 	const daySessions = activeDate ? (days[activeDate] ?? []) : [];
@@ -115,7 +115,7 @@ export function BookingPanel({ room, initialRanges, addOns, renderedAt, initialD
 		}
 	};
 
-	const cta = !chosen ? 'Choose a time' : !option ? 'Choose your team' : pending ? 'Adding…' : 'Add to satchel';
+	const cta = !chosen ? 'Choose a time' : !option ? 'Choose your team' : pending ? 'Adding…' : 'Add to your doors';
 	const note = chosen ? `${localDateParts(chosen.date).weekday} ${localDateParts(chosen.date).day} ${localDateParts(chosen.date).month} · ${chosen.time}${option ? ` · ${option.size} players` : ''}` : `${minutesLabel(room.durationMin)} visit${room.venueShort ? ` · ${room.venueShort}` : ''}`;
 
 	return (
@@ -169,7 +169,7 @@ export function BookingPanel({ room, initialRanges, addOns, renderedAt, initialD
 			) : null}
 			{added ? (
 				<p className={s.ok} role="status">
-					In your satchel: {added}
+					Added to your doors: {added}
 				</p>
 			) : null}
 

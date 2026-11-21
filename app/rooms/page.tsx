@@ -1,65 +1,64 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import type { CSSProperties } from 'react';
 import { getCatalogue } from '@/lib/server-data';
-import { shelfRooms } from '@/lib/shelf';
+import { doorRooms } from '@/lib/doors';
 import { roomPresentation } from '@/lib/site-config';
 import { formatWholePrice } from '@/lib/format';
-import { minutesLabel, roman } from '@/lib/when';
+import { minutesLabel } from '@/lib/when';
 import { PageHead } from '@/components/pages/page-head';
-import { ShelfSection } from '@/components/home/shelf-section';
-import { BookCover } from '@/components/shelf/book-cover';
+import { DoorArt } from '@/components/doors/door-art';
+import { doorArt } from '@/components/doors/door-sources';
 import { Meter } from '@/components/ui/meters';
+import s from '@/components/rooms/rooms.module.css';
 
-export const metadata: Metadata = { title: 'The rooms', description: 'Six original adventure escape rooms in Edinburgh: jungle temple, Victorian study, desert tomb, brass submarine, Riviera heist and a clockwork workshop.' };
+export const metadata: Metadata = { title: 'The rooms', description: 'Six immersive escape rooms in Edinburgh: a jungle temple, a gaslit study, a rogue-AI lab, a space station, a Riviera heist and a family clockwork workshop.' };
 export const revalidate = 60;
 
 export default async function RoomsPage() {
 	const catalogue = await getCatalogue();
-	const shelf = shelfRooms(catalogue);
+	const doors = doorRooms(catalogue);
 	return (
 		<>
-			<PageHead folio="The society’s catalogue" title="Six volumes, two houses." lede="Every room is a private game for your team, with its own story, set and game master. Pick a spine, or read the catalogue below." />
-			<section className="wrap py-16">
-				<ShelfSection shelf={shelf} />
-			</section>
-			<section className="wrap grid gap-16 pb-24">
-				{catalogue.rooms.map((r, i) => {
-					const p = roomPresentation(r.slug);
-					const s = shelf.find((x) => x.slug === r.slug)!;
+			<PageHead label="The rooms" title="Six doors. Six worlds." lede="Every room is a private game for your team, with its own story, set and game master. Compare them here, then step through." />
+			<section className="wrap grid gap-6 py-16 pb-24">
+				{doors.map((d) => {
+					const p = roomPresentation(d.slug);
+					const r = catalogue.rooms.find((x) => x.slug === d.slug)!;
 					return (
-						<article key={r.slug} className={`grid items-center gap-8 md:grid-cols-[minmax(0,320px)_1fr] ${i % 2 ? 'md:[&>*:first-child]:order-2 md:grid-cols-[1fr_minmax(0,320px)]' : ''}`}>
-							<Link href={`/rooms/${r.slug}`} className="mx-auto block w-full max-w-[320px] transition-transform hover:-rotate-1">
-								<BookCover title={r.title} genre={s.genre} volume={s.volume} palette={s.palette} src={r.images[0] ?? null} />
+						<article key={d.slug} className={s.row} style={{ '--slit': d.palette.glow } as CSSProperties}>
+							<Link href={`/rooms/${d.slug}`} className={s.art} aria-label={`Open ${d.title}`}>
+								<DoorArt sources={doorArt(d)} alt="" glow={d.palette.glow} className={s.img} />
+								<span className={s.num}>{String(d.number).padStart(2, '0')}</span>
 							</Link>
-							<div>
-								<p className="engraved text-sepia">
-									Volume {roman(s.volume)} · {s.genre}
-									{s.year ? `, ${s.year}` : ''} · {s.venueShort}
-									{s.epic ? ' · Epic' : ''}
+							<div className={s.body}>
+								<p className="label">
+									{d.genre} · {d.year} · {d.venueShort}
+									{d.epic ? ' · the Epic' : ''}
 								</p>
-								<h2 className="font-display mt-2 text-[clamp(2rem,4vw,3rem)] leading-tight">{r.title}</h2>
-								<p className="mt-3 text-[1.1rem] italic text-[#3b2e1d]">{p?.tagline}</p>
-								<dl className="mt-6 grid max-w-xl grid-cols-2 gap-x-8 gap-y-3 text-[0.95rem] sm:grid-cols-3">
-									<div><dt className="text-sepia">Team</dt><dd className="font-bold">{s.players} players</dd></div>
-									<div><dt className="text-sepia">Game</dt><dd className="font-bold">{p?.gameMinutes ?? 60} min ({minutesLabel(r.durationMin)} visit)</dd></div>
-									<div><dt className="text-sepia">Age</dt><dd className="font-bold">{p?.minAge ?? 12}+</dd></div>
-									<div><dt className="text-sepia">Difficulty</dt><dd><Meter kind="candle" value={s.difficulty} label="Difficulty" tone="#7a1e22" /></dd></div>
-									<div><dt className="text-sepia">Fear</dt><dd><Meter kind="key" value={s.fear} label="Fear" tone="#1e3a30" /></dd></div>
-									<div><dt className="text-sepia">Escape rate</dt><dd className="font-bold">{p?.successRate ?? 50}%</dd></div>
+								<h2 className={s.title}>{d.title}</h2>
+								<p className={s.tagline}>{p?.tagline}</p>
+								<dl className={s.stats}>
+									<div><dt>Team</dt><dd>{d.players} players</dd></div>
+									<div><dt>Game</dt><dd>{p?.gameMinutes ?? 60} min <span className="text-ink-3">({minutesLabel(r.durationMin)} visit)</span></dd></div>
+									<div><dt>Age</dt><dd>{d.minAge}+</dd></div>
+									<div><dt>Difficulty</dt><dd><Meter value={d.difficulty} label="Difficulty" tone={d.palette.glow} /></dd></div>
+									<div><dt>Fear</dt><dd><Meter value={d.fear} label="Fear" tone={d.palette.glow} /></dd></div>
+									<div><dt>Escape rate</dt><dd>{p?.successRate ?? 50}%</dd></div>
 								</dl>
 								<p className="mt-7 flex flex-wrap items-center gap-3">
-									<Link href={`/rooms/${r.slug}`} className="plate">
-										Open the volume
+									<Link href={`/rooms/${d.slug}`} className="btn">
+										Step through
 									</Link>
-									<Link href={`/rooms/${r.slug}#book`} className="plate plate-ghost">
-										Book from {formatWholePrice(s.fromPrice)}
+									<Link href={`/rooms/${d.slug}#book`} className="btn btn-glass">
+										Book from {formatWholePrice(d.fromPrice)}
 									</Link>
 								</p>
 							</div>
 						</article>
 					);
 				})}
-				{!catalogue.rooms.length ? <p className="text-center">No rooms yet: add the `rooms` collection in your Opencals dashboard.</p> : null}
+				{!doors.length ? <p className="text-ink-2">No rooms yet: add the `rooms` collection in your Opencals dashboard.</p> : null}
 			</section>
 		</>
 	);
