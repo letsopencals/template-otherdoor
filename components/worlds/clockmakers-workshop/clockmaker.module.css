@@ -2038,6 +2038,8 @@
 }
 .bookPanel {
 	min-width: 0;
+	/* the shell is dark; native controls inside the cream panel (checkboxes) follow the light skin */
+	color-scheme: light;
 }
 
 .cabinetFoot {
@@ -2321,18 +2323,28 @@
 	scale: 1.2;
 }
 .hiddenKeyArt {
+	position: relative;
 	width: 40px;
 	filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.35));
+}
+.hiddenKey::after {
+	content: '';
+	position: absolute;
+	inset: 4px;
+	border-radius: 50%;
+	background: radial-gradient(closest-side, rgba(255, 236, 170, 0.75), transparent);
+	opacity: 0;
 	animation: cw-glint 5s ease-in-out infinite;
+	pointer-events: none;
 }
 @keyframes cw-glint {
 	0%,
-	88%,
+	86%,
 	100% {
-		filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.35));
+		opacity: 0;
 	}
 	93% {
-		filter: drop-shadow(0 0 6px rgba(255, 236, 170, 0.95));
+		opacity: 1;
 	}
 }
 .hiddenKey[data-found] {

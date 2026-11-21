@@ -90,7 +90,7 @@ function frame(t: number) {
 	vel = Math.max(-40, Math.min(40, vel));
 	wound = Math.max(0, wound - dt / 90000);
 	notifyWound();
-	listeners.forEach((f) => f(angle));
+	visible.forEach((f) => f(angle));
 	raf = visible.size && !document.hidden ? requestAnimationFrame(frame) : 0;
 	if (!raf) lastT = 0;
 }

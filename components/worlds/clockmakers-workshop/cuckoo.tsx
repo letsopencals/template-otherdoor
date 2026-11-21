@@ -56,7 +56,7 @@ export function CuckooCorner() {
 				}
 				setHidden(quiet.size > 0);
 			},
-			{ threshold: 0 },
+			{ threshold: 0, rootMargin: '-65% 0px 0px 0px' },
 		);
 		sections.forEach((el) => mid.observe(el));
 		root.querySelectorAll('[data-cw-quiet]').forEach((el) => away.observe(el));
