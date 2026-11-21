@@ -1,0 +1,521 @@
+/* Cutaway of the two decks. Scoped; reads --k-* from the world root. */
+
+.wrap {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 310px;
+	gap: clamp(20px, 2.6vw, 40px);
+	align-items: start;
+}
+
+.plan {
+	position: relative;
+}
+.svg {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+/* hull and structure */
+.hull {
+	stroke: #7d89a2;
+	stroke-opacity: 0.5;
+	stroke-width: 2;
+}
+.rib {
+	fill: #0c1222;
+	opacity: 0.7;
+}
+.antenna,
+.collar {
+	fill: none;
+	stroke: #8590a6;
+	stroke-width: 3;
+}
+.redBlink {
+	fill: #ff5a4f;
+	animation: kcBlink 1.8s steps(2) infinite;
+}
+.deckLabel {
+	font-family: var(--font-mono);
+	font-size: 13px;
+	letter-spacing: 0.16em;
+	fill: var(--k-teal);
+}
+.slab {
+	fill: #1b2236;
+}
+.conduit {
+	fill: none;
+	stroke: var(--k-cond);
+	stroke-width: 3;
+	stroke-dasharray: 10 8;
+	opacity: 0.75;
+	animation: kcFlow var(--k-flow) linear infinite;
+	transition: stroke 0.8s ease;
+}
+.shaft {
+	fill: #070b17;
+	stroke: #5c6782;
+	stroke-opacity: 0.4;
+}
+.rail {
+	stroke: #7a86a0;
+	stroke-width: 2.4;
+}
+.rung {
+	stroke: #7a86a0;
+	stroke-width: 2;
+}
+
+/* rooms */
+.roomBg {
+	fill: #060a16;
+}
+.roomLit,
+.cone,
+.lamp {
+	transition: opacity 0.7s ease;
+}
+.roomLit {
+	opacity: 1;
+}
+.cone {
+	opacity: 0.8;
+	mix-blend-mode: screen;
+}
+.lamp {
+	fill: #e6fbff;
+	filter: drop-shadow(0 0 6px #9ff4f7);
+}
+.emergency {
+	fill: #ff5a4f;
+	opacity: 0;
+	transition: opacity 0.4s ease;
+}
+.roomEdge {
+	fill: none;
+	stroke: #6e7a96;
+	stroke-opacity: 0.45;
+	stroke-width: 1.5;
+	transition:
+		stroke 0.3s ease,
+		stroke-opacity 0.3s ease;
+}
+.room[data-active='true'] .roomEdge {
+	stroke: var(--k-warn);
+	stroke-opacity: 1;
+	stroke-width: 2.5;
+}
+.room[data-dark='true'] .roomLit,
+.room[data-dark='true'] .cone {
+	opacity: 0;
+}
+.room[data-dark='true'] .lamp {
+	opacity: 0.15;
+}
+.room[data-dark='true'] .emergency {
+	opacity: 1;
+	animation: kcBlink 1.2s steps(2) infinite;
+}
+.room[data-dark='true'] > g {
+	opacity: 0.38;
+	transition: opacity 0.7s ease;
+}
+.room > g {
+	transition: opacity 0.7s ease;
+}
+.room[data-dark='true'] .lamp,
+.room[data-dark='true'] .cone {
+	animation: kcFail 0.9s steps(1) 1;
+}
+
+/* interiors */
+.metal {
+	fill: #5d6880;
+}
+.metalDark {
+	fill: #262f45;
+}
+.hatchOpen {
+	fill: #ffb257;
+	opacity: 0.55;
+}
+.bolt {
+	stroke: #1a2236;
+	stroke-width: 3;
+}
+.hazard {
+	fill: #f2a33a;
+	opacity: 0.85;
+	mask: none;
+}
+.suit path,
+.suit circle {
+	fill: #aeb8ca;
+}
+.visor {
+	fill: #102030;
+}
+.panelLight,
+.ledAmber {
+	fill: #f2a33a;
+}
+.ledTeal {
+	fill: var(--k-teal);
+	animation: kcBlink 2.2s steps(2) infinite;
+}
+.bunk {
+	fill: #3b4762;
+}
+.pillow {
+	fill: #c9d1df;
+}
+.frame {
+	fill: none;
+	stroke: #7a86a0;
+	stroke-width: 2;
+}
+.locker {
+	fill: #2e3851;
+	stroke: #66728d;
+	stroke-width: 1;
+}
+.screen {
+	fill: #0f3a46;
+	stroke: #3ed2d6;
+	stroke-opacity: 0.6;
+}
+.screenText {
+	font-family: var(--font-mono);
+	font-size: 14px;
+	text-anchor: middle;
+	fill: #8ff3f5;
+}
+.tinyText {
+	font-family: var(--font-mono);
+	font-size: 11px;
+	text-anchor: middle;
+	fill: #9fb0d0;
+}
+.mug {
+	fill: #e9e2d2;
+}
+.console {
+	fill: #2a3450;
+	stroke: #66728d;
+}
+.wave {
+	fill: none;
+	stroke: #8ff3f5;
+	stroke-width: 1.6;
+}
+.rack {
+	fill: #3b4762;
+}
+.headset {
+	fill: none;
+	stroke: #c9d1df;
+	stroke-width: 3;
+}
+.coreGlass {
+	fill: #0e2a3a;
+	stroke: #3ed2d6;
+	stroke-opacity: 0.5;
+}
+.core {
+	fill: #3ed2d6;
+	opacity: var(--k-core);
+	animation: kcCore 2.4s ease-in-out infinite;
+}
+.pipe {
+	fill: none;
+	stroke: #56627c;
+	stroke-width: 6;
+}
+.gaugeFace {
+	fill: #0f3a46;
+	stroke: #f2a33a;
+	stroke-width: 2;
+}
+.fanWell {
+	fill: #0b1222;
+}
+.fan {
+	fill: #8b97ad;
+	transform-box: fill-box;
+	transform-origin: center;
+	animation: kcSpin var(--k-fan) linear infinite;
+}
+.canister {
+	fill: #2f3b57;
+	stroke: #66728d;
+}
+.o2Track {
+	fill: #0b1222;
+	stroke: #66728d;
+}
+.o2Fill {
+	fill: var(--k-cond);
+	transform: scaleY(var(--k-o2));
+	transition:
+		fill 0.8s ease,
+		transform 1.2s ease;
+	transform-box: fill-box;
+	transform-origin: bottom;
+}
+.star {
+	fill: #fff;
+}
+.route {
+	fill: none;
+	stroke: #f2a33a;
+	stroke-width: 1.4;
+	stroke-dasharray: 4 4;
+}
+.chartTable {
+	fill: #3ed2d6;
+	opacity: 0.55;
+}
+.chair path,
+.chair rect {
+	fill: #3b4762;
+}
+.viewport {
+	fill: #060a1f;
+	stroke: #8590a6;
+	stroke-width: 3;
+}
+
+/* crew */
+.crewBody {
+	fill: #e6eefa;
+}
+.walker {
+	animation: kcWalk 12s ease-in-out infinite alternate;
+}
+.climb {
+	animation: kcClimb 9s ease-in-out infinite alternate;
+}
+@keyframes kcWalk {
+	0%,
+	8% {
+		transform: translateX(0);
+	}
+	92%,
+	100% {
+		transform: translateX(var(--run));
+	}
+}
+@keyframes kcClimb {
+	0%,
+	12% {
+		transform: translateY(306px);
+	}
+	88%,
+	100% {
+		transform: translateY(506px);
+	}
+}
+@keyframes kcFlow {
+	to {
+		stroke-dashoffset: -36;
+	}
+}
+@keyframes kcBlink {
+	50% {
+		opacity: 0.2;
+	}
+}
+@keyframes kcSpin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+@keyframes kcCore {
+	50% {
+		opacity: 0.6;
+	}
+}
+@keyframes kcFail {
+	0% {
+		opacity: 1;
+	}
+	20% {
+		opacity: 0.1;
+	}
+	40% {
+		opacity: 0.9;
+	}
+	60% {
+		opacity: 0.05;
+	}
+}
+
+/* tap targets */
+.targets {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+}
+.target {
+	position: absolute;
+	display: flex;
+	align-items: flex-end;
+	padding: 6px;
+	border: 0;
+	background: transparent;
+	pointer-events: auto;
+	cursor: pointer;
+}
+.target:hover {
+	background: rgba(62, 210, 214, 0.06);
+}
+.target:focus-visible {
+	outline: 2px solid var(--k-teal);
+	outline-offset: -2px;
+}
+.targetTag {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 3px 7px;
+	font-family: var(--font-mono);
+	font-size: 0.66rem;
+	letter-spacing: 0.08em;
+	color: var(--k-ink);
+	background: rgba(4, 7, 26, 0.78);
+	border-left: 2px solid var(--k-teal);
+}
+.targetTag b {
+	color: var(--k-teal);
+	font-weight: 500;
+}
+.target[aria-pressed='true'] .targetTag {
+	border-left-color: var(--k-warn);
+}
+.target[aria-pressed='true'] .targetTag b {
+	color: var(--k-warn);
+}
+
+/* detail card */
+.detail {
+	position: relative;
+	padding: 24px;
+	border: 1px solid var(--k-line);
+	background:
+		linear-gradient(135deg, rgba(242, 163, 58, 0.08), transparent 40%),
+		linear-gradient(180deg, #0b1330, #060b20);
+	clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 0 100%);
+	animation: kcIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@keyframes kcIn {
+	from {
+		opacity: 0;
+		transform: translateX(8px);
+	}
+}
+.detailDeck {
+	display: flex;
+	justify-content: space-between;
+	gap: 10px;
+	font-family: var(--font-mono);
+	font-size: 0.68rem;
+	letter-spacing: 0.12em;
+	color: var(--k-teal);
+}
+.detailDeck span {
+	color: var(--k-teal);
+}
+.detailDeck span[data-dark='true'] {
+	color: #ff8a73;
+}
+.detailTitle {
+	margin-top: 14px;
+	font-family: var(--k-display);
+	font-size: 1.35rem;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+.detailBody {
+	margin-top: 12px;
+	line-height: 1.65;
+	color: var(--k-dim);
+}
+.puzzles {
+	margin-top: 18px;
+	display: grid;
+	gap: 8px;
+	list-style: none;
+	padding: 0;
+}
+.puzzles li {
+	position: relative;
+	padding: 10px 12px 10px 34px;
+	border: 1px solid var(--k-line);
+	background: rgba(62, 210, 214, 0.05);
+	font-size: 0.92rem;
+}
+.puzzles li::before {
+	content: '';
+	position: absolute;
+	left: 12px;
+	top: 50%;
+	width: 10px;
+	height: 10px;
+	translate: 0 -50%;
+	border: 1.5px solid var(--k-warn);
+	transform: rotate(45deg);
+}
+.crewNote {
+	margin-top: 16px;
+	font-size: 0.9rem;
+	color: var(--k-ink);
+}
+.crewNote span {
+	margin-right: 8px;
+	font-family: var(--font-mono);
+	font-size: 0.68rem;
+	letter-spacing: 0.12em;
+	color: var(--k-dim);
+	text-transform: uppercase;
+}
+
+@media (max-width: 1100px) {
+	.wrap {
+		grid-template-columns: 1fr;
+	}
+}
+@media (max-width: 640px) {
+	.targetName {
+		display: none;
+	}
+	.target {
+		padding: 3px;
+	}
+	.targetTag {
+		padding: 2px 5px;
+		font-size: 0.6rem;
+	}
+	.deckLabel {
+		font-size: 22px;
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.walker,
+	.climb,
+	.conduit,
+	.fan,
+	.core,
+	.redBlink,
+	.ledTeal,
+	.room[data-dark='true'] .emergency,
+	.room[data-dark='true'] .lamp,
+	.room[data-dark='true'] .cone,
+	.detail {
+		animation: none;
+	}
+	.climb {
+		transform: translateY(306px);
+	}
+}

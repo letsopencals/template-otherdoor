@@ -1,18 +1,30 @@
 /*
- * KEPLER STATION (2187). Deep-space indigo, ion teal HUD, warning amber,
- * nebula magenta. Display: Michroma (wide engineered caps); HUD numbers in the
- * shell mono. Everything here is scoped under .world.
+ * KEPLER STATION (2187), the Epic. Deep-space indigo, ion teal, warning amber,
+ * nebula magenta, hull titanium. Display: Michroma (wide engineered caps);
+ * readouts in the shell mono. The page is a mission timeline; restoring power
+ * (data-power='on' on the root) swaps the alert colour and brings the lights
+ * back everywhere through the variables below. Everything is scoped under .world.
  */
 .world {
 	--k-bg: #04071a;
 	--k-bg-2: #070c24;
 	--k-ink: #e6eefa;
-	--k-dim: #93a3c4;
+	--k-dim: #9cabc9;
 	--k-teal: #2ec4c9;
 	--k-warn: #f2a33a;
 	--k-mag: #b3367a;
+	--k-hull: #8a93a3;
 	--k-line: rgba(46, 196, 201, 0.22);
 	--k-display: var(--font-kepler), var(--font-display);
+
+	/* power state (read by every part of the station) */
+	--k-alert: var(--k-warn);
+	--k-cond: #ff6a4d;
+	--k-flow: 6s;
+	--k-fan: 4s;
+	--k-core: 0.35;
+	--k-o2: 1;
+	--k-dimmer: 0.55;
 
 	/* The shared booking panel, skinned for the station (AA checked: see components/worlds/README.md). */
 	--bp-bg: #0a1028;
@@ -36,6 +48,39 @@
 	color: var(--k-ink);
 	overflow-x: clip;
 }
+.world[data-power='on'] {
+	--k-alert: var(--k-teal);
+	--k-cond: #3ed2d6;
+	--k-flow: 1.6s;
+	--k-fan: 0.8s;
+	--k-core: 0.9;
+	--k-o2: 2.7;
+	--k-dimmer: 0;
+}
+
+/* the surge: a band of light sweeping down the screen when power comes back */
+.surge {
+	position: fixed;
+	inset: 0;
+	z-index: 40;
+	pointer-events: none;
+	background: linear-gradient(180deg, transparent 0%, rgba(143, 243, 245, 0.0) 40%, rgba(143, 243, 245, 0.22) 49%, rgba(255, 255, 255, 0.35) 50%, rgba(143, 243, 245, 0.18) 51%, transparent 62%);
+	background-size: 100% 300%;
+	animation: kSurge 1.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+@keyframes kSurge {
+	from {
+		background-position: 0 100%;
+		opacity: 1;
+	}
+	80% {
+		opacity: 1;
+	}
+	to {
+		background-position: 0 0%;
+		opacity: 0;
+	}
+}
 
 .mono {
 	font-family: var(--font-mono);
@@ -46,26 +91,67 @@
 .h2 {
 	margin-top: 14px;
 	font-family: var(--k-display);
-	font-size: clamp(1.7rem, 3.4vw, 2.9rem);
-	line-height: 1.12;
+	font-size: clamp(1.6rem, 3.3vw, 2.8rem);
+	line-height: 1.14;
 	letter-spacing: 0.02em;
 	text-transform: uppercase;
+	text-wrap: balance;
 }
 .lede {
-	margin-top: 16px;
-	max-width: 52ch;
-	font-size: 1.06rem;
-	line-height: 1.65;
+	margin-top: 18px;
+	max-width: 58ch;
+	font-size: 1.04rem;
+	line-height: 1.7;
 	color: var(--k-dim);
 }
 .blink {
-	color: var(--k-warn);
+	color: var(--k-alert);
 	animation: blink 1.6s steps(2) infinite;
 }
 @keyframes blink {
 	50% {
 		opacity: 0.25;
 	}
+}
+.imgFallback {
+	display: block;
+	width: 100%;
+	height: 100%;
+	min-height: 160px;
+	background: radial-gradient(80% 80% at 60% 40%, #1a1440, var(--k-bg) 75%);
+}
+
+/* ---- phase head: a mission-clock label, then the title */
+.phaseHead {
+	max-width: 760px;
+	margin-bottom: clamp(32px, 4vw, 56px);
+}
+.phaseTag {
+	display: inline-flex;
+	align-items: center;
+	gap: 12px;
+	padding: 6px 12px 6px 6px;
+	border: 1px solid var(--k-line);
+	background: rgba(4, 7, 26, 0.6);
+	font-family: var(--font-mono);
+	font-size: 0.72rem;
+	letter-spacing: 0.12em;
+	color: var(--k-ink);
+}
+.phaseN {
+	display: inline-grid;
+	place-items: center;
+	min-width: 30px;
+	height: 22px;
+	font-family: var(--k-display);
+	font-size: 0.72rem;
+	color: #04071a;
+	background: var(--k-teal);
+	clip-path: polygon(6px 0, 100% 0, 100% 100%, 0 100%, 0 6px);
+}
+.phaseT {
+	color: var(--k-alert);
+	font-variant-numeric: tabular-nums;
 }
 
 /* ---- HUD primitives */
@@ -112,8 +198,10 @@
 	color: var(--k-teal);
 }
 .gaugeArc {
-	filter: drop-shadow(0 0 6px var(--k-warn));
-	transition: stroke-dasharray 1s ease;
+	filter: drop-shadow(0 0 6px var(--k-alert));
+	transition:
+		stroke-dasharray 0.4s ease,
+		stroke 0.8s ease;
 }
 .gaugeValue {
 	font-family: var(--font-mono);
@@ -126,58 +214,84 @@
 	letter-spacing: 0.18em;
 	fill: var(--k-teal);
 }
-.deckMap {
-	display: block;
+
+/* ---- the hull seam between phases */
+.seam {
+	position: relative;
+	height: 72px;
+	overflow: clip;
+	box-shadow:
+		0 -20px 40px -20px #000,
+		0 20px 40px -20px #000;
+	z-index: 1;
+}
+.seamPlate {
+	position: absolute;
+	inset: 0;
 	width: 100%;
+	height: 100%;
+}
+.rivets {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 9px;
+	bottom: 9px;
+	background:
+		radial-gradient(circle, rgba(190, 200, 216, 0.55) 0 1.6px, rgba(0, 0, 0, 0.5) 2px, transparent 2.6px) 0 0 / 28px 54px repeat-x,
+		radial-gradient(circle, rgba(190, 200, 216, 0.55) 0 1.6px, rgba(0, 0, 0, 0.5) 2px, transparent 2.6px) 0 100% / 28px 54px repeat-x;
+	background-position:
+		14px 0,
+		14px 100%;
+	background-size:
+		28px 6px,
+		28px 6px;
+	opacity: 0.8;
+}
+.seamLabel {
+	position: absolute;
+	left: clamp(16px, 5vw, 72px);
+	top: 50%;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	translate: 0 -50%;
+	padding: 6px 14px 6px 8px;
+	background: #0a0e1b;
+	box-shadow: inset 0 0 0 1px rgba(138, 147, 163, 0.35);
+	font-family: var(--k-display);
+	font-size: 0.72rem;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: #d4dbe7;
+}
+.seamLabel b {
+	font-weight: 400;
+	color: var(--k-alert);
+}
+.seamHazard {
+	position: absolute;
+	right: clamp(110px, 14vw, 220px);
+	top: 50%;
+	width: clamp(60px, 9vw, 140px);
+	height: 16px;
+	translate: 0 -50%;
+	background: repeating-linear-gradient(-45deg, var(--k-warn) 0 8px, #0a0e1b 8px 16px);
+	opacity: 0.8;
+}
+.seamT {
+	position: absolute;
+	right: clamp(16px, 5vw, 72px);
+	top: 50%;
+	translate: 0 -50%;
+	font-family: var(--font-mono);
+	font-size: 0.72rem;
+	letter-spacing: 0.08em;
 	color: var(--k-teal);
-}
-.mapLabel {
-	font-family: var(--font-mono);
-	font-size: 9px;
-	letter-spacing: 0.2em;
-	fill: var(--k-warn);
-	stroke: none;
-}
-.mapRoom {
-	font-family: var(--font-mono);
-	font-size: 8.5px;
-	letter-spacing: 0.12em;
-	fill: currentColor;
-	fill-opacity: 0.8;
-	stroke: none;
-}
-.mapWarn {
-	font-family: var(--font-mono);
-	font-size: 8.5px;
-	letter-spacing: 0.12em;
-	fill: var(--k-warn);
-}
-.crew circle {
-	fill: var(--k-teal);
-	animation: blink 2.2s ease-in-out infinite;
-}
-.crew circle:nth-child(2n) {
-	animation-delay: -0.8s;
-}
-.alarm {
-	fill: none;
-	stroke: var(--k-warn);
-	stroke-width: 1.5;
-	transform-origin: 196px 168px;
-	animation: ping 1.8s ease-out infinite;
-}
-@keyframes ping {
-	from {
-		transform: scale(0.6);
-		opacity: 1;
-	}
-	to {
-		transform: scale(2.2);
-		opacity: 0;
-	}
+	font-variant-numeric: tabular-nums;
 }
 
-/* ---------------------------------------------------------------- Hero */
+/* ================================================================ HERO (00 contact) */
 .hero {
 	position: relative;
 	min-height: 100svh;
@@ -190,7 +304,7 @@
 .heroMedia {
 	position: absolute;
 	inset: 0;
-	z-index: -3;
+	z-index: -4;
 	background: radial-gradient(70% 60% at 70% 40%, #1a1440, var(--k-bg) 70%);
 }
 .heroMedia img,
@@ -205,11 +319,149 @@
 .heroStars {
 	position: absolute;
 	inset: 0;
-	z-index: -2;
+	z-index: -3;
 	width: 100%;
 	height: 100%;
 	mix-blend-mode: screen;
 	opacity: 0.7;
+}
+/* sun glare sweeping slowly across the hull */
+.glare {
+	position: absolute;
+	inset: -20%;
+	z-index: -2;
+	background:
+		radial-gradient(14% 22% at 50% 50%, rgba(255, 236, 205, 0.32), transparent 70%),
+		linear-gradient(115deg, transparent 44%, rgba(255, 230, 190, 0.08) 49%, rgba(255, 255, 255, 0.14) 50%, rgba(255, 230, 190, 0.08) 51%, transparent 56%);
+	mix-blend-mode: screen;
+	animation: kGlare 18s ease-in-out infinite;
+	pointer-events: none;
+}
+@keyframes kGlare {
+	0%,
+	100% {
+		transform: translate3d(-22%, -8%, 0);
+		opacity: 0.4;
+	}
+	50% {
+		transform: translate3d(18%, 6%, 0);
+		opacity: 1;
+	}
+}
+.orbit {
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+}
+.traj {
+	fill: none;
+	stroke-width: 1.6;
+	stroke-dasharray: 2 9;
+	stroke-linecap: round;
+	animation: kTraj 3s linear infinite;
+}
+@keyframes kTraj {
+	to {
+		stroke-dashoffset: -44;
+	}
+}
+.trajTick {
+	font-family: var(--font-mono);
+	font-size: 13px;
+	letter-spacing: 0.18em;
+	fill: rgba(143, 243, 245, 0.7);
+}
+.shuttleMark {
+	fill: var(--k-warn);
+	offset-path: path('M1620 840C1390 790 1160 680 1020 590S860 470 812 438');
+	offset-rotate: 0deg;
+	animation: kShuttle 14s cubic-bezier(0.3, 0, 0.2, 1) infinite;
+}
+.shuttleHalo {
+	fill: none;
+	stroke: var(--k-warn);
+	stroke-opacity: 0.5;
+}
+@keyframes kShuttle {
+	from {
+		offset-distance: 0%;
+		opacity: 0;
+	}
+	8% {
+		opacity: 1;
+	}
+	88% {
+		opacity: 1;
+	}
+	to {
+		offset-distance: 100%;
+		opacity: 0;
+	}
+}
+.target {
+	fill: none;
+	stroke: var(--k-teal);
+	stroke-width: 1.4;
+	stroke-dasharray: 4 6;
+	transform-box: fill-box;
+	transform-origin: center;
+	animation: kSpin 22s linear infinite;
+}
+.targetCross {
+	stroke: var(--k-teal);
+	stroke-width: 1.6;
+}
+@keyframes kSpin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+.debrisField path {
+	fill: #b3bccb;
+	opacity: 0.65;
+}
+.deb1 {
+	animation: kDeb1 38s linear infinite;
+}
+.deb2 {
+	animation: kDeb2 52s linear infinite;
+	animation-delay: -20s;
+}
+.deb3 {
+	animation: kDeb3 64s linear infinite;
+	animation-delay: -12s;
+	opacity: 0.4 !important;
+}
+.deb4 {
+	animation: kDeb1 44s linear infinite;
+	animation-delay: -30s;
+}
+@keyframes kDeb1 {
+	from {
+		transform: translate(1650px, 180px) rotate(0deg);
+	}
+	to {
+		transform: translate(-60px, 320px) rotate(720deg);
+	}
+}
+@keyframes kDeb2 {
+	from {
+		transform: translate(1650px, 620px) rotate(0deg);
+	}
+	to {
+		transform: translate(-60px, 480px) rotate(-540deg);
+	}
+}
+@keyframes kDeb3 {
+	from {
+		transform: translate(-60px, 80px) rotate(0deg) scale(1.4);
+	}
+	to {
+		transform: translate(1650px, 260px) rotate(400deg) scale(1.4);
+	}
 }
 .heroShade {
 	position: absolute;
@@ -221,11 +473,6 @@
 }
 .heroFrame {
 	inset: calc(var(--header-h) + 14px) 16px 16px;
-}
-@media (min-width: 768px) {
-	.heroFrame {
-		inset: calc(var(--header-h) + 18px) 28px 24px;
-	}
 }
 .hudTop {
 	position: absolute;
@@ -242,11 +489,6 @@
 	letter-spacing: 0.16em;
 	color: var(--k-teal);
 }
-@media (max-width: 760px) {
-	.hudTop > span:first-child {
-		display: none;
-	}
-}
 .heroInner {
 	position: relative;
 }
@@ -260,7 +502,7 @@
 .title {
 	margin-top: 18px;
 	font-family: var(--k-display);
-	font-size: clamp(2.7rem, 8.6vw, 8.4rem);
+	font-size: clamp(2.6rem, 8.6vw, 8.4rem);
 	line-height: 0.95;
 	letter-spacing: 0.04em;
 	text-transform: uppercase;
@@ -270,7 +512,6 @@
 	display: block;
 }
 .title span:last-child {
-	/* the second line is lit from below like a HUD readout, not outlined */
 	background: linear-gradient(180deg, #e6eefa 10%, var(--k-teal) 75%, rgba(46, 196, 201, 0.35));
 	-webkit-background-clip: text;
 	background-clip: text;
@@ -303,7 +544,9 @@
 	text-transform: uppercase;
 	text-decoration: none;
 	clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
-	transition: background 0.2s ease, color 0.2s ease;
+	transition:
+		background 0.2s ease,
+		color 0.2s ease;
 }
 .primary {
 	color: #140a02;
@@ -321,14 +564,19 @@
 .ghost:hover {
 	background: rgba(46, 196, 201, 0.2);
 }
+.primary:focus-visible,
+.ghost:focus-visible {
+	outline: 2px solid var(--k-ink);
+	outline-offset: 3px;
+}
 .heroStats {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 14px 40px;
+	gap: 14px 36px;
 	margin-top: 40px;
 	padding-top: 22px;
 	border-top: 1px solid var(--k-line);
-	max-width: 640px;
+	max-width: 680px;
 }
 .heroStats dt,
 .specs dt {
@@ -341,7 +589,7 @@
 .heroStats dd {
 	margin-top: 4px;
 	font-family: var(--font-mono);
-	font-size: 1.25rem;
+	font-size: 1.2rem;
 	font-variant-numeric: tabular-nums;
 }
 .heroGauge {
@@ -350,75 +598,49 @@
 	bottom: clamp(48px, 10vh, 110px);
 	display: none;
 }
-@media (min-width: 1100px) {
-	.heroGauge {
-		display: block;
-	}
-}
 
-/* ---------------------------------------------------------------- Signal */
-.signal {
+/* ================================================================ 01 APPROACH */
+.approach {
 	position: relative;
-	padding: clamp(72px, 9vw, 120px) 0;
+	padding: clamp(80px, 9vw, 130px) 0 clamp(70px, 8vw, 110px);
 	isolation: isolate;
 	overflow: clip;
-	background: radial-gradient(60% 50% at 80% 50%, rgba(179, 54, 122, 0.14), transparent 70%), var(--k-bg);
+	background: var(--k-bg);
 }
-.bgStars {
+.approachPlate {
 	position: absolute;
-	inset: 0;
-	z-index: -1;
-	width: 100%;
-	height: 100%;
-	opacity: 0.8;
+	inset: -8% -4%;
+	width: 108%;
+	height: 116%;
+	object-fit: cover;
+	z-index: -3;
+	opacity: 0.55;
+	-webkit-mask-image: linear-gradient(180deg, transparent, #000 18%, #000 80%, transparent);
+	mask-image: linear-gradient(180deg, transparent, #000 18%, #000 80%, transparent);
+	animation: kDrift 60s ease-in-out infinite alternate;
 }
-.signalInner {
-	display: grid;
-	gap: 48px;
-	align-items: center;
-}
-@media (min-width: 960px) {
-	.signalInner {
-		grid-template-columns: 1.3fr 1fr;
-		gap: 80px;
+@keyframes kDrift {
+	to {
+		transform: translate3d(-3%, 2%, 0) scale(1.04);
 	}
 }
-.transmission {
+.approachStars {
+	position: absolute;
+	inset: 0;
+	z-index: -2;
+	width: 100%;
+	height: 100%;
+	mix-blend-mode: screen;
+}
+.approachInner {
 	position: relative;
-	padding: clamp(26px, 4vw, 48px);
-	background: linear-gradient(180deg, rgba(46, 196, 201, 0.07), rgba(46, 196, 201, 0.02));
-	backdrop-filter: blur(6px);
-	-webkit-backdrop-filter: blur(6px);
-	/* scanlines */
-	background-image: repeating-linear-gradient(0deg, rgba(46, 196, 201, 0.05) 0 1px, transparent 1px 4px), linear-gradient(180deg, rgba(46, 196, 201, 0.07), rgba(46, 196, 201, 0.02));
-}
-.txHead {
-	font-family: var(--font-mono);
-	font-size: 0.7rem;
-	letter-spacing: 0.16em;
-	color: var(--k-teal);
-}
-.txBody {
-	margin-top: 18px;
-	font-size: 1.2rem;
-	line-height: 1.6;
-	color: var(--k-ink);
-}
-.txDesc {
-	margin-top: 16px;
-	line-height: 1.7;
-	color: var(--k-dim);
-}
-.signalSide .lede {
-	font-size: 1.25rem;
-	color: #c6d2ea;
 }
 
-/* ---------------------------------------------------------------- Docking approach (sticky track) */
+/* ================================================================ 02 HARD DOCK (sticky track) */
 .dockTrack {
 	--p: 0;
 	position: relative;
-	height: 330vh;
+	height: 280vh;
 }
 .dockStage {
 	position: sticky;
@@ -448,7 +670,6 @@
 	z-index: -2;
 	transform-origin: 73% 47%;
 	transform: translate3d(calc(var(--p) * -23%), calc(var(--p) * 3%), 0) scale(calc(0.42 + var(--p) * 1.05)) rotate(calc((1 - var(--p)) * 9deg));
-	/* isolate the ring on the starfield plate; the linear fade hides the picture's right edge */
 	-webkit-mask-image: radial-gradient(34% 52% at 73% 47%, #000 72%, transparent 100%), linear-gradient(90deg, #000 86%, transparent 98%);
 	-webkit-mask-composite: source-in;
 	mask-image: radial-gradient(34% 52% at 73% 47%, #000 72%, transparent 100%), linear-gradient(90deg, #000 86%, transparent 98%);
@@ -470,7 +691,9 @@
 	color: var(--k-teal);
 	transform: translate(-50%, -50%) scale(calc(1.7 - var(--p) * 0.7)) rotate(calc((1 - var(--p)) * 45deg));
 	opacity: calc(0.5 + var(--p) * 0.5);
-	transition: color 0.5s ease, filter 0.5s ease;
+	transition:
+		color 0.5s ease,
+		filter 0.5s ease;
 	filter: drop-shadow(0 0 8px rgba(46, 196, 201, 0.4));
 }
 .dockReticle[data-docked='true'] {
@@ -483,11 +706,6 @@
 }
 .dockFrame {
 	inset: calc(var(--header-h) + 10px) 16px 16px;
-}
-@media (min-width: 768px) {
-	.dockFrame {
-		inset: calc(var(--header-h) + 14px) 28px 24px;
-	}
 }
 .readouts {
 	position: absolute;
@@ -521,13 +739,15 @@
 .beat {
 	grid-area: 1 / 1;
 	padding: 20px 22px;
-	background: rgba(4, 7, 26, 0.72);
-	backdrop-filter: blur(10px);
-	-webkit-backdrop-filter: blur(10px);
-	box-shadow: inset 0 0 0 1px var(--k-line), inset 3px 0 0 var(--k-teal);
+	background: rgba(4, 7, 26, 0.78);
+	box-shadow:
+		inset 0 0 0 1px var(--k-line),
+		inset 3px 0 0 var(--k-teal);
 	opacity: 0;
 	transform: translateY(10px);
-	transition: opacity 0.6s ease, transform 0.6s ease;
+	transition:
+		opacity 0.6s ease,
+		transform 0.6s ease;
 }
 .beat[data-on='true'] {
 	opacity: 1;
@@ -566,399 +786,266 @@
 .dockStatus[data-docked='true'] {
 	color: var(--k-warn);
 }
-@media (max-width: 760px) {
-	.dockTrack {
-		height: 260vh;
-	}
-	.readouts {
-		top: calc(var(--header-h) + 40px);
-		gap: 8px;
-	}
-	.readouts div:last-child {
-		display: none;
-	}
-	.beats {
-		bottom: 56px;
-		left: 16px;
-		width: calc(100% - 32px);
-	}
-}
 
-/* ---------------------------------------------------------------- Airlock (sticky track) */
-.airTrack {
-	--p: 0;
-	--open: clamp(0, calc((var(--p) - 0.08) * 2.4), 1);
-	--hud: clamp(0, calc((var(--p) - 0.42) * 3), 1);
+/* ================================================================ 03 THE TWO DECKS */
+.decks {
 	position: relative;
-	height: 240vh;
-}
-.airStage {
-	position: sticky;
-	top: 0;
-	height: 100vh;
-	height: 100svh;
-	overflow: clip;
-	isolation: isolate;
-}
-.airScene {
-	position: absolute;
-	inset: 0;
-}
-.sceneImg {
-	position: absolute;
-	inset: 0;
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
-	transform: scale(calc(1.18 - var(--open) * 0.14));
-}
-.sceneShade {
-	position: absolute;
-	inset: 0;
-	background: linear-gradient(180deg, rgba(4, 7, 26, 0.6), rgba(4, 7, 26, 0.15) 40%, rgba(4, 7, 26, 0.85)), radial-gradient(60% 50% at 50% 60%, transparent, rgba(4, 7, 26, 0.6));
-}
-.sceneHud {
-	position: relative;
-	height: 100%;
-	display: grid;
-	grid-template-columns: 240px 1fr 380px;
-	grid-template-rows: 1fr auto;
-	gap: 24px;
-	align-items: end;
-	padding-top: calc(var(--header-h) + 40px);
-	padding-bottom: 56px;
-	opacity: var(--hud);
-	transform: translateY(calc((1 - var(--hud)) * 20px));
-}
-.panel {
-	position: relative;
-	padding: 18px;
-	background: rgba(4, 7, 26, 0.62);
-	backdrop-filter: blur(8px);
-	-webkit-backdrop-filter: blur(8px);
-	box-shadow: inset 0 0 0 1px var(--k-line);
-}
-.panelHead {
-	margin-bottom: 10px;
-	font-family: var(--font-mono);
-	font-size: 0.64rem;
-	letter-spacing: 0.2em;
-	color: var(--k-teal);
-}
-.panelNote {
-	margin-top: 8px;
-	font-size: 0.8rem;
-	line-height: 1.45;
-	color: var(--k-dim);
-}
-.mapPanel {
-	grid-column: 3;
-	grid-row: 1;
-	align-self: start;
-}
-.sceneHud > .panel:first-child {
-	grid-column: 1;
-	grid-row: 2;
-}
-.sceneCopy {
-	grid-column: 2 / 4;
-	grid-row: 2;
-	justify-self: end;
-	max-width: 520px;
-	text-align: right;
-}
-.sceneCopy p:last-child {
-	margin-top: 14px;
-	line-height: 1.65;
-	color: #c6d2ea;
-}
-@media (max-width: 960px) {
-	.sceneHud {
-		grid-template-columns: 1fr;
-		grid-template-rows: auto;
-		align-content: end;
-		gap: 16px;
-	}
-	.mapPanel {
-		display: none;
-	}
-	.sceneHud > .panel:first-child {
-		grid-column: 1;
-		grid-row: auto;
-		justify-self: start;
-		display: flex;
-		align-items: center;
-		gap: 14px;
-		padding: 12px;
-	}
-	.sceneHud > .panel:first-child .panelHead,
-	.sceneHud > .panel:first-child .panelNote {
-		display: none;
-	}
-	.sceneHud > .panel:first-child svg {
-		width: 110px;
-		height: 110px;
-	}
-	.sceneCopy {
-		grid-column: 1;
-		grid-row: auto;
-		justify-self: start;
-		text-align: left;
-	}
-}
-.airDoors {
-	position: absolute;
-	inset: 0;
-	pointer-events: none;
-}
-.airDoor {
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	width: 50.5%;
+	padding: clamp(80px, 9vw, 130px) 0;
 	background:
-		repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.025) 0 2px, transparent 2px 60px),
-		repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.35) 0 1px, transparent 1px 120px),
-		linear-gradient(180deg, #2a3146, #161b2b 50%, #0d1120);
-	box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.7);
-	transition: none;
+		radial-gradient(50% 40% at 85% 10%, rgba(179, 54, 122, 0.12), transparent 70%),
+		linear-gradient(180deg, var(--k-bg), var(--k-bg-2));
 }
-.airLeft {
-	left: 0;
-	transform: translateX(calc(var(--open) * -101%));
-	box-shadow: inset -2px 0 0 rgba(242, 163, 58, 0.5), inset 0 0 120px rgba(0, 0, 0, 0.7);
-}
-.airRight {
-	right: 0;
-	transform: translateX(calc(var(--open) * 101%));
-	box-shadow: inset 2px 0 0 rgba(242, 163, 58, 0.5), inset 0 0 120px rgba(0, 0, 0, 0.7);
-}
-.hazard {
-	position: absolute;
-	left: 0;
-	right: 0;
-	top: 64%;
-	height: 34px;
-	background: repeating-linear-gradient(-45deg, #f2a33a 0 16px, #0d1120 16px 32px);
-	opacity: 0.85;
-}
-.airWindow {
-	position: absolute;
-	top: 22%;
-	width: 120px;
-	height: 120px;
-	border-radius: 50%;
-	background: radial-gradient(circle, rgba(46, 196, 201, 0.25), rgba(4, 7, 26, 0.9) 70%);
-	box-shadow: inset 0 0 0 6px #232a3e, inset 0 0 0 8px rgba(255, 255, 255, 0.08), 0 0 30px rgba(46, 196, 201, 0.2);
-}
-.airLeft .airWindow {
-	right: 18%;
-}
-.airRight .airWindow {
-	left: 18%;
-}
-.airSeam {
-	position: absolute;
-	left: 50%;
-	top: 0;
-	bottom: 0;
-	width: 2px;
-	transform: translateX(-50%);
-	background: var(--k-warn);
-	box-shadow: 0 0 30px 6px rgba(242, 163, 58, 0.6);
-	opacity: calc(1 - var(--open) * 3);
-}
-.airPlate {
-	position: absolute;
-	left: 50%;
-	top: calc(var(--header-h) + 50px);
-	transform: translateX(-50%);
-	padding: 8px 16px;
-	font-family: var(--font-mono);
-	font-size: 0.7rem;
-	letter-spacing: 0.24em;
-	color: var(--k-warn);
-	background: rgba(4, 7, 26, 0.8);
-	box-shadow: inset 0 0 0 1px rgba(242, 163, 58, 0.5);
-	white-space: nowrap;
-	opacity: calc(1 - var(--open) * 2);
-}
-
-/* ---------------------------------------------------------------- Inside */
-.inside {
-	padding: clamp(80px, 11vw, 140px) 0 60px;
-	background: radial-gradient(50% 60% at 15% 30%, rgba(46, 196, 201, 0.1), transparent 70%), var(--k-bg);
-}
-.insideGrid {
+.specRow {
 	display: grid;
-	gap: 48px;
-	align-items: center;
-}
-@media (min-width: 960px) {
-	.insideGrid {
-		grid-template-columns: 1.05fr 1fr;
-		gap: 80px;
-	}
-}
-.leverFrame {
-	position: relative;
-	padding: 10px;
-}
-.leverImg {
-	display: block;
-	width: 100%;
-	aspect-ratio: 3 / 2;
-	object-fit: cover;
-}
-.leverTag {
-	position: absolute;
-	right: 26px;
-	bottom: 26px;
-	padding: 6px 10px;
-	font-family: var(--font-mono);
-	font-size: 0.66rem;
-	letter-spacing: 0.18em;
-	color: var(--k-warn);
-	background: rgba(4, 7, 26, 0.8);
-	box-shadow: inset 0 0 0 1px rgba(242, 163, 58, 0.5);
-}
-.imgFallback {
-	display: block;
-	width: 100%;
-	height: 100%;
-	min-height: 200px;
-	background: radial-gradient(60% 60% at 50% 60%, rgba(46, 196, 201, 0.2), transparent 70%), var(--k-bg-2);
+	grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+	gap: clamp(24px, 4vw, 56px);
+	margin-top: clamp(40px, 5vw, 72px);
+	align-items: stretch;
 }
 .specs {
 	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: 16px 28px;
-	margin-top: 32px;
-	padding-top: 24px;
+	grid-template-columns: 1fr 1fr;
+	gap: 0;
 	border-top: 1px solid var(--k-line);
 }
-@media (min-width: 600px) {
-	.specs {
-		grid-template-columns: repeat(4, minmax(0, 1fr));
-	}
+.specs > div {
+	padding: 16px 16px 16px 0;
+	border-bottom: 1px solid var(--k-line);
+}
+.specs > div:nth-child(odd) {
+	padding-right: 20px;
+	border-right: 1px solid var(--k-line);
+}
+.specs > div:nth-child(even) {
+	padding-left: 20px;
 }
 .specs dd {
 	margin-top: 6px;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-family: var(--k-display);
+	font-size: 1.08rem;
+	letter-spacing: 0.02em;
+}
+.specSmall {
 	font-family: var(--font-mono);
-	font-size: 1rem;
-	color: var(--k-ink);
+	font-size: 0.74rem;
+	color: var(--k-dim);
 }
 .bars {
 	display: inline-flex;
 	gap: 3px;
 }
 .bars i {
-	width: 12px;
+	width: 14px;
 	height: 6px;
 	background: rgba(46, 196, 201, 0.18);
 	transform: skewX(-20deg);
 }
 .bars i[data-on='true'] {
-	background: var(--k-warn);
-	box-shadow: 0 0 6px var(--k-warn);
+	background: var(--k-alert);
+	box-shadow: 0 0 6px var(--k-alert);
 }
-.photos {
-	display: grid;
-	gap: 14px;
-	margin-top: 72px;
-}
-@media (min-width: 760px) {
-	.photos {
-		grid-template-columns: 1.4fr 1fr 1fr;
-	}
-}
-.photo {
+.setShot {
 	position: relative;
 	margin: 0;
+	min-height: 260px;
 	overflow: clip;
+	border-radius: 4px;
 	box-shadow: inset 0 0 0 1px var(--k-line);
 }
-.photo img {
-	display: block;
-	width: 100%;
-	aspect-ratio: 3 / 2;
-	height: 100%;
-	object-fit: cover;
-	filter: saturate(0.9);
-}
-.photo figcaption {
-	position: absolute;
-	left: 12px;
-	top: 10px;
-	font-family: var(--font-mono);
-	font-size: 0.64rem;
-	letter-spacing: 0.2em;
-	color: var(--k-teal);
-	text-shadow: 0 1px 4px #000;
-}
-.photo figcaption::before {
-	content: '● ';
-	color: #ff4d5e;
-}
-
-/* ---------------------------------------------------------------- Corridor band */
-.corridor {
-	position: relative;
-	height: clamp(320px, 60vh, 620px);
-	overflow: clip;
-	display: grid;
-	place-items: center;
-}
-.corridor img {
+.setImg {
 	position: absolute;
 	inset: 0;
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
-	filter: brightness(0.7);
-	animation: drift linear both;
-	animation-timeline: view();
 }
-@keyframes drift {
-	from {
-		transform: scale(1.25);
-	}
-	to {
-		transform: scale(1);
-	}
+.setShot figcaption {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	padding: 40px 18px 16px;
+	background: linear-gradient(180deg, transparent, rgba(4, 7, 26, 0.92));
+	font-size: 0.92rem;
+	color: #c6d2ea;
 }
-.corridor::after {
+.setShot figcaption span {
+	display: block;
+	margin-bottom: 4px;
+	font-family: var(--font-mono);
+	font-size: 0.64rem;
+	letter-spacing: 0.14em;
+	color: var(--k-teal);
+}
+
+/* ================================================================ 04 DECK 1 · HABITATION */
+.hab {
+	position: relative;
+	padding: clamp(80px, 9vw, 130px) 0;
+	background:
+		radial-gradient(60% 50% at 10% 30%, rgba(255, 178, 87, 0.07), transparent 70%),
+		var(--k-bg-2);
+}
+.habGrid {
+	display: grid;
+	grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+	gap: clamp(28px, 4vw, 64px);
+	align-items: start;
+}
+.habList {
+	display: grid;
+	gap: 10px;
+	padding: 0;
+	list-style: none;
+	margin-top: -16px;
+}
+.habList li {
+	display: grid;
+	grid-template-columns: 88px 1fr;
+	gap: 12px;
+	padding: 10px 0;
+	border-bottom: 1px solid var(--k-line);
+	color: #c6d2ea;
+	font-size: 0.95rem;
+}
+.habList b {
+	font-family: var(--font-mono);
+	font-size: 0.7rem;
+	font-weight: 500;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--k-warn);
+	padding-top: 3px;
+}
+.cams {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 12px;
+	margin-top: 28px;
+}
+.cam {
+	position: relative;
+	margin: 0;
+	aspect-ratio: 4 / 3;
+	overflow: clip;
+	border-radius: 18px / 26px;
+	box-shadow:
+		inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+		0 20px 40px -20px #000;
+}
+.camImg {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	filter: saturate(0.85) contrast(1.05);
+}
+.cam::after {
 	content: '';
 	position: absolute;
 	inset: 0;
-	background: linear-gradient(180deg, var(--k-bg), transparent 30%, transparent 70%, var(--k-bg));
+	background:
+		radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.55)),
+		repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.12) 0 1px, transparent 1px 3px);
+	pointer-events: none;
 }
-.corridor p {
-	position: relative;
+.cam figcaption {
+	position: absolute;
+	left: 12px;
+	bottom: 10px;
 	z-index: 1;
-	padding: 0 16px;
-	font-family: var(--k-display);
-	font-size: clamp(1.3rem, 3vw, 2.4rem);
-	letter-spacing: 0.06em;
-	text-transform: uppercase;
-	text-align: center;
-	text-shadow: 0 2px 30px #000;
+	font-family: var(--font-mono);
+	font-size: 0.62rem;
+	letter-spacing: 0.12em;
+	color: #e6eefa;
+	text-shadow: 0 1px 4px #000;
+}
+.rec {
+	color: #ff5a4f;
+	animation: blink 1.4s steps(2) infinite;
 }
 
-/* ---------------------------------------------------------------- Mission control */
-.control {
-	padding: clamp(80px, 10vw, 130px) 0;
+/* ================================================================ 05 DECK 2 · COMMAND */
+.cmd {
+	position: relative;
+	padding-bottom: clamp(80px, 9vw, 130px);
+	background: var(--k-bg);
+}
+.viewport {
+	position: relative;
+	min-height: clamp(420px, 62vh, 640px);
+	display: grid;
+	align-items: end;
+	overflow: clip;
+	isolation: isolate;
+}
+.viewportImg,
+.viewport .imgFallback {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	z-index: -2;
+}
+.viewportShade {
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	background:
+		linear-gradient(180deg, rgba(4, 7, 26, 0.6), transparent 30%, rgba(4, 7, 26, 0.5) 60%, var(--k-bg) 100%),
+		linear-gradient(90deg, rgba(4, 7, 26, 0.85), transparent 60%),
+		rgba(2, 4, 12, var(--k-dimmer));
+	transition: background 1.2s ease;
+}
+.viewportCopy {
+	padding-top: 120px;
+}
+.viewportCopy .phaseHead {
+	margin-bottom: 40px;
+}
+.viewportCopy .lede {
+	color: #c6d2ea;
+}
+.cmdGrid {
+	display: grid;
+	grid-template-columns: minmax(0, 1.5fr) minmax(0, 0.7fr);
+	gap: clamp(20px, 3vw, 40px);
+	align-items: stretch;
+	margin-top: 10px;
+}
+.leverShot {
+	position: relative;
+	margin: 0;
+	min-height: 260px;
+	overflow: clip;
+}
+.leverImg {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+.leverShot figcaption {
+	position: absolute;
+	left: 14px;
+	bottom: 12px;
+	padding: 4px 8px;
+	background: rgba(4, 7, 26, 0.8);
+	font-family: var(--font-mono);
+	font-size: 0.64rem;
+	letter-spacing: 0.12em;
+	color: var(--k-warn);
 }
 .controlGrid {
 	display: grid;
-	gap: 56px;
+	grid-template-columns: 1fr 1fr;
+	gap: clamp(28px, 5vw, 80px);
 	align-items: start;
-}
-@media (min-width: 960px) {
-	.controlGrid {
-		grid-template-columns: 1fr 1fr;
-		gap: 80px;
-	}
+	margin-top: clamp(60px, 7vw, 100px);
 }
 .comms {
 	position: relative;
@@ -968,7 +1055,7 @@
 .commsHead {
 	font-family: var(--font-mono);
 	font-size: 0.68rem;
-	letter-spacing: 0.18em;
+	letter-spacing: 0.16em;
 	color: var(--k-teal);
 }
 .commsBody {
@@ -988,7 +1075,17 @@
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
-	filter: grayscale(0.5) contrast(1.05);
+	filter: grayscale(0.4) contrast(1.05);
+}
+.portraitFallback {
+	display: grid;
+	place-items: center;
+	width: 100%;
+	height: 100%;
+	font-family: var(--k-display);
+	font-size: 1.6rem;
+	color: var(--k-teal);
+	background: radial-gradient(circle, #13204a, #060a1e);
 }
 .gmName {
 	font-family: var(--k-display);
@@ -1028,8 +1125,13 @@
 	line-height: 1.65;
 	color: #c6d2ea;
 }
+.logWrap {
+	padding-top: 6px;
+}
 .log {
 	margin-top: 26px;
+	padding: 0;
+	list-style: none;
 	border-top: 1px solid var(--k-line);
 }
 .log li {
@@ -1047,43 +1149,40 @@
 }
 .log b {
 	font-weight: 500;
-	font-size: 1.2rem;
+	font-size: 1.15rem;
 }
 .log em {
 	font-style: normal;
 	font-family: var(--font-mono);
-	font-size: 1.3rem;
+	font-size: 1.25rem;
 	color: var(--k-teal);
 	font-variant-numeric: tabular-nums;
 }
 
-/* ---------------------------------------------------------------- Booking */
-.booking {
-	padding: clamp(60px, 8vw, 100px) 0 clamp(80px, 10vw, 130px);
-	background: radial-gradient(50% 50% at 75% 40%, rgba(242, 163, 58, 0.08), transparent 70%), linear-gradient(180deg, var(--k-bg), var(--k-bg-2));
+/* ================================================================ 06 FINAL DOCKING + booking */
+.final {
+	position: relative;
+	padding: clamp(80px, 9vw, 130px) 0 clamp(80px, 10vw, 130px);
+	background:
+		radial-gradient(50% 40% at 75% 70%, rgba(242, 163, 58, 0.08), transparent 70%),
+		linear-gradient(180deg, var(--k-bg), var(--k-bg-2));
 }
 .bookGrid {
 	display: grid;
-	gap: 48px;
+	grid-template-columns: 1fr minmax(440px, 500px);
+	gap: 72px;
 	align-items: start;
-}
-@media (min-width: 960px) {
-	.bookGrid {
-		grid-template-columns: 1fr minmax(440px, 500px);
-		gap: 72px;
-	}
+	margin-top: clamp(60px, 8vw, 110px);
 }
 .brief {
+	position: sticky;
+	top: calc(var(--header-h) + 30px);
 	padding-top: 10px;
-}
-@media (min-width: 960px) {
-	.brief {
-		position: sticky;
-		top: calc(var(--header-h) + 30px);
-	}
 }
 .timeline {
 	margin-top: 30px;
+	padding: 0;
+	list-style: none;
 	border-left: 1px solid var(--k-line);
 }
 .timeline li {
@@ -1118,11 +1217,19 @@
 	box-shadow: inset 2px 0 0 var(--k-warn);
 	background: rgba(242, 163, 58, 0.06);
 }
+.wear span {
+	margin-right: 8px;
+	font-family: var(--font-mono);
+	font-size: 0.68rem;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--k-warn);
+}
 .panelWrap {
 	position: relative;
 }
 
-/* ---------------------------------------------------------------- Next door */
+/* ================================================================ Next door */
 .next {
 	display: grid;
 	grid-template-columns: auto 1fr;
@@ -1132,7 +1239,13 @@
 	color: inherit;
 	text-decoration: none;
 	border-top: 1px solid var(--k-line);
-	background: radial-gradient(40% 80% at 10% 50%, color-mix(in srgb, var(--n) 16%, transparent), transparent 70%), var(--k-bg-2);
+	background:
+		radial-gradient(40% 80% at 10% 50%, color-mix(in srgb, var(--n) 16%, transparent), transparent 70%),
+		var(--k-bg-2);
+}
+.next:focus-visible {
+	outline: 2px solid var(--k-teal);
+	outline-offset: -6px;
 }
 .hatch {
 	position: relative;
@@ -1141,8 +1254,24 @@
 	aspect-ratio: 1;
 	border-radius: 50%;
 	background: radial-gradient(circle at 40% 35%, #2a3146, #0d1120 70%);
-	box-shadow: inset 0 0 0 8px #1b2133, inset 0 0 0 10px rgba(255, 255, 255, 0.08), 0 0 50px color-mix(in srgb, var(--n) 30%, transparent);
+	box-shadow:
+		inset 0 0 0 8px #1b2133,
+		inset 0 0 0 10px rgba(255, 255, 255, 0.08),
+		0 0 50px color-mix(in srgb, var(--n) 30%, transparent);
 	overflow: clip;
+}
+.hatchImg {
+	position: absolute;
+	inset: 10px;
+	width: calc(100% - 20px);
+	height: calc(100% - 20px);
+	border-radius: 50%;
+	object-fit: cover;
+	filter: brightness(0.45) saturate(0.8);
+	transition: filter 0.6s ease;
+}
+.next:hover .hatchImg {
+	filter: brightness(0.9) saturate(1);
 }
 .hatch i {
 	position: absolute;
@@ -1150,7 +1279,9 @@
 	border-radius: 50%;
 	background: radial-gradient(circle, var(--n), transparent 70%);
 	opacity: 0.4;
-	transition: opacity 0.6s ease, inset 0.8s var(--ease-door);
+	transition:
+		opacity 0.6s ease,
+		inset 0.8s ease;
 }
 .next:hover .hatch i {
 	opacity: 0.95;
@@ -1171,47 +1302,123 @@
 	color: var(--k-dim);
 }
 
-@media (prefers-reduced-motion: reduce) {
-	.dockTrack,
-	.airTrack {
-		height: auto;
+/* ================================================================ Responsive */
+@media (min-width: 768px) {
+	.heroFrame {
+		inset: calc(var(--header-h) + 18px) 28px 24px;
 	}
-	.dockStage,
-	.airStage {
-		position: relative;
+	.dockFrame {
+		inset: calc(var(--header-h) + 14px) 28px 24px;
 	}
-	.beat {
-		position: relative;
-		opacity: 1;
-		transform: none;
+}
+@media (min-width: 1100px) {
+	.heroGauge {
+		display: block;
+	}
+}
+@media (max-width: 1100px) {
+	.cmdGrid {
+		grid-template-columns: 1fr;
+	}
+	.leverShot {
+		min-height: 220px;
+	}
+	.habGrid,
+	.controlGrid,
+	.specRow {
+		grid-template-columns: 1fr;
+	}
+	.bookGrid {
+		grid-template-columns: 1fr;
+		gap: 40px;
+	}
+	.brief {
+		position: static;
+	}
+}
+@media (max-width: 760px) {
+	.hudTop > span:first-child {
+		display: none;
+	}
+	.dockTrack {
+		height: 240vh;
+	}
+	.readouts {
+		top: calc(var(--header-h) + 40px);
+		gap: 8px;
+	}
+	.readouts div:last-child {
+		display: none;
 	}
 	.beats {
-		gap: 10px;
+		bottom: 56px;
+		left: 16px;
+		width: calc(100% - 32px);
 	}
-	.beat {
-		grid-area: auto;
+	.seamHazard {
+		display: none;
 	}
-	.corridor img {
-		animation: none;
+	.seamLabel {
+		font-size: 0.62rem;
+	}
+	.orbit .trajTick {
+		display: none;
 	}
 }
-@supports not (animation-timeline: view()) {
-	.corridor img {
-		animation: none;
+@media (max-width: 560px) {
+	.hudTop {
+		padding-inline: 28px;
+		font-size: 0.6rem;
 	}
-}
-.hatchImg {
-	position: absolute;
-	inset: 10px;
-	width: calc(100% - 20px);
-	height: calc(100% - 20px);
-	border-radius: 50%;
-	object-fit: cover;
-	filter: brightness(0.45) saturate(0.8);
-	transition: filter 0.6s ease;
-}
-.next:hover .hatchImg {
-	filter: brightness(0.9) saturate(1);
+	.hudTop > span:nth-child(2) {
+		display: none;
+	}
+	.heroStats {
+		gap: 12px 24px;
+	}
+	.heroStats dd {
+		font-size: 1.02rem;
+	}
+	.specs {
+		grid-template-columns: 1fr 1fr;
+	}
+	.specs > div:nth-child(odd) {
+		padding-right: 12px;
+	}
+	.specs > div:nth-child(even) {
+		padding-left: 12px;
+	}
+	.specs dd {
+		font-size: 0.9rem;
+	}
+	.bars i {
+		width: 10px;
+	}
+	.cams {
+		grid-template-columns: 1fr 1fr;
+		gap: 8px;
+	}
+	.habList li {
+		grid-template-columns: 76px 1fr;
+	}
+	.commsBody {
+		grid-template-columns: 84px 1fr;
+		gap: 14px;
+	}
+	.portrait {
+		width: 84px;
+		height: 100px;
+	}
+	.comms {
+		padding: 20px 16px;
+	}
+	.next {
+		grid-template-columns: 1fr;
+	}
+	.phaseTag {
+		font-size: 0.64rem;
+		gap: 8px;
+	}
 }
 /* Portrait screens: centre the station in its own layer instead of sliding it across. */
 @media (max-aspect-ratio: 1 / 1) {
@@ -1224,5 +1431,44 @@
 		transform: scale(calc(0.5 + var(--p) * 0.9)) rotate(calc((1 - var(--p)) * 9deg));
 		-webkit-mask-image: radial-gradient(closest-side at 50% 50%, #000 70%, transparent 100%);
 		mask-image: radial-gradient(closest-side at 50% 50%, #000 70%, transparent 100%);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.dockTrack {
+		height: auto;
+	}
+	.dockStage {
+		position: relative;
+		min-height: 100svh;
+	}
+	.beats {
+		gap: 10px;
+	}
+	.beat {
+		grid-area: auto;
+		opacity: 1;
+		transform: none;
+	}
+	.glare,
+	.traj,
+	.target,
+	.approachPlate,
+	.debrisField path,
+	.wave i,
+	.blink,
+	.rec,
+	.surge {
+		animation: none;
+	}
+	.surge {
+		display: none;
+	}
+	.shuttleMark {
+		animation: none;
+		offset-distance: 70%;
+	}
+	.debrisField {
+		display: none;
 	}
 }

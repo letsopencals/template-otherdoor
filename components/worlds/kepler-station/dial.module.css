@@ -1,0 +1,222 @@
+/* The mission clock: the page's navigation dial. Scoped; --k-* from the world root. */
+
+.dock {
+	position: fixed;
+	left: clamp(12px, 2vw, 28px);
+	bottom: clamp(12px, 2vw, 28px);
+	z-index: 30;
+	display: grid;
+	justify-items: start;
+	gap: 10px;
+	opacity: 0;
+	transform: translateY(16px);
+	pointer-events: none;
+	transition:
+		opacity 0.35s ease,
+		transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.dock[data-show='true'] {
+	opacity: 1;
+	transform: none;
+	pointer-events: auto;
+}
+
+.dial {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: var(--k-ink);
+	cursor: pointer;
+	text-align: left;
+}
+.dial:focus-visible {
+	outline: none;
+}
+.dial:focus-visible .ring {
+	outline: 2px solid var(--k-teal);
+	outline-offset: 2px;
+	border-radius: 50%;
+}
+.ring {
+	position: relative;
+	width: 76px;
+	height: 76px;
+	flex: none;
+	border-radius: 50%;
+	background:
+		radial-gradient(circle at 50% 40%, rgba(62, 210, 214, 0.12), transparent 60%),
+		rgba(4, 7, 26, 0.86);
+	box-shadow:
+		0 0 0 1px rgba(62, 210, 214, 0.35),
+		0 12px 30px -10px #000;
+	transform: rotate(0deg);
+}
+.track {
+	fill: none;
+	stroke: rgba(62, 210, 214, 0.15);
+	stroke-width: 3;
+}
+.arc {
+	fill: none;
+	stroke: var(--k-alert);
+	stroke-width: 3;
+	stroke-linecap: round;
+	transform: rotate(-90deg);
+	transform-origin: 40px 40px;
+	transition: stroke-dasharray 0.25s linear;
+}
+.tick {
+	stroke: var(--k-ink);
+	stroke-opacity: 0.55;
+	stroke-width: 1.4;
+}
+.face {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 76px;
+	height: 76px;
+	display: grid;
+	place-content: center;
+	justify-items: center;
+	pointer-events: none;
+}
+.phaseN {
+	font-family: var(--k-display);
+	font-size: 0.95rem;
+	line-height: 1;
+}
+.met {
+	margin-top: 4px;
+	font-family: var(--font-mono);
+	font-size: 0.56rem;
+	letter-spacing: 0.04em;
+	color: var(--k-teal);
+	font-variant-numeric: tabular-nums;
+}
+.caption {
+	display: grid;
+	gap: 2px;
+	padding: 7px 12px 7px 10px;
+	border-left: 1px solid var(--k-teal);
+	background: linear-gradient(90deg, rgba(4, 7, 26, 0.9), rgba(4, 7, 26, 0.4));
+}
+.caption b {
+	font-family: var(--k-display);
+	font-size: 0.68rem;
+	font-weight: 400;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+.caption span {
+	font-family: var(--font-mono);
+	font-size: 0.6rem;
+	color: var(--k-dim);
+}
+
+.panel {
+	width: min(300px, calc(100vw - 32px));
+	padding: 14px;
+	border: 1px solid var(--k-line);
+	background: rgba(5, 9, 28, 0.96);
+	box-shadow: 0 30px 60px -20px #000;
+	clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%);
+	animation: kDialIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.panel[hidden] {
+	display: none;
+}
+@keyframes kDialIn {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+}
+.panelHead {
+	display: flex;
+	justify-content: space-between;
+	font-family: var(--font-mono);
+	font-size: 0.62rem;
+	letter-spacing: 0.12em;
+	color: var(--k-dim);
+}
+.panelHead span[data-ok='false'] {
+	color: var(--k-warn);
+}
+.panelHead span[data-ok='true'] {
+	color: #7dffb1;
+}
+.list {
+	margin-top: 10px;
+	display: grid;
+	list-style: none;
+	padding: 0;
+}
+.list a {
+	display: grid;
+	grid-template-columns: 26px 1fr auto;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 6px;
+	border-top: 1px solid rgba(62, 210, 214, 0.1);
+	color: var(--k-ink);
+	text-decoration: none;
+	font-size: 0.86rem;
+}
+.list a:hover,
+.list a:focus-visible {
+	background: rgba(62, 210, 214, 0.08);
+	outline: none;
+}
+.n {
+	font-family: var(--font-mono);
+	font-size: 0.7rem;
+	color: var(--k-dim);
+}
+.t {
+	font-family: var(--font-mono);
+	font-size: 0.64rem;
+	color: var(--k-dim);
+}
+.list li[data-state='done'] .n {
+	color: var(--k-teal);
+}
+.list li[data-state='now'] a {
+	background: linear-gradient(90deg, rgba(242, 163, 58, 0.14), transparent);
+}
+.list li[data-state='now'] .n {
+	color: var(--k-warn);
+}
+
+@media (max-width: 720px) {
+	.caption {
+		display: none;
+	}
+	.ring,
+	.face {
+		width: 60px;
+		height: 60px;
+	}
+	.met {
+		font-size: 0.5rem;
+	}
+	.phaseN {
+		font-size: 0.8rem;
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.dock,
+	.arc {
+		transition: opacity 0.2s ease;
+	}
+	.dock {
+		transform: none;
+	}
+	.panel {
+		animation: none;
+	}
+}
