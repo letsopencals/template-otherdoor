@@ -20,7 +20,7 @@ export default async function WorkshopsPage() {
 					const gm = gameMaster(host?.slug);
 					const copy = siteConfig.workshops[w.slug];
 					return (
-						<article key={w.slug} className="grid items-start gap-10 lg:grid-cols-[1fr_minmax(420px,500px)]">
+						<article key={w.slug} className="grid grid-cols-1 items-start gap-10 lg:grid-cols-[1fr_minmax(420px,500px)]">
 							<div>
 								<div className="overflow-hidden rounded-[16px_16px_4px_4px] bg-night-2 shadow-[0_0_0_1px_rgba(255,255,255,0.08)]">
 									<SafeImg src={w.images[0]} alt={w.title} className="block aspect-[3/2] w-full object-cover" fallback={<span className="block aspect-[3/2] bg-[radial-gradient(60%_60%_at_50%_100%,rgba(242,196,109,0.2),transparent_70%)]" />} />
