@@ -676,8 +676,29 @@
 	text-transform: uppercase;
 	letter-spacing: 0.2em;
 }
+.evidence {
+	position: relative;
+	display: grid;
+	justify-items: end;
+}
+/* The last plate from Vance's camera, tucked behind the notebook. */
+.plateImg {
+	display: block;
+	width: min(300px, 62%);
+	aspect-ratio: 3 / 4;
+	object-fit: cover;
+	margin: 0 6% -64px 0;
+	padding: 8px 8px 30px;
+	background: #1c1a14;
+	box-shadow:
+		inset 0 0 0 1px rgba(255, 240, 200, 0.12),
+		0 30px 50px -24px #000;
+	transform: rotate(4deg);
+	filter: sepia(0.25) contrast(1.05);
+}
 .notebook {
 	position: relative;
+	justify-self: stretch;
 	padding: 30px 30px 34px;
 	border-radius: 6px 14px 14px 6px;
 	background: radial-gradient(ellipse at 20% 0%, rgba(255, 255, 255, 0.06), transparent 60%), repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.06) 0 2px, transparent 2px 5px), linear-gradient(135deg, #1d3324, #10221a 60%, #0b1812);
@@ -831,8 +852,8 @@
 	position: relative;
 	z-index: 1;
 }
-.stepsHead {
-	max-width: 900px;
+.stepsHead .h2 {
+	max-width: 22ch;
 }
 .stair {
 	margin-top: 56px;
@@ -2173,6 +2194,10 @@
 	}
 	.runCopy {
 		top: 10%;
+	}
+	.plateImg {
+		width: 58%;
+		margin-bottom: -40px;
 	}
 	.chamberLeaf,
 	.stepsFernL,

@@ -208,6 +208,7 @@ const FACE_L: LeafSpot[] = [
 		y: 74,
 		w: 'clamp(260px, 30vw, 480px)',
 		r: 84,
+		wide: true,
 	},
 	{
 		kind: 'palm',
@@ -308,7 +309,7 @@ const TRIALS = [
 	},
 ];
 
-export default function JaguarTemple({ room, presentation: p, photos, gameMaster, next, records, booking }: RoomWorldProps) {
+export default function JaguarTemple({ room, presentation: p, cover, photos, gameMaster, next, records, booking }: RoomWorldProps) {
 	const m = p.media;
 	const stills = m.stills ?? [];
 	const wide = stills[0] ?? `${MEDIA}/wide.jpg`;
@@ -316,6 +317,7 @@ export default function JaguarTemple({ room, presentation: p, photos, gameMaster
 	const door = stills[2] ?? `${MEDIA}/stone-door.jpg`;
 	const shafts = stills[3] ?? `${MEDIA}/light-shafts.jpg`;
 	const foliage = stills[4] ?? `${MEDIA}/layer-foliage.jpg`;
+	const key = cover ?? m.key ?? `${MEDIA}/key.jpg`;
 	const [b0, b1, b2, b3] = p.beats;
 	const players = p.minPlayers === p.maxPlayers ? `${p.minPlayers}` : `${p.minPlayers}–${p.maxPlayers}`;
 	const venue = room.venue?.name ?? 'Otherdoor Vaults';
@@ -458,25 +460,28 @@ export default function JaguarTemple({ room, presentation: p, photos, gameMaster
 							</p>
 						))}
 					</div>
-					<figure className={s.notebook}>
-						<figcaption className={s.nbHead}>
-							<span>Field notebook · A. Vance</span>
-							<span>p. 31</span>
-						</figcaption>
-						<p className={s.nbHand}>
-							Day thirty-one. The door has three faces and they <em>turn</em>. The carvers wrote the order on the lintel the way they wrote everything: what rises, what crawls, what watches.
-						</p>
-						<ol className={s.nbGlyphs} aria-label="Sketch of the three faces, in order: sun, serpent, eye">
-							{[0, 1, 2].map((g, i) => (
-								<li key={g}>
-									<span className={s.nbNum}>{['i', 'ii', 'iii'][i]}</span>
-									<Glyph i={g} gold className={s.nbGlyph} />
-								</li>
-							))}
-						</ol>
-						<p className={s.nbHand}>Rises. Crawls. Watches. Do not get it wrong twice.</p>
-						<span className={s.nbStain} aria-hidden />
-					</figure>
+					<div className={s.evidence}>
+						<SafeImg src={key} alt="Two explorers with torches before the golden jaguar on its altar, deep inside the temple" className={s.plateImg} fallback={null} />
+						<figure className={s.notebook}>
+							<figcaption className={s.nbHead}>
+								<span>Field notebook · A. Vance</span>
+								<span>p. 31</span>
+							</figcaption>
+							<p className={s.nbHand}>
+								Day thirty-one. The door has three faces and they <em>turn</em>. The carvers wrote the order on the lintel the way they wrote everything: what rises, what crawls, what watches.
+							</p>
+							<ol className={s.nbGlyphs} aria-label="Sketch of the three faces, in order: sun, serpent, eye">
+								{[0, 1, 2].map((g, i) => (
+									<li key={g}>
+										<span className={s.nbNum}>{['i', 'ii', 'iii'][i]}</span>
+										<Glyph i={g} gold className={s.nbGlyph} />
+									</li>
+								))}
+							</ol>
+							<p className={s.nbHand}>Rises. Crawls. Watches. Do not get it wrong twice.</p>
+							<span className={s.nbStain} aria-hidden />
+						</figure>
+					</div>
 				</div>
 				<Curtain left={UNDER_L} right={UNDER_R} />
 			</section>
