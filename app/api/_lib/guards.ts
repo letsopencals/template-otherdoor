@@ -71,7 +71,7 @@ export function safeCallback(raw: string | undefined | null, fallback = '/accoun
 	}
 }
 
-/** "1" or "2" people for a private session (a duet is one booking for two). */
-export function sanitizePeople(v: unknown): '1' | '2' {
-	return v === 2 || v === '2' ? '2' : '1';
+/** Team size for the booking's `people` attribute: an integer 1–20 as a string. */
+export function sanitizePeople(v: unknown): string {
+	return String(clampInt(v, 1, 20, 1));
 }

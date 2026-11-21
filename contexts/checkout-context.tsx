@@ -27,11 +27,11 @@ import { bannerMessage, hasFieldErrors, mapFieldErrors, readFieldErrors, type Ap
 
 export type CheckoutStep = 'customer' | 'questions' | 'payment-select' | 'payment';
 
-/** The talent's fields, by their path in the customer payload (the API's `customer.email` is `email`). */
+/** The bearer's fields, by their path in the customer payload (the API's `customer.email` is `email`). */
 export type CustomerField = 'email' | 'firstName' | 'lastName';
 const CUSTOMER_FIELDS: readonly CustomerField[] = ['email', 'firstName', 'lastName'];
 
-/** A failed save-customer: the API's field errors for the talent's fields, and the banner line for the rest. */
+/** A failed save-customer: the API's field errors for the bearer's fields, and the banner line for the rest. */
 async function customerSaveFailure(res: Response, fallback: string): Promise<{ byField: FieldErrors<CustomerField>; banner: string | null }> {
 	const body = (await res.json().catch(() => null)) as { error?: unknown } | null;
 	const { byField, unmapped } = mapFieldErrors(readFieldErrors(body), CUSTOMER_FIELDS);
@@ -81,7 +81,7 @@ interface CheckoutContextValue {
 	errorCode: CheckoutErrorCode | null;
 	submitting: boolean;
 	checkoutComplete: boolean;
-	/** The API's messages for the talent's fields, shown under each one; a field's clear when it's edited. */
+	/** The API's messages for the bearer's fields, shown under each one; a field's clear when it's edited. */
 	fieldErrors: FieldErrors<CustomerField>;
 
 	// Customer
@@ -115,12 +115,12 @@ interface CheckoutContextValue {
 	setError: (error: string | null) => void;
 	handleSaveCustomer: (e: React.FormEvent) => Promise<void>;
 	handleSaveAnswers: (e: React.FormEvent) => Promise<void>;
-	/** The release form: save the customer, then the answers, in one submit. */
+	/** The Letter of Passage: save the customer, then the answers, in one submit. */
 	handleSign: (e: React.FormEvent) => Promise<void>;
 	handleStartCheckout: (providerName: PaymentProviderName) => Promise<void>;
 	handleSubmitCheckout: (stripePaymentIntentId?: string) => Promise<boolean>;
-	/** After CART_EXPIRED: drop the cart and go back to the schedule. */
-	restartFromSchedule: () => void;
+	/** After CART_EXPIRED: drop the cart and go back to the expedition board. */
+	restartFromBoard: () => void;
 	extendCart: () => void;
 }
 
@@ -192,10 +192,10 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
 
 	// Redirect if no cart — but only once CartProvider has read the stored cart id
 	// from localStorage. Before that cartId is always null, so a hard reload of
-	// /checkout would otherwise bounce to /schedule.
+	// /checkout would otherwise bounce to /book.
 	useEffect(() => {
 		if (isLoaded && !cartId && !checkoutComplete) {
-			router.replace('/schedule');
+			router.replace('/book');
 		}
 	}, [isLoaded, cartId, checkoutComplete, router]);
 
@@ -287,7 +287,7 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
 		[answers, questions, cartHeaders],
 	);
 
-	// Release form: customer + answers in one go (same calls as steps 1 and 2, in order).
+	// Letter of Passage: customer + answers in one go (same calls as steps 1 and 2, in order).
 	const handleSign = useCallback(
 		async (e: React.FormEvent) => {
 			e.preventDefault();
@@ -333,14 +333,14 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
 				return false;
 			}
 			if (err.code === 'CART_ALREADY_CHECKED_OUT') {
-				// This shot list is already booked (another tab, a retried request): show that booking.
+				// This satchel is already booked (another tab, a retried request): show that booking.
 				setCheckoutComplete(true);
 				clearCart();
 				router.push(err.orderId ? `/thank-you?orderId=${encodeURIComponent(err.orderId)}` : '/thank-you');
 				return true;
 			}
 			setErrorCode(err.code ?? null);
-			// A field of the talent's the API rejected: back to the form, the message under that field.
+			// A field of the bearer's the API rejected: back to the form, the message under that field.
 			const { byField, unmapped } = mapFieldErrors(err.fieldErrors, CUSTOMER_FIELDS);
 			if (hasFieldErrors(byField)) {
 				setFieldErrors(byField);
@@ -366,8 +366,8 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
 		[clearCart, router],
 	);
 
-	// Step 4: Submit checkout. Resolves true once the order is placed (the page is on its way to the call
-	// sheet); false when it failed and the error is on screen.
+	// Step 4: Submit checkout. Resolves true once the order is placed (the page is on its way to the
+	// invitation); false when it failed and the error is on screen.
 	const handleSubmitCheckout = useCallback(
 		async (stripePaymentIntentId?: string): Promise<boolean> => {
 			setError(null);
@@ -459,9 +459,9 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
 	);
 
 	/** Leave a hold that expired (a slot was taken meanwhile): drop the cart and go pick a new time. */
-	const restartFromSchedule = useCallback(() => {
+	const restartFromBoard = useCallback(() => {
 		clearCart();
-		router.push('/schedule');
+		router.push('/book');
 	}, [clearCart, router]);
 
 	const items = useMemo<CartItem[]>(() => cart?.items ?? [], [cart?.items]);
@@ -504,7 +504,7 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
 			handleSign,
 			handleStartCheckout,
 			handleSubmitCheckout,
-			restartFromSchedule,
+			restartFromBoard,
 			extendCart,
 		}),
 		[
@@ -536,7 +536,7 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
 			handleSign,
 			handleStartCheckout,
 			handleSubmitCheckout,
-			restartFromSchedule,
+			restartFromBoard,
 			extendCart,
 		],
 	);

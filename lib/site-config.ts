@@ -1,1122 +1,502 @@
 /**
- * AFTERGLOW: brand copy and gym knowledge for the template.
+ * THE GILDED COMPASS: copy and presentation only.
  *
- * Business data (classes, prices, capacities, coaches and crew, sites, add-ons,
- * logo and banner) loads from the Opencals storefront API. This file holds only
- * what the API has no field for: the category → tone mapping, which set (room)
- * each class runs on, crew roles and handles, site copy, the shot add-on
- * deliverables and the Glow Pass preview. A gym that forks the template
- * rewrites this file and keeps the code.
- *
- * Lookups are keyed by API slugs: collection slugs (categories), location slugs
- * (sites), staff slugs (people), add-on titles (shots) and the class key that
- * `lib/catalog.ts` derives from variant slugs (`glute-lab-south-beach-valentina`
- * → `glute-lab`). Anything the API returns that has no entry here still renders.
- *
- * Every number on the site (spots left, prices, sessions this week) comes from
- * the API. Don't put made-up stats here.
+ * Everything bookable (room names, team-size prices, descriptions, images,
+ * workshops, add-ons, availability) comes from the store through the API.
+ * This file holds what the API doesn't model: stats, palettes, game-master
+ * titles, venue copy, the Hall of Fame sample, the quiz and the cryptex.
+ * Keys are slugs (room = the variant slug without its `-<n>p` suffix).
  */
 
-/* ------------------------------------------------------------------ Types */
+export type HeaderTone = 'light' | 'dark';
 
-/** Category gel colours: the 3px edge on set cards and the story-ring seed. */
-export type Tone = 'ride' | 'sculpt' | 'flow' | 'box' | 'sweat' | 'coaching' | 'content' | 'glow' | 'bar' | 'events';
-
-/** How a category's products are booked. */
-export type CategoryMode = 'timetable' | 'booker' | 'events';
-
-export interface CategoryMeta {
-	label: string;
-	tone: Tone;
-	mode: CategoryMode;
-	/** Where the category is booked. */
-	href: string;
-	tagline: string;
-	blurb: string;
+export interface RoomPalette {
+	/** Page ground of the world. */
+	ground: string;
+	/** Text on the ground. */
+	ink: string;
+	/** Main accent (buttons, selected session). */
+	accent: string;
+	/** Text on the accent. */
+	accentInk: string;
+	/** Secondary accent. */
+	second: string;
+	/** Leather colour of the book spine on the shelf. */
+	spine: string;
+	/** Foil / title colour on the spine. */
+	foil: string;
 }
 
-export type SetKey = 'rooftop' | 'mirror-hall' | 'beach' | 'neon-room' | 'ring' | 'mural-floor' | 'studio-wall';
+export interface RoomPresentation {
+	/** Fallback title when the store has none (the store wins). */
+	title: string;
+	/** Short title for spines and tags. */
+	short: string;
+	/** Venue location slug. */
+	venue: string;
+	genre: string;
+	/** Year the story is set in. */
+	year: string;
+	tagline: string;
+	/** Volume number on the shelf (roman numeral rendered). */
+	volume: number;
+	/** 1–5 */
+	difficulty: number;
+	/** 0–5 */
+	fear: number;
+	minAge: number;
+	/** Percent of teams that escape. */
+	successRate: number;
+	/** Game time in minutes (the product duration is the whole visit). */
+	gameMinutes: number;
+	/** Record time "mm:ss". */
+	record: string;
+	/** Fallback team sizes if the store has no variants yet. */
+	players: [number, number];
+	/** Epic rooms get a ribbon. */
+	epic?: boolean;
+	/** Family-friendly flag. */
+	family?: boolean;
+	palette: RoomPalette;
+	/** Hero text tone in its world: `light` text over a dark hero, or `dark` text over a light hero. */
+	headerTone: HeaderTone;
+	/** Staff slug of the room's game master. */
+	gameMaster: string;
+	/** Slug of the room the world teases at the end. */
+	next: string;
+	/** Three or four short story beats for the world placeholder and the /rooms plates. */
+	beats: Array<{ title: string; body: string }>;
+	/** What to wear for this room (the invitation). */
+	wear: string;
+}
 
-export interface SetMeta {
+export interface VenuePresentation {
+	key: 'vaults' | 'leith';
 	name: string;
-	/** Site key (`south-beach`, `wynwood`). */
-	site: string;
-	/** Outdoor sets get the golden-hour badge. */
-	outdoor: boolean;
-	light: string;
+	short: string;
+	address: string;
+	postcode: string;
+	lat: number;
+	lng: number;
 	blurb: string;
+	lounge: { name: string; body: string };
+	gettingThere: string[];
+	access: string;
+	/** Template-only photo in public/images (optional, SVG plate when missing). */
 	image: string;
-	/** Camera readout on the set photo. */
-	readout: string;
 }
 
-export interface ClassMeta {
-	/** Category (collection slug). The collection wins when the API has it. */
-	category: string;
-	short: string;
-	set: SetKey;
-	/** 1 (easy) – 5 (all out). */
-	intensity: 1 | 2 | 3 | 4 | 5;
-	level: string;
-	tagline: string;
-	/** What the crew shoots in this class (shown next to the shot add-ons). */
-	shotNote: string;
-	whatToBring: string[];
-	/** Wardrobe note for the call sheet. */
-	wardrobe: string;
-}
-
-export interface ServiceMeta {
-	/** Extra slug prefixes that belong to this service (`pt-` → physique-coaching). */
-	prefixes?: string[];
-	/** Category (collection slug). Site copy wins over the API's collection. */
-	category: string;
-	short: string;
-	tagline: string;
-	/** Bullet points for the service card ("what you get"). */
-	includes: string[];
-	/** Minutes between suggested start times (default 30). */
-	startStep?: number;
-	/** Lengths offered (minutes) for custom-duration products. */
-	lengths?: number[];
-	whatToBring?: string[];
-	wardrobe?: string;
-	/** Partner sessions: one booking for two people (customAttributes.people = "2"). */
-	people?: 2;
-	/** Tables: the party size is the number of attendees. */
-	party?: boolean;
-	set?: SetKey;
-	/** What the person you choose is called on this service ("Photographer", "Coach"). */
-	whoLabel?: string;
-	/** A `content` service the customer shoots themselves (the Studio Wall hire): no crew, no edits. */
-	selfShoot?: true;
-}
-
-export type Role = 'coach' | 'photographer' | 'videographer' | 'makeup';
-
-export interface PersonMeta {
-	role: Role;
-	tier?: 'coach' | 'senior' | 'head';
-	handle: string;
+export interface GameMaster {
+	name: string;
 	title: string;
 	bio: string;
-	specialties: string[];
-	/** Category slugs a coach leads with. */
-	categories: string[];
-	quote: string;
+	/** Room slug they run (or 'workshops'). */
+	room: string;
+	/** Initials-plate colour. */
+	tone: string;
 }
 
-export type ShotKind = 'clips' | 'photos' | 'reel' | 'roll';
-
-export interface ShotMeta {
-	kind: ShotKind;
-	label: string;
-	deliverable: string;
-	/** "3 × 9:16 clips", "10 edits". */
-	spec: string;
-	eta: string;
+export interface QuizQuestion {
+	q: string;
+	answers: Array<{ label: string; rooms: Record<string, number> }>;
 }
-
-export interface SiteMeta {
-	key: string;
-	name: string;
-	nickname: string;
-	neighborhood: string;
-	blurb: string;
-	transit: string;
-	parking: string;
-	hours: string;
-	sets: SetKey[];
-	facilities: string[];
-	images: string[];
-}
-
-export interface StoryMeta {
-	key: string;
-	label: string;
-	/** Ring thumbnail. */
-	thumb: string;
-	clips: Array<{ video: string; poster: string; caption: string; cta?: { label: string; href: string } }>;
-}
-
-/* ------------------------------------------------------------------ Config */
 
 export const siteConfig = {
-	name: 'Afterglow',
-	tagline: 'Train. Glow. Get the shot.',
+	name: 'The Gilded Compass',
+	shortName: 'Gilded Compass',
+	tagline: 'Every room is a story you walk into.',
+	strap: 'Adventure rooms · Edinburgh',
 	description:
-		'A content gym in Miami. Rhythm rides, glute lab, rooftop yoga and boxing in South Beach and Wynwood, with an in-house crew that photographs and films you while you train. You train. We shoot.',
-	url: process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com',
-	locale: 'en_US',
-	/** BCP 47 locale for Intl formatting. */
-	intlLocale: 'en-US',
-	country: 'US',
-	/** Fallbacks only; the store's settings win when they load. */
-	currency: 'USD',
-	/** Every time on the site renders in this zone, on the server and in the browser. */
-	timezone: 'America/New_York',
+		'Six original adventure escape rooms under the Old Town and on the Shore at Leith: a jungle temple, a gaslit study, a desert tomb, a brass submarine, a Riviera jewel job and a clockwork workshop. Book a room for your team in Edinburgh.',
+	url: 'https://template-compass.vercel.app',
+	city: 'Edinburgh',
+	country: 'GB',
+	timezone: 'Europe/London',
+	intlLocale: 'en-GB',
+	currency: 'GBP',
 
 	contact: {
-		email: 'hello@afterglow.club',
-		phone: '+1 (305) 555-0147',
-		hours: 'Mon–Fri 6 AM–10 PM · Sat 8 AM–11 PM · Sun 8 AM–7 PM',
-		instagram: 'https://instagram.com/afterglow.club',
-		instagramHandle: '@afterglow.club',
+		email: 'expeditions@gildedcompass.example',
+		phone: '+44 131 496 0192',
+		instagram: 'gildedcompass',
 	},
 
-	/** The promise, in three frames (home). */
-	promise: [
-		{ n: '01', title: 'Book the class. Circle the shot.', body: 'Pick a class and add the shots you want: clips, a photo set, a slow-mo reel or the whole camera roll.' },
-		{ n: '02', title: 'Train. Forget the camera.', body: 'The crew shoots from the edges of the set while you train. No phone propped on a water bottle, no asking a stranger.' },
-		{ n: '03', title: 'Edits land in 48 hours.', body: 'Graded, cropped for stories and feed, sent to your inbox. Post them, or keep them for yourself.' },
+	/** Collections that drive the catalogue. */
+	collections: { rooms: 'rooms', workshops: 'workshops' },
+
+	/** Appointment customAttributes keys (team name travels with each booking). */
+	customAttributeKeys: { people: 'people', team: 'team' },
+
+	/** Call time before the start (the invitation). */
+	callTimeMinutes: 15,
+	/** Days shown in date strips. */
+	horizonDays: 21,
+
+	/** The home page's cryptex: the six letters hide on the spines; opening it reveals the code. */
+	cryptex: {
+		word: 'VOYAGE',
+		code: 'GILDED',
+		offer: '10% off any room',
+		clues: [
+			'Each volume on the shelf carries one gilt letter at its foot. Read them left to right.',
+			'Hold the lantern over the map: the society’s word is the thing every room is.',
+			'Six rings, six letters, one journey.',
+		],
+	},
+
+	media: {
+		heroMap: '/images/hero-map.jpg',
+		heroVideo: '/videos/hero.mp4',
+		heroPoster: '/videos/hero-poster.jpg',
+		mapRoom: '/images/map-room.jpg',
+		gallery: Array.from({ length: 8 }, (_, i) => `/images/gallery-${i + 1}.jpg`),
+	},
+
+	rooms: {
+		'jaguar-temple': {
+			title: 'The Jaguar Temple',
+			short: 'Jaguar Temple',
+			venue: 'gilded-compass-vaults',
+			genre: 'Jungle expedition',
+			year: '1936',
+			tagline: 'A sealed temple, a rolling stone and a golden idol that does not want to leave.',
+			volume: 1,
+			difficulty: 4,
+			fear: 2,
+			minAge: 12,
+			successRate: 38,
+			gameMinutes: 60,
+			record: '41:07',
+			players: [2, 6],
+			palette: { ground: '#1F3320', ink: '#F3EBD2', accent: '#D9A520', accentInk: '#1A1A10', second: '#4E8C6A', spine: '#2E4A2A', foil: '#E8C35A' },
+			headerTone: 'light',
+			gameMaster: 'isla-moncrieff',
+			next: 'gaslight-no-9',
+			beats: [
+				{ title: 'The expedition', body: 'Dr. Aurelia Vance went into the canopy in 1936 and sent back one telegram: “Found it. Do not follow.” You followed.' },
+				{ title: 'The stakes', body: 'The temple seals itself at moonrise. Sixty minutes to reach the inner chamber and walk out with the idol.' },
+				{ title: 'What you’ll do', body: 'Read carvings, balance offerings, map the corridors and outrun a stone that has rolled for four hundred years.' },
+				{ title: 'Inside the room', body: 'Two chambers of carved stone, roots and lantern light under the Cowgate, built by hand in our own workshop.' },
+			],
+			wear: 'Clothes you can kneel and crawl in. Closed shoes.',
+		},
+		'gaslight-no-9': {
+			title: 'The Gaslight Affair at No. 9',
+			short: 'Gaslight No. 9',
+			venue: 'gilded-compass-vaults',
+			genre: 'Victorian detective',
+			year: '1891',
+			tagline: 'A locked study, a vanished inventor and a fog that has not lifted since Tuesday.',
+			volume: 2,
+			difficulty: 3,
+			fear: 1,
+			minAge: 12,
+			successRate: 52,
+			gameMinutes: 60,
+			record: '38:44',
+			players: [2, 5],
+			palette: { ground: '#1C2B24', ink: '#EFE6D0', accent: '#D69A3C', accentInk: '#1A140A', second: '#7A8C7E', spine: '#24402F', foil: '#E2B86A' },
+			headerTone: 'light',
+			gameMaster: 'hamish-dunbar',
+			next: 'cartographers-tomb',
+			beats: [
+				{ title: 'The case', body: 'Professor Ambrose Quill locked his study at No. 9 Heriot Row from the inside, and was never seen again.' },
+				{ title: 'The stakes', body: 'The inspector arrives in an hour and wants a name. Every clue is in the room. So is the door he used.' },
+				{ title: 'What you’ll do', body: 'Read the evidence, test alibis against the gas bill, decode the professor’s inventions and name the culprit.' },
+				{ title: 'Inside the room', body: 'A gaslit Victorian study, rebuilt drawer by drawer, down to the soot on the mantel.' },
+			],
+			wear: 'Anything you like. Deerstalkers are not required.',
+		},
+		'cartographers-tomb': {
+			title: 'The Cartographer’s Tomb',
+			short: 'Cartographer’s Tomb',
+			venue: 'gilded-compass-vaults',
+			genre: 'Desert excavation',
+			year: '1922',
+			tagline: 'A mapmaker’s burial chamber, two rooms deep, and a map that only draws itself in the dark.',
+			volume: 3,
+			difficulty: 5,
+			fear: 3,
+			minAge: 14,
+			successRate: 24,
+			gameMinutes: 90,
+			record: '67:31',
+			players: [4, 8],
+			epic: true,
+			palette: { ground: '#E9D4A8', ink: '#2A1C10', accent: '#1F3F8F', accentInk: '#F6EBD2', second: '#B5532C', spine: '#1F3F8F', foil: '#E6C46A' },
+			headerTone: 'dark',
+			gameMaster: 'priya-ashworth',
+			next: 'leviathan-dive',
+			beats: [
+				{ title: 'The dig', body: 'In 1922 the society’s dig found a tomb no list mentioned: the resting place of the royal cartographer.' },
+				{ title: 'The stakes', body: 'Ninety minutes, two chambers, one map. Lose the light and the sand takes the passage back.' },
+				{ title: 'What you’ll do', body: 'Split up, work two chambers at once and bring the halves of the map together for the finale.' },
+				{ title: 'Inside the room', body: 'Our Epic: the largest set in Edinburgh, with a second chamber most teams never see.' },
+			],
+			wear: 'Light layers: the tomb is warm. Closed shoes.',
+		},
+		'leviathan-dive': {
+			title: 'The Leviathan Dive',
+			short: 'Leviathan Dive',
+			venue: 'gilded-compass-leith',
+			genre: 'Brass submarine',
+			year: '1870',
+			tagline: 'A brass submarine at the bottom of the trench, the oxygen running low and something outside.',
+			volume: 4,
+			difficulty: 4,
+			fear: 2,
+			minAge: 12,
+			successRate: 41,
+			gameMinutes: 60,
+			record: '43:58',
+			players: [2, 6],
+			palette: { ground: '#0D2A2E', ink: '#E3F1EC', accent: '#C9A24B', accentInk: '#10201E', second: '#3FA79A', spine: '#1F5A55', foil: '#D7B45E' },
+			headerTone: 'light',
+			gameMaster: 'callum-reid',
+			next: 'hotel-lumiere',
+			beats: [
+				{ title: 'The dive', body: 'Captain Elspeth Haldane took the Leviathan down in 1870 to find the bottom of the sea. She found it.' },
+				{ title: 'The stakes', body: 'The engines are dead, the ballast is jammed and the oxygen dial says sixty minutes. Bring her up.' },
+				{ title: 'What you’ll do', body: 'Restart the engine room, read the sonar, steer through the trench and blow the tanks before the air runs out.' },
+				{ title: 'Inside the room', body: 'A riveted brass hull in an old bonded warehouse on the Shore, with real portholes and a lot of pipes.' },
+			],
+			wear: 'Comfortable clothes. The hatches are low.',
+		},
+		'hotel-lumiere': {
+			title: 'The Hôtel Lumière Job',
+			short: 'Hôtel Lumière',
+			venue: 'gilded-compass-leith',
+			genre: 'Riviera heist',
+			year: '1963',
+			tagline: 'The Riviera, 1963. One diamond, one penthouse safe, one evening while the band plays.',
+			volume: 5,
+			difficulty: 3,
+			fear: 1,
+			minAge: 12,
+			successRate: 57,
+			gameMinutes: 60,
+			record: '36:12',
+			players: [2, 6],
+			palette: { ground: '#FFF4D6', ink: '#111111', accent: '#E63022', accentInk: '#FFFFFF', second: '#1B9AD6', spine: '#E63022', foil: '#FFD23F' },
+			headerTone: 'dark',
+			gameMaster: 'margaux-lindqvist',
+			next: 'clockmakers-workshop',
+			beats: [
+				{ title: 'The job', body: 'The Étoile de Menton sleeps in the penthouse safe of the Hôtel Lumière. Tonight it changes hands.' },
+				{ title: 'The stakes', body: 'Sixty minutes while the band plays. The house detective does a round every quarter hour.' },
+				{ title: 'What you’ll do', body: 'Case the suite, crack the safe, slip the laser grid and be back in the ballroom before the encore.' },
+				{ title: 'Inside the room', body: 'A pop-art penthouse in primary colours. Friendly, fast and loud: the best first room we have.' },
+			],
+			wear: 'Dress up if you like: cocktail hour is encouraged.',
+		},
+		'clockmakers-workshop': {
+			title: 'The Clockmaker’s Workshop',
+			short: 'Clockmaker’s Workshop',
+			venue: 'gilded-compass-leith',
+			genre: 'Clockwork workshop',
+			year: '1899',
+			tagline: 'A toymaker’s workshop where every clock has stopped at midnight, and the toys know why.',
+			volume: 6,
+			difficulty: 2,
+			fear: 0,
+			minAge: 7,
+			successRate: 72,
+			gameMinutes: 60,
+			record: '33:20',
+			players: [2, 6],
+			family: true,
+			palette: { ground: '#F3E3C8', ink: '#3B2414', accent: '#B5562B', accentInk: '#FFF6E8', second: '#4E6E7A', spine: '#6B3F22', foil: '#E8B66A' },
+			headerTone: 'dark',
+			gameMaster: 'thea-galloway',
+			next: 'jaguar-temple',
+			beats: [
+				{ title: 'The workshop', body: 'Master Tobias Wren built toys that walked, sang and kept perfect time. Then, at midnight, every clock stopped.' },
+				{ title: 'The stakes', body: 'Wind the great clock before the toys wind down for good. Sixty minutes, and the cuckoo is counting.' },
+				{ title: 'What you’ll do', body: 'Fix gear trains, play the music box, follow blueprints and help the wind-up toys find their keys.' },
+				{ title: 'Inside the room', body: 'Warm walnut, brass and a hundred moving parts. Made for families with children 7 and up.' },
+			],
+			wear: 'Anything comfortable. Grown-ups play too.',
+		},
+	} satisfies Record<string, RoomPresentation>,
+
+	venues: {
+		'gilded-compass-vaults': {
+			key: 'vaults',
+			name: 'The Vaults, Cowgate',
+			short: 'The Vaults',
+			address: '19 Cowgate, Edinburgh',
+			postcode: 'EH1 1JY',
+			lat: 55.9488,
+			lng: -3.188,
+			blurb: 'Underground sandstone vaults beneath the Old Town, three rooms deep. The arches were cellars for the merchants of the South Bridge; now they hold a temple, a study and a tomb.',
+			lounge: { name: 'The Map Room', body: 'A low-lit bar under the arches with charts on every wall. Arrive early, brief over a drink, toast the escape after.' },
+			gettingThere: ['Five minutes’ walk from Waverley Station via the Cowgate steps.', 'Buses 35 and 45 stop on the Cowgate; most others on the South Bridge above.', 'NCP Castle Terrace is the nearest car park (10 minutes on foot).'],
+			access: 'Step-free entrance and step-free access to Gaslight No. 9; the Jaguar Temple and the Tomb have steps and low arches.',
+			image: '/images/venue-vaults.jpg',
+		},
+		'gilded-compass-leith': {
+			key: 'leith',
+			name: 'The Bond, Leith',
+			short: 'The Bond',
+			address: '54 The Shore, Leith, Edinburgh',
+			postcode: 'EH6 6RA',
+			lat: 55.9757,
+			lng: -3.1702,
+			blurb: 'A converted bonded whisky warehouse on the Shore. Three rooms, the Workshop Hall for classes, and big windows over the Water of Leith.',
+			lounge: { name: 'The Workshop Hall', body: 'Long oak tables where lockpicking and secret-ink classes run, and where teams gather before the Leviathan dives.' },
+			gettingThere: ['Trams to The Shore stop, 3 minutes’ walk.', 'Buses 16, 22 and 36 stop on Bernard Street.', 'On-street pay parking on Commercial Street; free after 18:30.'],
+			access: 'Step-free throughout the ground floor, including the Hôtel Lumière and the Clockmaker’s Workshop.',
+			image: '/images/venue-leith.jpg',
+		},
+	} satisfies Record<string, VenuePresentation>,
+
+	/** Game masters by staff slug. The store's staff record supplies the portrait. */
+	gameMasters: {
+		'isla-moncrieff': { name: 'Isla Moncrieff', title: 'Head of Expeditions', room: 'jaguar-temple', tone: '#2E4A2A', bio: 'Former field archaeologist who built the temple’s carvings by hand. Will tell you about the rolling stone. Will not tell you how it works.' },
+		'hamish-dunbar': { name: 'Hamish Dunbar', title: 'Keeper of the Casebook', room: 'gaslight-no-9', tone: '#24402F', bio: 'Edinburgh tour-guide turned game designer. Knows every close in the Old Town and every alibi at No. 9.' },
+		'priya-ashworth': { name: 'Priya Ashworth', title: 'Mistress of Maps', room: 'cartographers-tomb', tone: '#1F3F8F', bio: 'Draws the society’s maps and designed the Epic. Has watched more teams lose the light than anyone alive.' },
+		'callum-reid': { name: 'Callum Reid', title: 'Chief Engineer', room: 'leviathan-dive', tone: '#1F5A55', bio: 'Ex-Leith shipyard fitter who riveted the Leviathan together. Talks you through the dive over the voice pipe.' },
+		'margaux-lindqvist': { name: 'Margaux Lindqvist', title: 'The Fixer', room: 'hotel-lumiere', tone: '#E63022', bio: 'Theatre stage manager by training. Runs the Lumière like an opening night and the lockpicking classes like a heist crew.' },
+		'thea-galloway': { name: 'Thea Galloway', title: 'Keeper of Keys', room: 'clockmakers-workshop', tone: '#6B3F22', bio: 'Clock restorer and the society’s cipher teacher. Builds the workshop’s toys and teaches the secret-inks class.' },
+	} satisfies Record<string, GameMaster>,
+
+	workshops: {
+		'lockpicking-101': { blurb: 'Pick your first pin-tumbler lock in ten minutes, then work up through padlocks and a practice safe. Locks and picks provided; you keep a beginner’s set.', age: '16+', bring: 'Nothing: picks, locks and tea are on us.' },
+		'ciphers-and-secret-inks': { blurb: 'Caesar wheels, book codes and lemon-juice inks. Write a message only your team can read and take home a cipher wheel you made yourself.', age: '10+', bring: 'Reading glasses if you use them.' },
+	} as Record<string, { blurb: string; age: string; bring: string }>,
+
+	/** Add-on presentation by add-on slug (title, price and description come from the store). */
+	addOns: {
+		'expedition-portrait': { glyph: 'frame' },
+		'victory-bottle': { glyph: 'bottle' },
+		'provisions-hamper': { glyph: 'hamper' },
+		'costume-trunk': { glyph: 'trunk' },
+		'escape-on-film': { glyph: 'film' },
+		'birthday-ceremony': { glyph: 'candle' },
+	} as Record<string, { glyph: 'frame' | 'bottle' | 'hamper' | 'trunk' | 'film' | 'candle' }>,
+
+	/** Hall of Fame: SAMPLE records for the template (labelled as such in the README). */
+	hallOfFame: {
+		'jaguar-temple': [
+			{ team: 'The Lost Lanterns', time: '41:07', date: '2026-10-03' },
+			{ team: 'Stone Rollers', time: '43:51', date: '2026-09-14' },
+			{ team: 'Vance’s Folly', time: '45:20', date: '2026-08-22' },
+		],
+		'gaslight-no-9': [
+			{ team: 'Fog & Fiddle', time: '38:44', date: '2026-10-11' },
+			{ team: 'Heriot Row Irregulars', time: '40:02', date: '2026-07-30' },
+			{ team: 'The Gas Bill', time: '42:16', date: '2026-09-02' },
+		],
+		'cartographers-tomb': [
+			{ team: 'True North', time: '67:31', date: '2026-10-18' },
+			{ team: 'Sand in the Gears', time: '71:09', date: '2026-08-09' },
+			{ team: 'Two Chambers', time: '74:45', date: '2026-09-27' },
+		],
+		'leviathan-dive': [
+			{ team: 'Blow the Tanks', time: '43:58', date: '2026-10-25' },
+			{ team: 'Shore Leave', time: '46:30', date: '2026-09-19' },
+			{ team: 'Fathom Five', time: '47:12', date: '2026-08-15' },
+		],
+		'hotel-lumiere': [
+			{ team: 'Les Voleurs', time: '36:12', date: '2026-10-31' },
+			{ team: 'Penthouse Paws', time: '37:48', date: '2026-10-04' },
+			{ team: 'The Encore', time: '39:05', date: '2026-09-07' },
+		],
+		'clockmakers-workshop': [
+			{ team: 'The Wren Family', time: '33:20', date: '2026-10-26' },
+			{ team: 'Tick Tock Tribe', time: '35:41', date: '2026-10-12' },
+			{ team: 'Granny’s Gang', time: '37:03', date: '2026-08-30' },
+		],
+	} as Record<string, Array<{ team: string; time: string; date: string }>>,
+
+	quiz: [
+		{
+			q: 'Your team walks into an unknown room. First move?',
+			answers: [
+				{ label: 'Touch everything', rooms: { 'jaguar-temple': 2, 'leviathan-dive': 1 } },
+				{ label: 'Read every scrap of paper', rooms: { 'gaslight-no-9': 2, 'cartographers-tomb': 1 } },
+				{ label: 'Find the exits and make a plan', rooms: { 'hotel-lumiere': 2, 'leviathan-dive': 1 } },
+				{ label: 'Hand the torch to the youngest', rooms: { 'clockmakers-workshop': 3 } },
+			],
+		},
+		{
+			q: 'How brave are we feeling?',
+			answers: [
+				{ label: 'Lights on, please', rooms: { 'clockmakers-workshop': 2, 'hotel-lumiere': 2, 'gaslight-no-9': 1 } },
+				{ label: 'A little dark is fine', rooms: { 'jaguar-temple': 2, 'leviathan-dive': 2 } },
+				{ label: 'Bring on the tomb', rooms: { 'cartographers-tomb': 3 } },
+			],
+		},
+		{
+			q: 'How many explorers?',
+			answers: [
+				{ label: 'Two or three', rooms: { 'gaslight-no-9': 2, 'hotel-lumiere': 1, 'jaguar-temple': 1 } },
+				{ label: 'Four to six', rooms: { 'jaguar-temple': 1, 'leviathan-dive': 2, 'hotel-lumiere': 1 } },
+				{ label: 'Seven or eight', rooms: { 'cartographers-tomb': 3 } },
+				{ label: 'A family with kids', rooms: { 'clockmakers-workshop': 3 } },
+			],
+		},
+		{
+			q: 'Pick a souvenir.',
+			answers: [
+				{ label: 'A golden idol', rooms: { 'jaguar-temple': 3 } },
+				{ label: 'A signed confession', rooms: { 'gaslight-no-9': 3 } },
+				{ label: 'A diamond, discreetly', rooms: { 'hotel-lumiere': 3 } },
+				{ label: 'A brass porthole', rooms: { 'leviathan-dive': 3 } },
+				{ label: 'A wind-up bird', rooms: { 'clockmakers-workshop': 3 } },
+				{ label: 'A map nobody else has', rooms: { 'cartographers-tomb': 3 } },
+			],
+		},
+	] satisfies QuizQuestion[],
+
+	groups: [
+		{ key: 'team', title: 'Team days', body: 'Book two or three rooms side by side at the same venue, race the clock and compare times over drinks in the Map Room. Up to 22 explorers at the Vaults, 18 at the Bond.', cta: 'Plan a team day' },
+		{ key: 'birthday', title: 'Birthdays', body: 'Add the birthday ceremony to any room: a sealed scroll from the society, a candle cake and a toast at the debrief. The Clockmaker’s Workshop welcomes children from 7.', cta: 'Book a birthday' },
+		{ key: 'stag', title: 'Stag and hen', body: 'The Hôtel Lumière Job with the Victory Bottle on ice is our most-booked celebration. Costume trunk optional, encouraged.', cta: 'Book the heist' },
+		{ key: 'family', title: 'Family days', body: 'Friendly, bright and clever: the Clockmaker’s Workshop is built for families with kids 7+, and grown-ups still have to think.', cta: 'See the workshop' },
 	],
 
-	/** Template media in public/. Missing files fall back to the gradient placeholder. */
-	media: {
-		heroVideo: '/videos/hero.mp4',
-		heroVideoVertical: '/videos/stories/story-mirror-shoot.mp4',
-		heroPoster: '/videos/hero-poster.jpg',
-		pass: '/images/hero/glow-pass.jpg',
-		bar: '/images/sets/bar.jpg',
-		crew: '/images/gallery/shoot-bts.jpg',
-		shoots: '/images/hero/we-shoot.jpg',
-		categories: {
-			ride: '/images/sets/neon-room.jpg',
-			sculpt: '/images/sets/mirror-hall.jpg',
-			flow: '/images/sets/rooftop.jpg',
-			box: '/images/sets/ring.jpg',
-			sweat: '/images/sets/mural-floor.jpg',
-			coaching: '/images/classes/pt-senior.jpg',
-			content: '/images/sets/studio-wall.jpg',
-			glow: '/images/classes/infrared-suite-1.jpg',
-			bar: '/images/sets/bar.jpg',
-			events: '/images/classes/event-sunset-sessions.jpg',
-		} as Record<string, string>,
-	},
-
-	/** Location `type` values from the API. */
-	locationTypes: {
-		online: 'online',
-		physical: 'physical',
-		delivery: 'delivery',
-	},
-
-	/** Categories by collection slug, in display order. */
-	categories: {
-		ride: {
-			label: 'Ride',
-			tone: 'ride',
-			mode: 'timetable',
-			href: '/schedule?type=ride',
-			tagline: 'On the beat, in the dark.',
-			blurb: 'Rhythm Ride, Climb & Sprint and the Friday and Saturday Ride After Dark in the Neon Room, Wynwood.',
-		},
-		sculpt: {
-			label: 'Sculpt',
-			tone: 'sculpt',
-			mode: 'timetable',
-			href: '/schedule?type=sculpt',
-			tagline: 'Shape, built in front of the arched mirrors.',
-			blurb: 'Glute Lab, Sculpt & Tone, Abs Club and small-group barbell strength in Mirror Hall, South Beach.',
-		},
-		flow: {
-			label: 'Flow',
-			tone: 'flow',
-			mode: 'timetable',
-			href: '/schedule?type=flow',
-			tagline: 'Strong, slow, and timed to the light.',
-			blurb: 'Sunset Rooftop Yoga, Pilates Burn, Barre Glow and Stretch & Glow, on the roof and in Mirror Hall.',
-		},
-		box: {
-			label: 'Box',
-			tone: 'box',
-			mode: 'timetable',
-			href: '/schedule?type=box',
-			tagline: 'Pink lights, real rounds.',
-			blurb: 'Boxing Basics, Shadowbox Glow and Ring Rounds in the Ring, Wynwood. Gloves and wraps at the desk.',
-		},
-		sweat: {
-			label: 'Sweat',
-			tone: 'sweat',
-			mode: 'timetable',
-			href: '/schedule?type=sweat',
-			tagline: 'Strobes, choreography and sand.',
-			blurb: 'Strobe HIIT and Dance Cardio on the Mural Floor, and the Sunrise Beach Run from Lummus Park.',
-		},
-		coaching: {
-			label: 'Coaching',
-			tone: 'coaching',
-			mode: 'booker',
-			href: '/coaching',
-			tagline: 'One coach, your physique.',
-			blurb: 'Physique coaching 1:1 for 30, 60 or 90 minutes with a coach, senior coach or head coach, and partner training for two.',
-		},
-		content: {
-			label: 'Shoots',
-			tone: 'content',
-			mode: 'booker',
-			href: '/shoots',
-			tagline: 'The crew, the set and an hour that is all about you.',
-			blurb: 'Golden-hour shoots on the roof, gym glam in Mirror Hall, reels, transformation sets, duo shoots and full creator brand days.',
-		},
-		glow: {
-			label: 'Glow',
-			tone: 'glow',
-			mode: 'booker',
-			href: '/glow',
-			tagline: 'Heat, ice, red light and a touch-up.',
-			blurb: 'Rooftop infrared suites, the cold plunge, the red light pod, the compression lounge and twenty-minute glam with Zoe.',
-		},
-		bar: {
-			label: 'Bar',
-			tone: 'bar',
-			mode: 'booker',
-			href: '/bar',
-			tagline: 'Matcha, açaí and a table after class.',
-			blurb: 'The Afterglow Bar on Collins and the café in Wynwood. Book a table for after class, and add drinks to any booking.',
-		},
-		events: {
-			label: 'Events',
-			tone: 'events',
-			mode: 'events',
-			href: '/bar#events',
-			tagline: 'Sunset sessions, creator nights, run club brunch.',
-			blurb: 'Dated nights and mornings: a DJ on the roof at sunset, a creator night in Wynwood and a run that ends in brunch.',
-		},
-	} satisfies Record<string, CategoryMeta>,
-
-	/** Categories whose products run as weekly group classes on the schedule. */
-	timetableCategories: ['ride', 'sculpt', 'flow', 'box', 'sweat'],
-
-	/** The sets (rooms) the classes run on. Not API entities. */
-	sets: {
-		'neon-room': {
-			name: 'Neon Room',
-			site: 'wynwood',
-			outdoor: false,
-			light: 'Neon, lasers, strobe on the drop',
-			blurb: 'Twenty-four bikes on a tiered floor, a lighting rig that runs with the playlist and a podium the crew shoots from.',
-			image: '/images/sets/neon-room.jpg',
-			readout: 'ISO 3200 · 1/250 · f1.8',
-		},
-		ring: {
-			name: 'The Ring',
-			site: 'wynwood',
-			outdoor: false,
-			light: 'Pink ring lights, haze',
-			blurb: 'A full-size ring under pink lights, a bag wall and a lot of haze. Gloves and wraps at the desk.',
-			image: '/images/sets/ring.jpg',
-			readout: 'ISO 1600 · 1/500 · f2.0',
-		},
-		'mural-floor': {
-			name: 'Mural Floor',
-			site: 'wynwood',
-			outdoor: false,
-			light: 'Daylight through the roll-up door, strobes after dark',
-			blurb: 'The open floor under the warehouse murals, with the roll-up door open on good days.',
-			image: '/images/sets/mural-floor.jpg',
-			readout: 'ISO 800 · 1/320 · f2.8',
-		},
-		'studio-wall': {
-			name: 'Studio Wall',
-			site: 'wynwood',
-			outdoor: false,
-			light: 'Cyc wall, strobes, colour gels',
-			blurb: 'A white cyc wall and a rack of backdrops, lit by Mia. Hire it, or book a shoot on it.',
-			image: '/images/sets/studio-wall.jpg',
-			readout: 'ISO 100 · 1/160 · f8',
-		},
-		rooftop: {
-			name: 'The Rooftop',
-			site: 'south-beach',
-			outdoor: true,
-			light: 'Golden hour, ocean breeze',
-			blurb: 'Teak deck, pastel parapets and a view over the Deco rooftops to the ocean. The best light of the day happens here.',
-			image: '/images/sets/rooftop.jpg',
-			readout: 'ISO 100 · 1/1000 · f2.8',
-		},
-		'mirror-hall': {
-			name: 'Mirror Hall',
-			site: 'south-beach',
-			outdoor: false,
-			light: 'Arched mirrors, terrazzo, soft daylight',
-			blurb: 'Five arched mirrors, a terrazzo floor and racks in Miami pastel. Glute Lab lives here.',
-			image: '/images/sets/mirror-hall.jpg',
-			readout: 'ISO 400 · 1/250 · f2.2',
-		},
-		beach: {
-			name: 'Lummus Park Beach',
-			site: 'south-beach',
-			outdoor: true,
-			light: 'Sunrise over the Atlantic',
-			blurb: 'The sand in front of the lifeguard towers, two blocks from the gym. Sunrise runs start here.',
-			image: '/images/gallery/beach-run.jpg',
-			readout: 'ISO 200 · 1/2000 · f4',
-		},
-	} satisfies Record<SetKey, SetMeta>,
-
-	/** Class copy by class key. Order = order within a set on the schedule. */
-	classes: {
-		'rhythm-ride': {
-			category: 'ride',
-			short: 'Rhythm Ride',
-			set: 'neon-room',
-			intensity: 4,
-			level: 'All levels',
-			tagline: 'On the bike, on the beat, in the dark.',
-			shotNote: 'Shot from the podium: the climb, the choreography and the final sprint under the strobes.',
-			whatToBring: ['Water', 'Cycling shoes (or borrow a pair)', 'A towel'],
-			wardrobe: 'Bright colours read best under neon. Avoid black head to toe.',
-		},
-		'ride-after-dark': {
-			category: 'ride',
-			short: 'After Dark',
-			set: 'neon-room',
-			intensity: 4,
-			level: 'All levels',
-			tagline: 'A party ride with lasers and a live mix.',
-			shotNote: 'Wide shots of the whole room on the drop, plus close-ups when the lasers hit.',
-			whatToBring: ['Water', 'Something to change into for after'],
-			wardrobe: 'Dress for going out after. Metallics and white glow under the lasers.',
-		},
-		'climb-sprint': {
-			category: 'ride',
-			short: 'Climb & Sprint',
-			set: 'neon-room',
-			intensity: 5,
-			level: 'Some riding',
-			tagline: 'Heavy climbs, all-out sprints.',
-			shotNote: 'The final sprint in slow motion is the one everybody posts.',
-			whatToBring: ['Water', 'Cycling shoes', 'A towel'],
-			wardrobe: 'Fitted tops; loose fabric blurs at 120 fps.',
-		},
-		'glute-lab': {
-			category: 'sculpt',
-			short: 'Glute Lab',
-			set: 'mirror-hall',
-			intensity: 4,
-			level: 'All levels',
-			tagline: 'Built for shape, in front of the arched mirrors.',
-			shotNote: 'Side angles on hip thrusts and split squats, and the mirror shot at the end.',
-			whatToBring: ['Water', 'Training shoes', 'A booty band if you have a favourite'],
-			wardrobe: 'Seamless sets photograph best. Solid colours over prints.',
-		},
-		'sculpt-tone': {
-			category: 'sculpt',
-			short: 'Sculpt & Tone',
-			set: 'mirror-hall',
-			intensity: 3,
-			level: 'All levels',
-			tagline: 'Dumbbells, tempo, head to toe.',
-			shotNote: 'Tempo reps in the mirrors and a slow pan across the room.',
-			whatToBring: ['Water', 'Training shoes'],
-			wardrobe: 'Two looks if you want variety in the photo set: one light, one dark.',
-		},
-		'abs-club': {
-			category: 'sculpt',
-			short: 'Abs Club',
-			set: 'mirror-hall',
-			intensity: 4,
-			level: 'All levels',
-			tagline: 'Thirty minutes of core.',
-			shotNote: 'Overhead and floor-level angles; great for a short reel.',
-			whatToBring: ['Water'],
-			wardrobe: 'A cropped top if you want the work to show.',
-		},
-		'mirror-strength': {
-			category: 'sculpt',
-			short: 'Mirror Strength',
-			set: 'mirror-hall',
-			intensity: 4,
-			level: 'Some lifting',
-			tagline: 'Small-group barbell strength.',
-			shotNote: 'Chalk, the bar and your best set of the day, shot low.',
-			whatToBring: ['Water', 'Flat shoes', 'Lifting belt (optional)'],
-			wardrobe: 'Neutral tones look great against the pastel racks.',
-		},
-		'sunset-yoga': {
-			category: 'flow',
-			short: 'Sunset Yoga',
-			set: 'rooftop',
-			intensity: 2,
-			level: 'All levels',
-			tagline: 'The last pose lands on the light.',
-			shotNote: 'Silhouettes against the sky in golden hour, and a wide of the deck.',
-			whatToBring: ['Water', 'A layer for after'],
-			wardrobe: 'Earth tones and white glow in golden hour. Barefoot.',
-		},
-		'pilates-burn': {
-			category: 'flow',
-			short: 'Pilates Burn',
-			set: 'mirror-hall',
-			intensity: 3,
-			level: 'All levels',
-			tagline: 'Slow, precise and very hard.',
-			shotNote: 'Long lines and clean shapes, shot through the arches.',
-			whatToBring: ['Grip socks', 'Water'],
-			wardrobe: 'Monochrome sets; grip socks in a matching colour.',
-		},
-		'barre-glow': {
-			category: 'flow',
-			short: 'Barre Glow',
-			set: 'mirror-hall',
-			intensity: 3,
-			level: 'All levels',
-			tagline: 'Small moves, high reps, serious shake.',
-			shotNote: 'The barre line in the mirrors, and close-ups of the pulse.',
-			whatToBring: ['Grip socks', 'Water'],
-			wardrobe: 'Soft pastels match the room.',
-		},
-		'stretch-glow': {
-			category: 'flow',
-			short: 'Stretch & Glow',
-			set: 'rooftop',
-			intensity: 1,
-			level: 'All levels',
-			tagline: 'Thirty minutes of long, slow stretching.',
-			shotNote: 'Morning light on the deck; calm, slow frames.',
-			whatToBring: ['Water'],
-			wardrobe: 'Anything comfortable. Light colours in morning sun.',
-		},
-		'shadowbox-glow': {
-			category: 'box',
-			short: 'Shadowbox Glow',
-			set: 'ring',
-			intensity: 4,
-			level: 'All levels',
-			tagline: 'Combinations to the beat, under pink lights.',
-			shotNote: 'Combinations in slow motion through the haze, and the bag wall.',
-			whatToBring: ['Water', 'Wraps (or borrow)', 'Gloves (or borrow)'],
-			wardrobe: 'White or neon reads best in the haze.',
-		},
-		'ring-rounds': {
-			category: 'box',
-			short: 'Ring Rounds',
-			set: 'ring',
-			intensity: 5,
-			level: 'Some boxing',
-			tagline: 'Padwork and rounds, fight-camp style.',
-			shotNote: 'Padwork in the ring, from the corner. The sweat is real.',
-			whatToBring: ['Water', 'Wraps', 'Gloves', 'Mouthguard'],
-			wardrobe: 'Sports bra or vest; nothing loose.',
-		},
-		'boxing-basics': {
-			category: 'box',
-			short: 'Boxing Basics',
-			set: 'ring',
-			intensity: 3,
-			level: 'Beginners',
-			tagline: 'Stance, jab, cross. Start here.',
-			shotNote: 'Your first combinations, from the ring apron.',
-			whatToBring: ['Water'],
-			wardrobe: 'Anything you can move in. We lend gloves and wraps.',
-		},
-		'strobe-hiit': {
-			category: 'sweat',
-			short: 'Strobe HIIT',
-			set: 'mural-floor',
-			intensity: 5,
-			level: 'All levels',
-			tagline: 'Intervals in front of the murals.',
-			shotNote: 'Jumps frozen mid-air against the murals.',
-			whatToBring: ['Water', 'Training shoes', 'A towel'],
-			wardrobe: 'Bold colours against the murals. Tie hair back for jumps.',
-		},
-		'dance-cardio': {
-			category: 'sweat',
-			short: 'Dance Cardio',
-			set: 'mural-floor',
-			intensity: 3,
-			level: 'All levels',
-			tagline: 'Choreography you learn in one class.',
-			shotNote: 'The full routine from the front, cut to the song.',
-			whatToBring: ['Water', 'Trainers you can turn in'],
-			wardrobe: 'Something with movement: a skirt over shorts, an oversized tee.',
-		},
-		'sunrise-run': {
-			category: 'sweat',
-			short: 'Sunrise Run',
-			set: 'beach',
-			intensity: 3,
-			level: 'All paces',
-			tagline: 'Five kilometres on the sand at first light.',
-			shotNote: 'The pack at the lifeguard towers with the sun coming up.',
-			whatToBring: ['Water', 'Running shoes', 'Sunscreen'],
-			wardrobe: 'Bright colours against the blue hour.',
-		},
-	} satisfies Record<string, ClassMeta>,
-
-	/** Service copy by service key (product group key or prefix). */
-	services: {
-		'physique-coaching': {
-			prefixes: ['pt-'],
-			category: 'coaching',
-			short: 'Physique Coaching',
-			tagline: 'One coach, one plan, one body to build.',
-			includes: ['A plan for the session and the weeks after', 'Form checks on every set', 'Add the crew for progress photos'],
-			startStep: 30,
-			lengths: [30, 60, 90],
-			whatToBring: ['Water', 'Training shoes', 'Your goals'],
-			wardrobe: 'Whatever you train best in.',
-			whoLabel: 'Coach',
-		},
-		'partner-training': {
-			category: 'coaching',
-			short: 'Partner Training',
-			tagline: 'Two people, one coach, one hour.',
-			includes: ['Sixty minutes for two', 'A shared plan with separate weights', 'Duo shots if you add the crew'],
-			startStep: 30,
-			people: 2,
-			whatToBring: ['Water', 'Your training partner'],
-			wardrobe: 'Coordinate if you want the duo shots to pop.',
-			whoLabel: 'Coach',
-		},
-		'golden-hour-shoot': {
-			category: 'content',
-			short: 'Golden Hour Shoot',
-			tagline: 'Forty-five minutes on the roof in the best light of the day.',
-			includes: ['20 edited photos', '2 vertical clips', 'Two looks on the rooftop set'],
-			startStep: 15,
-			set: 'rooftop',
-			whatToBring: ['Two looks', 'Water'],
-			wardrobe: 'Two looks. Earth tones, white and gold glow in golden hour.',
-			whoLabel: 'Photographer',
-		},
-		'gym-glam-shoot': {
-			category: 'content',
-			short: 'Gym Glam Shoot',
-			tagline: 'Mirror Hall, the arches and you, lit properly.',
-			includes: ['15 edited photos', 'One look change', 'Mirror and rack setups'],
-			startStep: 30,
-			set: 'mirror-hall',
-			whatToBring: ['Two training looks', 'Water'],
-			wardrobe: 'Matching sets. Pastels or monochrome against the terrazzo.',
-			whoLabel: 'Photographer',
-		},
-		'reel-in-an-hour': {
-			category: 'content',
-			short: 'Reel in an Hour',
-			tagline: 'Hook, shot list, shoot, edit. Post it tonight.',
-			includes: ['One finished 30-second reel', 'Three hooks to choose from', 'Raw clips for later'],
-			startStep: 30,
-			whatToBring: ['Two looks', 'An idea (or we bring one)'],
-			wardrobe: 'Two looks with contrast for the transition.',
-			whoLabel: 'Videographer',
-		},
-		'transformation-shoot': {
-			category: 'content',
-			short: 'Transformation',
-			tagline: 'A consistent before, a proud after.',
-			includes: ['A matched set of poses and lighting', '12 edited photos', 'We save your setup for next time'],
-			startStep: 30,
-			whatToBring: ['The same outfit you will wear for the after', 'Water'],
-			wardrobe: 'Keep it simple and repeatable: the same set each time.',
-			whoLabel: 'Photographer',
-		},
-		'duo-shoot': {
-			category: 'content',
-			short: 'Duo Shoot',
-			tagline: 'You and your training partner (or your partner).',
-			includes: ['25 edited photos', 'Two sets', 'A short duo reel'],
-			startStep: 30,
-			people: 2,
-			whatToBring: ['Two looks each', 'Water'],
-			wardrobe: 'Coordinate colours, don’t match exactly.',
-			whoLabel: 'Photographer',
-		},
-		'creator-brand-day': {
-			category: 'content',
-			short: 'Creator Brand Day',
-			tagline: 'Three hours, the Studio Wall and a crew of creators.',
-			includes: ['A pre-shoot call to plan the shot list', '40 edited photos and 4 reels', 'Studio Wall, backdrops and lighting'],
-			startStep: 60,
-			set: 'studio-wall',
-			whatToBring: ['Up to five looks', 'Products, if it’s a brand shoot'],
-			wardrobe: 'Bring more than you think you need.',
-			whoLabel: 'Lead creator',
-		},
-		'studio-wall-hire': {
-			category: 'content',
-			short: 'Studio Wall Hire',
-			tagline: 'The cyc wall and the lights, for your own crew.',
-			includes: ['The white cyc and the backdrop rack', 'Strobes and gels set up', 'An hour, or up to four'],
-			startStep: 60,
-			lengths: [60, 120, 180, 240],
-			set: 'studio-wall',
-			selfShoot: true,
-			whatToBring: ['Your camera and your crew'],
-		},
-		'infrared-sauna': {
-			category: 'glow',
-			short: 'Infrared Suite',
-			tagline: 'A private suite with a glass wall over the rooftops.',
-			includes: ['Towels and an electrolyte shot', 'Forty minutes, or eighty', 'Private suite for one'],
-			startStep: 20,
-			lengths: [40, 80],
-			whatToBring: ['Swimwear', 'Water'],
-		},
-		'cold-plunge': {
-			category: 'glow',
-			short: 'Cold Plunge',
-			tagline: 'Two pools at 45 °F, next to the saunas.',
-			includes: ['Twenty minutes for a few rounds', 'Robes and towels'],
-			startStep: 20,
-			whatToBring: ['Swimwear'],
-		},
-		'red-light-pod': {
-			category: 'glow',
-			short: 'Red Light Pod',
-			tagline: 'Lie down, close your eyes, glow.',
-			includes: ['Twenty minutes, full body', 'Eye protection provided'],
-			startStep: 20,
-		},
-		'compression-lounge': {
-			prefixes: ['compression-'],
-			category: 'glow',
-			short: 'Compression Lounge',
-			tagline: 'Boots on, mocktail in hand.',
-			includes: ['Thirty minutes in the compression boots', 'A recovery mocktail'],
-			startStep: 30,
-		},
-		'glam-touch-up': {
-			category: 'glow',
-			short: 'Glam Touch-up',
-			tagline: 'Twenty minutes with Zoe before a shoot or a class with the crew.',
-			includes: ['Sweat-proof base and brows', 'A glow that survives the Neon Room'],
-			startStep: 20,
-			whoLabel: 'Artist',
-		},
-		'first-glow-tour': {
-			category: 'intro',
-			short: 'First Glow Tour',
-			tagline: 'Free: the sets, the bar, how the crew works, and a test shot.',
-			includes: ['A 20-minute walk through the sets', 'A test shot on the set you like best', 'No card needed'],
-			startStep: 20,
-			whoLabel: 'Your guide',
-		},
-		'bar-table': {
-			prefixes: ['bar-table-', 'cafe-table-'],
-			category: 'bar',
-			short: 'Bar Table',
-			tagline: 'A table for after class. The kitchen opens at 7 AM.',
-			includes: ['A table for 45 minutes', 'Order at the table', 'The deposit comes off your bill'],
-			startStep: 15,
-			party: true,
-		},
-	} satisfies Record<string, ServiceMeta>,
-
-	/** Event copy by product slug. */
-	events: {
-		'event-sunset-sessions': {
-			tagline: 'A DJ on the roof, a flow at sunset and the bar open after.',
-			whatToBring: ['Something to change into', 'A layer for after dark'],
-		},
-		'event-creator-night': {
-			tagline: 'Panels, portfolio reviews and a shoot wall in Wynwood.',
-			whatToBring: ['Your handle', 'Business cards, if you still have them'],
-		},
-		'event-run-club-brunch': {
-			tagline: 'Five kilometres on the beach, then brunch at the bar.',
-			whatToBring: ['Running shoes', 'An appetite'],
-		},
-	} as Record<string, { tagline: string; whatToBring: string[] }>,
-
-	/** Shot add-ons by add-on title (slugified). Deliverables shown in booking and on the call sheet. */
-	shots: {
-		'class-clips': { kind: 'clips', label: 'Class Clips', deliverable: 'Three edited vertical clips of you in class', spec: '3 × 9:16 clips', eta: '48 h' },
-		'photo-set': { kind: 'photos', label: 'Photo Set', deliverable: 'Ten edited photos, cropped for feed and stories', spec: '10 edits', eta: '48 h' },
-		'slow-mo-reel': { kind: 'reel', label: 'Slow-mo Reel', deliverable: 'One cinematic 15-second reel, cut to the playlist', spec: '1 × 15 s reel', eta: '48 h' },
-		'raw-camera-roll': { kind: 'roll', label: 'Raw Camera Roll', deliverable: 'Every frame the crew took of you, unedited', spec: 'All frames', eta: '24 h' },
-	} satisfies Record<string, ShotMeta>,
-
-	/** People by staff slug (a leading `staff-` is ignored). */
-	people: {
-		'valentina-cruz': {
-			role: 'coach',
-			tier: 'head',
-			handle: '@valentina.lifts',
-			title: 'Head coach · Physique',
-			bio: 'Competed in bikini for six years and now coaches physique: progressive overload, honest food advice and form that looks as good as it works.',
-			specialties: ['Glutes', 'Physique', 'Strength'],
-			categories: ['sculpt', 'coaching'],
-			quote: 'Pretty and strong are not two different goals.',
-		},
-		'dante-rivers': {
-			role: 'coach',
-			tier: 'head',
-			handle: '@danteinthering',
-			title: 'Head coach · Boxing',
-			bio: 'Golden Gloves finalist. Dante runs the Ring like a fight camp with better lighting: footwork first, then combinations, then rounds.',
-			specialties: ['Boxing', 'Conditioning'],
-			categories: ['box', 'coaching'],
-			quote: 'Hands up. Chin down. Smile for Theo.',
-		},
-		'marcus-bell': {
-			role: 'coach',
-			tier: 'senior',
-			handle: '@marcusrides',
-			title: 'Senior coach · Ride',
-			bio: 'Ex-DJ who traded the booth for the bike. Marcus builds every Rhythm Ride playlist himself.',
-			specialties: ['Rhythm Ride', 'Conditioning'],
-			categories: ['ride'],
-			quote: 'If you’re off the beat, the lights will tell you.',
-		},
-		'isabella-moreau': {
-			role: 'coach',
-			tier: 'senior',
-			handle: '@isabella.moves',
-			title: 'Senior coach · Pilates & yoga',
-			bio: 'Classically trained Pilates teacher from Montréal. Slow, precise, very hard, and the Saturday sunset flow.',
-			specialties: ['Pilates', 'Yoga', 'Mobility'],
-			categories: ['flow'],
-			quote: 'Slower. No, slower.',
-		},
-		'luca-romano': {
-			role: 'coach',
-			tier: 'senior',
-			handle: '@luca.strength',
-			title: 'Senior coach · Strength',
-			bio: 'Sports-science degree and a soft spot for the deadlift. Mirror Hall Strength and the lunchtime Abs Club.',
-			specialties: ['Strength', 'Abs', 'Physique'],
-			categories: ['sculpt', 'coaching'],
-			quote: 'Chalk is a lifestyle.',
-		},
-		'kiara-johnson': {
-			role: 'coach',
-			tier: 'coach',
-			handle: '@kiaradances',
-			title: 'Coach · Dance & HIIT',
-			bio: 'Toured as a backup dancer. Choreography you can learn in one class and still feel cool doing.',
-			specialties: ['Dance Cardio', 'HIIT'],
-			categories: ['sweat'],
-			quote: 'Five, six, seven, eight, and smile.',
-		},
-		'sofia-herrera': {
-			role: 'coach',
-			tier: 'coach',
-			handle: '@sofia.sunsetflow',
-			title: 'Coach · Rooftop yoga',
-			bio: 'Grew up in Little Havana. Strong, warm classes, timed so the last pose lands on the light.',
-			specialties: ['Yoga', 'Stretch'],
-			categories: ['flow'],
-			quote: 'The sun is the only teacher I wait for.',
-		},
-		'jaylen-brooks': {
-			role: 'coach',
-			tier: 'coach',
-			handle: '@jaylenbrooks',
-			title: 'Coach · Ride & HIIT',
-			bio: 'Former college sprinter. The climbs, the Saturday Ride After Dark, and the loudest person in any room.',
-			specialties: ['Rhythm Ride', 'HIIT'],
-			categories: ['ride', 'sweat'],
-			quote: 'Turn it up. No, more.',
-		},
-		'amara-diallo': {
-			role: 'coach',
-			tier: 'coach',
-			handle: '@amara.barre',
-			title: 'Coach · Barre & sculpt',
-			bio: 'Ballet in Dakar and Paris, barre in Miami. Small movements, high reps, serious shake.',
-			specialties: ['Barre', 'Sculpt'],
-			categories: ['flow', 'sculpt'],
-			quote: 'The shake means it’s working.',
-		},
-		'nico-alvarez': {
-			role: 'coach',
-			tier: 'coach',
-			handle: '@nico.runs.miami',
-			title: 'Coach · Running & boxing',
-			bio: 'Every Miami Marathon since 2016. Still thinks 6:45 AM is a reasonable time to meet.',
-			specialties: ['Boxing', 'Running'],
-			categories: ['sweat', 'box'],
-			quote: 'Sunrise waits for no one.',
-		},
-		'ava-lin': {
-			role: 'photographer',
-			handle: '@avalin.shoots',
-			title: 'Photographer · Golden hour',
-			bio: 'Shot lookbooks in New York before moving south for the light. Ava runs the rooftop golden-hour shoots.',
-			specialties: ['Golden hour', 'Portraits'],
-			categories: ['content'],
-			quote: 'Give me twenty minutes before sunset and I’ll give you your profile picture.',
-		},
-		'theo-marsh': {
-			role: 'videographer',
-			handle: '@theomarsh.film',
-			title: 'Videographer · Reels',
-			bio: 'Music-video director turned in-house filmmaker. The slow-mo reels in the Neon Room and the Ring, cut to the playlist.',
-			specialties: ['Reels', 'Slow motion'],
-			categories: ['content'],
-			quote: '120 frames a second. Every drop of sweat counts.',
-		},
-		'camila-reyes': {
-			role: 'photographer',
-			handle: '@camilareyes.photo',
-			title: 'Photographer · Fitness',
-			bio: 'Ten years of sports photography. She knows the angle that makes a hip thrust look as hard as it was.',
-			specialties: ['Fitness', 'Transformation'],
-			categories: ['content'],
-			quote: 'Low angle, high effort.',
-		},
-		'jordan-price': {
-			role: 'videographer',
-			handle: '@jordanprice.creates',
-			title: 'Creator lead',
-			bio: 'Built two creator brands from zero. Reel in an Hour and Creator Brand Days: hooks, shot lists, same-night edits.',
-			specialties: ['Reels', 'Creator content'],
-			categories: ['content'],
-			quote: 'The first second is the whole video.',
-		},
-		'mia-santos': {
-			role: 'photographer',
-			handle: '@miasantos.studio',
-			title: 'Photographer · Studio',
-			bio: 'Editorial and studio photographer who lit the Studio Wall herself. Duo sessions and backdrops in Wynwood.',
-			specialties: ['Studio', 'Editorial'],
-			categories: ['content'],
-			quote: 'Light is the outfit.',
-		},
-		'zoe-laurent': {
-			role: 'makeup',
-			handle: '@zoelaurent.glam',
-			title: 'Makeup artist',
-			bio: 'Makeup for shoots and stages. Twenty-minute sweat-proof glam that survives a class and the lights.',
-			specialties: ['Sweat-proof glam'],
-			categories: ['glow'],
-			quote: 'Glow, not shine.',
-		},
-	} satisfies Record<string, PersonMeta>,
-
-	/** Sites by location slug. */
-	sites: {
-		'afterglow-south-beach': {
-			key: 'south-beach',
-			name: 'Afterglow South Beach',
-			nickname: 'South Beach',
-			neighborhood: 'Collins Ave, Miami Beach',
-			blurb: 'A 1938 Art Deco building on Collins: Mirror Hall on the ground floor, the Afterglow Bar on the corner, and the Rooftop with two infrared suites and the plunge pools. Two blocks from the beach.',
-			transit: 'Two blocks from Lummus Park. Citi Bike dock at 14th and Collins; the South Beach Loop trolley stops outside.',
-			parking: 'Municipal garage on 13th St (7th St garage on weekends). We validate two hours at the bar.',
-			hours: 'Mon–Fri 6 AM–10 PM · Sat 7 AM–10 PM · Sun 8 AM–7 PM',
-			sets: ['rooftop', 'mirror-hall', 'beach'],
-			facilities: ['Rooftop deck', 'Mirror Hall', '2 infrared suites', 'Cold plunge pools', 'Afterglow Bar', 'Showers with Dyson dryers'],
-			images: ['/images/sites/south-beach.jpg', '/images/sets/rooftop.jpg', '/images/sets/mirror-hall.jpg'],
-		},
-		'afterglow-wynwood': {
-			key: 'wynwood',
-			name: 'Afterglow Wynwood',
-			nickname: 'Wynwood',
-			neighborhood: 'NW 2nd Ave, Wynwood',
-			blurb: 'A mural-wrapped warehouse off NW 2nd Ave: the Neon Room, the Ring under pink lights, the Mural Floor, the Studio Wall and the café by the roll-up door.',
-			transit: 'Ten minutes from the Brightline at MiamiCentral; the Wynwood trolley stops on NW 2nd Ave.',
-			parking: 'Street parking on NW 25th St and the Wynwood garage at 2621 NW 2nd Ave.',
-			hours: 'Mon–Fri 6 AM–11 PM · Sat 8 AM–11 PM · Sun 9 AM–6 PM',
-			sets: ['neon-room', 'ring', 'mural-floor', 'studio-wall'],
-			facilities: ['Neon Room (24 bikes)', 'The Ring', 'Mural Floor', 'Studio Wall', 'Red light pod', 'Café'],
-			images: ['/images/sites/wynwood.jpg', '/images/sets/neon-room.jpg', '/images/sets/ring.jpg'],
-		},
-	} satisfies Record<string, SiteMeta>,
-
-	/** The story rings on home: short vertical clips from the sets. */
-	stories: [
-		{
-			key: 'neon-room',
-			label: 'Neon Room',
-			thumb: '/images/stories/story-neon-ride.jpg',
-			clips: [{ video: '/videos/stories/story-neon-ride.mp4', poster: '/images/stories/story-neon-ride.jpg', caption: 'Rhythm Ride, 6 PM. Twenty-four bikes, one playlist.', cta: { label: 'Book a ride', href: '/schedule?type=ride' } }],
-		},
-		{
-			key: 'rooftop',
-			label: 'Rooftop',
-			thumb: '/images/stories/story-rooftop-yoga.jpg',
-			clips: [{ video: '/videos/stories/story-rooftop-yoga.mp4', poster: '/images/stories/story-rooftop-yoga.jpg', caption: 'Sunset Rooftop Yoga. The last pose lands on the light.', cta: { label: 'Book sunset yoga', href: '/schedule?type=flow' } }],
-		},
-		{
-			key: 'ring',
-			label: 'The Ring',
-			thumb: '/images/stories/story-ring.jpg',
-			clips: [{ video: '/videos/stories/story-ring.mp4', poster: '/images/stories/story-ring.jpg', caption: 'Shadowbox Glow. Pink lights, haze, real rounds.', cta: { label: 'Book boxing', href: '/schedule?type=box' } }],
-		},
-		{
-			key: 'mirror-hall',
-			label: 'Mirror Hall',
-			thumb: '/images/stories/story-mirror-shoot.jpg',
-			clips: [{ video: '/videos/stories/story-mirror-shoot.mp4', poster: '/images/stories/story-mirror-shoot.jpg', caption: 'Glute Lab, shot by Camila. Edits in 48 hours.', cta: { label: 'Book Glute Lab', href: '/schedule?type=sculpt' } }],
-		},
-		{
-			key: 'bar',
-			label: 'The Bar',
-			thumb: '/images/stories/story-bar-matcha.jpg',
-			clips: [{ video: '/videos/stories/story-bar-matcha.mp4', poster: '/images/stories/story-bar-matcha.jpg', caption: 'Matcha protein, poured after the 7 AM.', cta: { label: 'Book a table', href: '/bar' } }],
-		},
-		{
-			key: 'beach',
-			label: 'Sunrise run',
-			thumb: '/images/stories/story-beach-run.jpg',
-			clips: [{ video: '/videos/stories/story-beach-run.mp4', poster: '/images/stories/story-beach-run.jpg', caption: 'Sunrise Beach Run from Lummus Park. 6:45 AM, every Wednesday and weekend.', cta: { label: 'Join the run', href: '/schedule?type=sweat' } }],
-		},
-		{
-			key: 'crew',
-			label: 'The Crew',
-			thumb: '/images/stories/story-studio-wall.jpg',
-			clips: [{ video: '/videos/stories/story-studio-wall.mp4', poster: '/images/stories/story-studio-wall.jpg', caption: 'Reel in an Hour on the Studio Wall. Two looks, one cut, ready to post.', cta: { label: 'Book a shoot', href: '/shoots' } }],
-		},
-	] satisfies StoryMeta[],
-
-	/** The Glow Pass: a preview only. Memberships aren't on sale yet. */
-	glowPass: {
-		status: 'Coming soon',
-		name: 'The Glow Pass',
-		priceHint: 'From $289 / month',
-		headline: 'Unlimited classes. Four shoots a month. One pass.',
-		perks: [
-			'Unlimited classes at both sites',
-			'Four content sessions a month (clips, photo set or reel)',
-			'Priority booking for Ride After Dark and Sunset Sessions',
-			'10% off the bar',
-			'A bring-a-friend pass every month',
-		],
-		note: 'Passes aren’t on sale yet. Book the free First Glow Tour and we’ll tell you first when they are.',
-	},
-
-	/** A code to mention in copy (it lives in the store). */
-	promoCode: 'GLOW15',
-
-	/** Intro offer copy (the discount itself is automatic). */
-	introOffer: {
-		percent: 40,
-		headline: '40% off your first class',
-		body: 'Your first order of classes is 40% off, applied at checkout. Shot add-ons are 30% off, always.',
-	},
-
-	/** The free intro, by service key. */
-	introService: 'first-glow-tour',
-
-	/** "Early light": the automatic weekday discount on early classes (by class start, local time). */
-	offPeak: { weekdays: [1, 2, 3, 4, 5], from: '06:00', to: '08:00', label: 'Early light −20%' },
-
-	/** Spots left at or below this read "going fast". */
-	lowSeatsThreshold: 3,
-
-	policies: {
-		bookingWindowDays: 28,
-		changeHours: 12,
-	},
-
-	/** Minutes before start that a Join link opens (online sessions; none at launch). */
-	joinWindowMinutes: 10,
-
-	/** Golden hour length (minutes) for the schedule badge. */
-	goldenHourMinutes: 60,
-
-	/** Fallback coordinates for the sun calculation when a location has none. */
-	geo: { latitude: 25.7826, longitude: -80.1341 },
-
-	/** Appointment `customAttributes` keys the template writes. */
-	customAttributeKeys: {
-		/** "1" or "2": partner and duo sessions are one booking for two people. */
-		people: 'people',
-	},
-
-	tones: {
-		ride: { hex: '#FF3EA5', ink: '#FFFFFF' },
-		sculpt: { hex: '#FF8A5B', ink: '#120E1A' },
-		flow: { hex: '#F4A93B', ink: '#120E1A' },
-		box: { hex: '#6A4BFF', ink: '#FFFFFF' },
-		sweat: { hex: '#00C2A8', ink: '#120E1A' },
-		coaching: { hex: '#120E1A', ink: '#FFF4EA' },
-		content: { hex: '#FF5E8A', ink: '#FFFFFF' },
-		glow: { hex: '#8E7CFF', ink: '#FFFFFF' },
-		bar: { hex: '#B5651D', ink: '#FFFFFF' },
-		events: { hex: '#F4A93B', ink: '#120E1A' },
-	} satisfies Record<Tone, { hex: string; ink: string }>,
+	faq: [
+		{ q: 'How long is a visit?', a: 'Plan for 90 minutes (two hours for the Cartographer’s Tomb): a short briefing, 60 minutes of game (90 in the Tomb), then photos and a debrief with your game master.' },
+		{ q: 'When should we arrive?', a: 'Fifteen minutes before your session. That is the call time on your invitation. Late teams play the time that is left.' },
+		{ q: 'Is the price per person?', a: 'Room prices are for the whole team and depend on team size, so you see the group price and the price per head before you book. Workshops are priced per person.' },
+		{ q: 'Is it scary?', a: 'Each room has a fear rating out of five. Nothing jumps at you; the Tomb is dark and atmospheric. The Clockmaker’s Workshop and the Hôtel Lumière are lights-on and friendly.' },
+		{ q: 'What if we get stuck?', a: 'Your game master watches every moment and sends clues when you ask, or when the room decides you need one. Nobody leaves without a story.' },
+		{ q: 'Can children play?', a: 'Each room has a minimum age (7+ for the Clockmaker’s Workshop, 12+ for most, 14+ for the Tomb). Under-16s play with at least one adult on the team.' },
+		{ q: 'Can we move or cancel?', a: 'Yes, from your Explorer’s Logbook up to 24 hours before the start. After that, email us and we’ll do what we can.' },
+		{ q: 'Are the rooms accessible?', a: 'Gaslight No. 9, the Hôtel Lumière and the Clockmaker’s Workshop are step-free. Tell us about access, mobility or claustrophobia at checkout and we’ll prepare the room.' },
+		{ q: 'Do you have offers?', a: 'Matinee: 15% off rooms starting Monday to Thursday before 15:00, applied automatically. And there is a code hidden in the cryptex on our home page.' },
+	],
 
 	nav: [
-		{ label: 'Schedule', href: '/schedule' },
-		{ label: 'Shoots', href: '/shoots' },
-		{ label: 'Coaching', href: '/coaching' },
-		{ label: 'Glow', href: '/glow' },
-		{ label: 'Bar', href: '/bar' },
-		{ label: 'Crew', href: '/crew' },
+		{ href: '/rooms', label: 'Rooms' },
+		{ href: '/book', label: 'Book' },
+		{ href: '/workshops', label: 'Workshops' },
+		{ href: '/groups', label: 'Groups' },
 	],
 
-	footerNav: [
-		{ label: 'Glow Pass', href: '/glow-pass' },
-		{ label: 'First Glow Tour', href: '/shoots?service=first-glow-tour#book' },
-		{ label: 'South Beach', href: '/sites/south-beach' },
-		{ label: 'Wynwood', href: '/sites/wynwood' },
-	],
-};
+	/** `/preview/*` fixture screens in production (always on in dev). */
+	previewEnv: 'COMPASS_PREVIEW',
+} as const;
 
-export type SiteConfig = typeof siteConfig;
+export type RoomSlug = keyof typeof siteConfig.rooms;
 
-/* ------------------------------------------------------------------ Lookups */
-
-export function categoryMeta(slug: string | null | undefined): CategoryMeta | null {
-	if (!slug) return null;
-	return (siteConfig.categories as Record<string, CategoryMeta>)[slug] ?? null;
+export function roomPresentation(slug: string): RoomPresentation | null {
+	return (siteConfig.rooms as Record<string, RoomPresentation>)[slug] ?? null;
 }
 
-export function classMeta(classKey: string | null | undefined): ClassMeta | null {
-	if (!classKey) return null;
-	return (siteConfig.classes as Record<string, ClassMeta>)[classKey] ?? null;
+export function venuePresentation(slug: string | null | undefined): VenuePresentation | null {
+	return slug ? ((siteConfig.venues as Record<string, VenuePresentation>)[slug] ?? null) : null;
 }
 
-export function serviceMeta(key: string | null | undefined): ServiceMeta | null {
-	if (!key) return null;
-	return (siteConfig.services as Record<string, ServiceMeta>)[key] ?? null;
+export function gameMaster(slug: string | null | undefined): GameMaster | null {
+	return slug ? ((siteConfig.gameMasters as Record<string, GameMaster>)[slug] ?? null) : null;
 }
 
-/** A session the Afterglow crew shoots end to end: a `content` service, except one hired to shoot yourself. */
-export function isCrewShoot(category: string | null | undefined, offeringKey: string | null | undefined): boolean {
-	return category === 'content' && !serviceMeta(offeringKey)?.selfShoot;
-}
+/** Room slugs in shelf order (by volume). */
+export const ROOM_ORDER: string[] = Object.entries(siteConfig.rooms as Record<string, RoomPresentation>)
+	.sort((a, b) => a[1].volume - b[1].volume)
+	.map(([slug]) => slug);
 
-export function setMeta(key: string | null | undefined): (SetMeta & { key: SetKey }) | null {
-	if (!key) return null;
-	const meta = (siteConfig.sets as Record<string, SetMeta>)[key];
-	return meta ? { ...meta, key: key as SetKey } : null;
-}
-
-export function siteMeta(locationSlug: string | null | undefined): SiteMeta | null {
-	if (!locationSlug) return null;
-	return (siteConfig.sites as Record<string, SiteMeta>)[locationSlug] ?? null;
-}
-
-export function siteMetaByKey(key: string | null | undefined): (SiteMeta & { slug: string }) | null {
-	if (!key) return null;
-	for (const [slug, meta] of Object.entries(siteConfig.sites as Record<string, SiteMeta>)) if (meta.key === key) return { ...meta, slug };
-	return null;
-}
-
-/** Person copy by staff slug (a leading `staff-` is ignored). */
-export function coachMeta(staffSlug: string | null | undefined): PersonMeta | null {
-	if (!staffSlug) return null;
-	const all = siteConfig.people as Record<string, PersonMeta>;
-	return all[staffSlug] ?? all[staffSlug.replace(/^staff-/, '')] ?? null;
-}
-
-export function slugifyTitle(s: string): string {
-	return s
-		.toLowerCase()
-		.normalize('NFKD')
-		.replace(/[̀-ͯ]/g, '')
-		.replace(/[^a-z0-9]+/g, '-')
-		.replace(/^-+|-+$/g, '');
-}
-
-/** Shot copy for an add-on (by its title), or null when the add-on isn't a shot. */
-export function shotMeta(addOnTitle: string | null | undefined): ShotMeta | null {
-	if (!addOnTitle) return null;
-	return (siteConfig.shots as Record<string, ShotMeta>)[slugifyTitle(addOnTitle)] ?? null;
-}
-
-export function toneHex(tone: Tone): string {
-	return siteConfig.tones[tone]?.hex ?? siteConfig.tones.content.hex;
-}
-
-/** The tone for a category slug (content when unknown). */
-export function toneFor(category: string | null | undefined): Tone {
-	if (category === 'intro') return 'content';
-	return categoryMeta(category)?.tone ?? 'content';
-}
+/** A neutral palette for a store room this config doesn't know. */
+export const FALLBACK_PALETTE: RoomPalette = { ground: '#F4EAD5', ink: '#15201B', accent: '#1E3A30', accentInk: '#FBF6EA', second: '#7A1E22', spine: '#7A1E22', foil: '#E6C46A' };

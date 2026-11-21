@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
 			addOns?: CreateAppointmentAddOn[];
 			customer?: ExistingAppointmentCustomer | NewAppointmentCustomer;
 			checkoutQuestionAnswers?: CheckoutQuestionAnswer[];
-			/** Privates: "2" for a duet. Sent as appointment customAttributes.people. */
+			/** Rooms: the team size, sent as appointment customAttributes.people (the variant already prices it). */
 			people?: unknown;
 		};
 
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
 					staffMemberId: slot.staffMemberId ?? null,
 					locationId: slot.locationId ?? null,
 				},
-				// A duet is ONE seat (one private room) for two people; the head count travels as an attribute.
+				// A room is ONE seat (the team books the room, numberOfAttendees 1); workshops send the head count.
 				numberOfAttendees: typeof numberOfAttendees === 'number' && numberOfAttendees >= 1 ? Math.min(20, Math.trunc(numberOfAttendees)) : 1,
 				cartId: cart.id,
 				addOns: sanitizeAddOns(addOns),
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
 			throwOnError: true,
 		});
 
-		// Places changed: the Floor, events and slot-rack ranges are cached under this tag.
+		// Rooms and workshop seats are cached under this tag.
 		revalidateTag('availability');
 		return NextResponse.json(publicPayload({ appointment, cart: finalCart }));
 	} catch (err) {

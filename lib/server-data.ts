@@ -12,13 +12,11 @@ import {
 	type ProductCollectionResponse,
 	type StaffMemberListItemResponse,
 	type LocationDetailResponse,
-	type CurrentAvailabilitySlot,
 	type AddOnListItemResponse,
 } from '@opencals/storefront-sdk';
 import { publicPayload } from '@/lib/public-payload';
-import { buildCatalog, type Catalog, type Series } from '@/lib/catalog';
-import { buildTimetable, type Occurrence } from '@/lib/timetable';
-import type { FreeRange } from '@/lib/slots';
+import { buildCatalogue, type Catalogue } from '@/lib/rooms';
+import { toRanges, type FreeRange } from '@/lib/sessions';
 
 /**
  * Server-only data readers. Each is wrapped in React.cache() so repeated calls
@@ -69,8 +67,7 @@ export const getProduct = cache(async (slug: string): Promise<ProductListItemRes
 	return items.find((item) => item.slug === slug || item.variants?.some((v) => v.slug === slug)) ?? null;
 });
 
-/** All visible collections (with their product references). Empty on failure. */
-/** Add-ons offered with one product (by slug): the bar menu and the shot add-ons. */
+/** Add-ons offered with one product (by slug): portrait, Victory Bottle, hamper… */
 export const getAddOnsForProduct = cache(async (slug: string): Promise<AddOnListItemResponse[]> => {
 	try {
 		const { data } = await ProductService.listAddOnsBySlug({ path: { slug } });
@@ -80,6 +77,7 @@ export const getAddOnsForProduct = cache(async (slug: string): Promise<AddOnList
 	}
 });
 
+/** All visible collections (with their product references). Empty on failure. */
 export const getCollections = cache(async (): Promise<ProductCollectionResponse[]> => {
 	try {
 		const { data } = await ProductCollectionService.list({ query: { take: 50 } });
@@ -107,29 +105,20 @@ export const getLocations = cache(async (): Promise<LocationDetailResponse[]> =>
 	}
 });
 
-/* ---------------------------------------------------------------- Catalog */
+/* ---------------------------------------------------------------- Catalogue */
 
-/**
- * The whole catalog: class types with their series (class × studio × instructor),
- * privates, workshops, studios and instructors. Pure mapping over the four list
- * reads, see lib/catalog.ts.
- */
-export const getCatalog = cache(async (): Promise<Catalog> => {
-	const [products, collections, staff, locations] = await Promise.all([
-		getProducts(),
-		getCollections(),
-		getStaff(),
-		getLocations(),
-	]);
-	return buildCatalog({ products, collections, staff, locations });
+/** Rooms (team-size variants grouped), workshops, venues and game masters. Pure mapping, see lib/rooms.ts. */
+export const getCatalogue = cache(async (): Promise<Catalogue> => {
+	const [products, collections, staff, locations] = await Promise.all([getProducts(), getCollections(), getStaff(), getLocations()]);
+	return buildCatalogue({ products, collections, staff, locations });
 });
 
-/* ---------------------------------------------------------------- Timetable */
+/* ---------------------------------------------------------------- Availability */
 
 /** Parallel availability calls. The storefront API allows 20 requests per second per key + IP. */
 const CONCURRENCY = 6;
 
-async function mapLimit<T, R>(items: T[], limit: number, fn: (item: T) => Promise<R>): Promise<R[]> {
+async function mapLimit<T, R>(items: readonly T[], limit: number, fn: (item: T) => Promise<R>): Promise<R[]> {
 	const out: R[] = new Array(items.length);
 	let next = 0;
 	async function worker() {
@@ -148,17 +137,16 @@ class PartialAvailabilityError extends Error {}
 const RETRY_DELAYS_MS = [400, 1200];
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-/** Merged availability for one series, retried on failure (429s during a fan-out are the usual cause). */
-async function fetchSeriesSlots(productId: string): Promise<CurrentAvailabilitySlot[] | null> {
+/** Merged availability for one product across the whole horizon (no date), retried on failure (429s during a fan-out). */
+async function fetchRanges(productId: string): Promise<FreeRange[] | null> {
 	for (let attempt = 0; ; attempt++) {
 		try {
-			// One call returns the whole booking horizon (one range per class).
-			const { data } = await ProductService.getCurrentAvailabilitiesMerged({ path: { productId } });
-			return Array.isArray(data) ? data : [];
+			const { data } = await ProductService.getCurrentAvailabilitiesMerged({ path: { productId }, query: { timezone: 'UTC' }, throwOnError: true });
+			return toRanges(Array.isArray(data) ? data : []);
 		} catch (error) {
 			const delay = RETRY_DELAYS_MS[attempt];
 			if (delay === undefined) {
-				console.warn(`[timetable] availability failed for product ${productId}`, error);
+				console.warn(`[availability] failed for product ${productId}`, error);
 				return null;
 			}
 			await sleep(delay);
@@ -166,112 +154,63 @@ async function fetchSeriesSlots(productId: string): Promise<CurrentAvailabilityS
 	}
 }
 
+/** Free windows per key. With `strict`, any failure throws so `unstable_cache` keeps its previous entry. */
+async function loadRanges(entries: ReadonlyArray<readonly [key: string, productId: string]>, strict: boolean): Promise<Record<string, FreeRange[]>> {
+	const results = await mapLimit(entries, CONCURRENCY, async ([key, id]) => [key, await fetchRanges(id)] as const);
+	if (strict && results.some(([, r]) => r === null)) throw new PartialAvailabilityError();
+	return Object.fromEntries(results.map(([key, r]) => [key, r ?? []]));
+}
+
+export type RangesByKey = Record<string, FreeRange[]>;
+
+async function roomEntries(venueSlug: string | null): Promise<Array<readonly [string, string]>> {
+	const { rooms } = await getCatalogue();
+	return rooms.filter((r) => !venueSlug || r.venue?.slug === venueSlug).map((r) => [r.slug, r.availabilityProductId] as const);
+}
+
 /**
- * Fan out over the series. With `strict`, any series that still fails after
- * retries throws, so `unstable_cache` keeps its previous entry instead of
- * caching a timetable with holes; the uncached fallback renders what it got.
+ * Free windows for every room (or one venue's rooms), keyed by room slug: one
+ * merged-availability call per room (its smallest-team variant stands for the
+ * pool), cached 60 s and tagged `availability`. Booking, cart removal,
+ * cancelling and moving revalidate the tag.
  */
-async function loadOccurrences(series: Series[], strict: boolean, horizonDays?: number): Promise<Occurrence[]> {
-	const results = await mapLimit(series, CONCURRENCY, async (s) => [s.id, await fetchSeriesSlots(s.id)] as const);
-	if (strict && results.some(([, slots]) => slots === null)) throw new PartialAvailabilityError();
-	const slots = Object.fromEntries(results.map(([id, list]) => [id, list ?? []]));
-	return buildTimetable(series, slots, { now: Date.now(), ...(horizonDays ? { horizonDays } : {}) });
-}
-
-/** Weekly group classes. Services are live slots: the slot rack reads their ranges itself. */
-async function timetableSeries(): Promise<Series[]> {
-	return (await getCatalog()).classes.flatMap((c) => c.series);
-}
-
-const cachedTimetable = unstable_cache(async () => loadOccurrences(await timetableSeries(), true), ['afterglow-timetable-v1'], {
+const cachedRoomRanges = unstable_cache(async (venueSlug: string | null) => loadRanges(await roomEntries(venueSlug), true), ['compass-room-ranges-v1'], {
 	revalidate: 60,
-	tags: ['availability', 'timetable'],
+	tags: ['availability', 'rooms-availability'],
 });
 
-/**
- * Every class occurrence in the booking window, including inferred Full ones
- * (see lib/timetable.ts). Cached for 60 s across requests and tagged
- * `availability`: one fan-out (one availability request per series, 6 at a
- * time) serves every visitor, and booking, cancelling or moving revalidates
- * it. If a series can't be read, this request renders uncached with what it
- * has and the next one tries again.
- */
-export const getTimetable = cache(async (): Promise<Occurrence[]> => {
+export const getRoomRanges = cache(async (venueSlug: string | null = null): Promise<RangesByKey> => {
 	try {
-		return await cachedTimetable();
+		return await cachedRoomRanges(venueSlug);
 	} catch (error) {
-		if (!(error instanceof PartialAvailabilityError)) throw error;
-		return loadOccurrences(await timetableSeries(), false);
+		if (!(error instanceof PartialAvailabilityError)) console.warn('[availability] rooms', error);
+		try {
+			return await loadRanges(await roomEntries(venueSlug), false);
+		} catch {
+			return {};
+		}
 	}
 });
 
-/* ---------------------------------------------------------------- Events */
-
-/** Events are dated and sell further ahead than the class window. */
-const EVENT_HORIZON_DAYS = 60;
-
-async function eventSeries(): Promise<Series[]> {
-	return (await getCatalog()).events.flatMap((w) => w.series);
+async function workshopEntries(): Promise<Array<readonly [string, string]>> {
+	return (await getCatalogue()).workshops.map((w) => [w.slug, w.productId] as const);
 }
 
-// Events are never inferred Full: a sold-out date just isn't returned.
-const cachedEvents = unstable_cache(
-	async () => loadOccurrences(await eventSeries(), true, EVENT_HORIZON_DAYS),
-	['afterglow-events-v1'],
-	{ revalidate: 60, tags: ['availability', 'events'] },
-);
-
-/** Every bookable event date over the next 60 days. Cached like the timetable. */
-export const getEventOccurrences = cache(async (): Promise<Occurrence[]> => {
-	try {
-		return await cachedEvents();
-	} catch (error) {
-		if (!(error instanceof PartialAvailabilityError)) throw error;
-		return loadOccurrences(await eventSeries(), false, EVENT_HORIZON_DAYS);
-	}
+const cachedWorkshopRanges = unstable_cache(async () => loadRanges(await workshopEntries(), true), ['compass-workshop-ranges-v1'], {
+	revalidate: 60,
+	tags: ['availability', 'workshops-availability'],
 });
 
-/* ---------------------------------------------------------------- Service ranges */
-
-export interface RangeQuery {
-	productId: string;
-	staffMemberId?: string | null;
-	locationId?: string | null;
-}
-
-function toRanges(slots: CurrentAvailabilitySlot[]): FreeRange[] {
-	return slots
-		.map((r) => ({
-			start: Date.parse(`${r.fromDate}T${r.fromTime.length === 5 ? `${r.fromTime}:00` : r.fromTime}Z`),
-			// Ranges can touch at a one-second seam (23:59:59 → 00:00:00): round the end up to the minute.
-			end: Math.ceil(Date.parse(`${r.toDate}T${r.toTime.length === 5 ? `${r.toTime}:00` : r.toTime}Z`) / 60_000) * 60_000,
-			attendees: r.attendees ?? 0,
-			maxAttendees: r.maxAttendees ?? 1,
-			staffMemberIds: r.staffMemberIds ?? [],
-		}))
-		.filter((r) => Number.isFinite(r.start) && Number.isFinite(r.end) && r.end > r.start)
-		.sort((a, b) => a.start - b.start);
-}
-
-/**
- * Free windows for one bookable thing (a PT tier for one coach, a suite, a
- * test) across the whole booking horizon: one merged-availability call with no
- * date, cached 60 s and tagged `availability`. The slot rack derives the days
- * and start times from it on the client, so a day change never refetches.
- */
-export const getServiceRanges = unstable_cache(
-	async ({ productId, staffMemberId, locationId }: RangeQuery): Promise<FreeRange[]> => {
-		const { data } = await ProductService.getCurrentAvailabilitiesMerged({
-			path: { productId },
-			query: {
-				timezone: 'UTC',
-				...(staffMemberId ? { staffMemberId } : {}),
-				...(locationId ? { locationId } : {}),
-			},
-			throwOnError: true,
-		});
-		return toRanges(Array.isArray(data) ? data : []);
-	},
-	['afterglow-service-ranges-v1'],
-	{ revalidate: 60, tags: ['availability'] },
-);
+/** Free windows (with seats) per workshop slug. Cached like the rooms. */
+export const getWorkshopRanges = cache(async (): Promise<RangesByKey> => {
+	try {
+		return await cachedWorkshopRanges();
+	} catch (error) {
+		if (!(error instanceof PartialAvailabilityError)) console.warn('[availability] workshops', error);
+		try {
+			return await loadRanges(await workshopEntries(), false);
+		} catch {
+			return {};
+		}
+	}
+});

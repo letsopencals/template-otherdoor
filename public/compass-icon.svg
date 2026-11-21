@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="The Gilded Compass"><title>The Gilded Compass</title>
+  <defs>
+    <linearGradient id="ifoil" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F3E1A6"/>
+      <stop offset="0.28" stop-color="#D8B45E"/>
+      <stop offset="0.52" stop-color="#C8A04A"/>
+      <stop offset="0.74" stop-color="#94701F"/>
+      <stop offset="1" stop-color="#E6CB82"/>
+    </linearGradient>
+    <linearGradient id="ifoil2" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#EBD38C"/>
+      <stop offset="0.5" stop-color="#C8A04A"/>
+      <stop offset="1" stop-color="#9C7A2C"/>
+    </linearGradient>
+  </defs>
+  <circle cx="256" cy="256" r="248" fill="#1E3A30"/>
+  <circle cx="256" cy="256" r="214" fill="none" stroke="url(#ifoil)" stroke-width="40"/>
+  <circle cx="256" cy="256" r="186" fill="none" stroke="#C8A04A" stroke-width="5"/>
+  <polygon points="256,256 340.85,171.15 256,226" fill="#E8D29A"/><polygon points="256,256 340.85,171.15 286,256" fill="#A9852F"/>
+  <polygon points="256,256 340.85,340.85 286,256" fill="#E8D29A"/><polygon points="256,256 340.85,340.85 256,286" fill="#A9852F"/>
+  <polygon points="256,256 171.15,340.85 256,286" fill="#E8D29A"/><polygon points="256,256 171.15,340.85 226,256" fill="#A9852F"/>
+  <polygon points="256,256 171.15,171.15 226,256" fill="#E8D29A"/><polygon points="256,256 171.15,171.15 256,226" fill="#A9852F"/>
+  <polygon points="256,256 434,256 288.53,223.47" fill="#F4EAD5"/><polygon points="256,256 434,256 288.53,288.53" fill="#C8A04A"/>
+  <polygon points="256,256 256,434 288.53,288.53" fill="#F4EAD5"/><polygon points="256,256 256,434 223.47,288.53" fill="#C8A04A"/>
+  <polygon points="256,256 78,256 223.47,288.53" fill="#F4EAD5"/><polygon points="256,256 78,256 223.47,223.47" fill="#C8A04A"/>
+  <polygon points="256,256 256,136 223.47,223.47" fill="#F4EAD5"/><polygon points="256,256 256,136 288.53,223.47" fill="#C8A04A"/>
+  <g transform="translate(256 128) scale(1.12)" fill="#F4EAD5" stroke="#1E3A30" stroke-width="1.79" stroke-linejoin="round"><path d="M0,-62 C10,-50 16,-32 13,-16 C11,-7 7,-2 5,2 L-5,2 C-7,-2 -11,-7 -13,-16 C-16,-32 -10,-50 0,-62 Z"/><path d="M6,0 C14,-6 24,-20 30,-34 C34,-44 30,-54 22,-54 C15,-54 12,-46 17,-41 C21,-37 24,-41 23,-44 C27,-38 24,-26 18,-16 C14,-9 10,-4 6,-1 Z"/><path d="M-6,0 C-14,-6 -24,-20 -30,-34 C-34,-44 -30,-54 -22,-54 C-15,-54 -12,-46 -17,-41 C-21,-37 -24,-41 -23,-44 C-27,-38 -24,-26 -18,-16 C-14,-9 -10,-4 -6,-1 Z"/><path d="M-19,1 H19 Q21,1 21,4 V7 Q21,10 19,10 H-19 Q-21,10 -21,7 V4 Q-21,1 -19,1 Z"/><path d="M-5,10 C-7,17 -13,23 -21,22 C-15,19 -12,15 -11,10 Z"/><path d="M5,10 C7,17 13,23 21,22 C15,19 12,15 11,10 Z"/><path d="M-4,10 H4 L0,26 Z"/></g>
+  <circle cx="256" cy="256" r="20" fill="#C8A04A" stroke="#1E3A30" stroke-width="6"/>
+</svg>

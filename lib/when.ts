@@ -1,8 +1,8 @@
 import { siteConfig } from '@/lib/site-config';
 
 /**
- * Date and time labels, always in the gym's zone (Miami), so the server render
- * and the browser agree. 12 h clock, US order.
+ * Date and time labels, always in Edinburgh time (Europe/London), so the server
+ * render and the browser agree. 24 h clock, British order: "19:30", "Sat 28 Nov".
  */
 
 const TZ = siteConfig.timezone;
@@ -20,50 +20,29 @@ function fmt(key: string, opts: Intl.DateTimeFormatOptions): Intl.DateTimeFormat
 
 const toDate = (v: string | number | Date) => (v instanceof Date ? v : new Date(v));
 
-/** "6:15 PM" */
+/** "19:30" */
 export function timeLabel(v: string | number | Date): string {
-	return fmt('time', { hour: 'numeric', minute: '2-digit', hour12: true }).format(toDate(v));
+	return fmt('time', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(toDate(v));
 }
 
-/** "6:15" + "PM", for big type where the meridiem is set smaller. */
-export function timeParts(v: string | number | Date): { clock: string; meridiem: string } {
-	const parts = fmt('time', { hour: 'numeric', minute: '2-digit', hour12: true }).formatToParts(toDate(v));
-	const clock = parts
-		.filter((p) => p.type === 'hour' || p.type === 'minute' || p.type === 'literal')
-		.map((p) => p.value)
-		.join('')
-		.trim();
-	return { clock, meridiem: parts.find((p) => p.type === 'dayPeriod')?.value ?? '' };
-}
-
-/** "6:15 PM" from a local `HH:mm`. */
-export function localTimeLabel(hhmm: string): string {
-	const [h = 0, m = 0] = hhmm.split(':').map(Number);
-	const meridiem = h >= 12 ? 'PM' : 'AM';
-	const hour = h % 12 === 0 ? 12 : h % 12;
-	return `${hour}:${String(m).padStart(2, '0')} ${meridiem}`;
-}
-
-/** "00:45:00" timecode from minutes. */
-export function timecode(min: number): string {
-	const h = Math.floor(min / 60);
-	const m = min % 60;
-	return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:00`;
-}
-
-/** "Mon, Nov 2" from an instant. */
+/** "Sat 28 Nov" from an instant. */
 export function dayLabel(v: string | number | Date): string {
-	return fmt('day', { weekday: 'short', day: 'numeric', month: 'short' }).format(toDate(v));
+	return fmt('day', { weekday: 'short', day: 'numeric', month: 'short' }).format(toDate(v)).replace(',', '');
 }
 
-/** "Monday, November 2" from an instant. */
+/** "Saturday 28 November" from an instant. */
 export function longDayLabel(v: string | number | Date): string {
-	return fmt('long', { weekday: 'long', day: 'numeric', month: 'long' }).format(toDate(v));
+	return fmt('long', { weekday: 'long', day: 'numeric', month: 'long' }).format(toDate(v)).replace(',', '');
 }
 
-/** Labels for a local `YYYY-MM-DD` (16:00 UTC is the same calendar day in Miami). */
+/** "28 November 2026" from an instant. */
+export function fullDateLabel(v: string | number | Date): string {
+	return fmt('full', { day: 'numeric', month: 'long', year: 'numeric' }).format(toDate(v));
+}
+
+/** Labels for a local `YYYY-MM-DD` (noon UTC is the same calendar day in Edinburgh). */
 export function localDateParts(date: string): { weekday: string; day: string; month: string; long: string } {
-	const d = new Date(`${date}T16:00:00Z`);
+	const d = new Date(`${date}T12:00:00Z`);
 	return {
 		weekday: fmt('wd', { weekday: 'short' }).format(d),
 		day: fmt('dd', { day: 'numeric' }).format(d),
@@ -72,10 +51,19 @@ export function localDateParts(date: string): { weekday: string; day: string; mo
 	};
 }
 
-/** "2h 05m" / "45 min" from minutes. */
+/** "1h 30m" / "45 min" from minutes. */
 export function minutesLabel(min: number): string {
 	if (min < 60) return `${min} min`;
 	const h = Math.floor(min / 60);
 	const m = min % 60;
 	return m ? `${h}h ${String(m).padStart(2, '0')}m` : `${h}h`;
+}
+
+/** Roman numeral for volume numbers (1–39). */
+export function roman(n: number): string {
+	const map: Array<[number, string]> = [[10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I']];
+	let out = '';
+	let rest = Math.max(0, Math.floor(n));
+	for (const [v, s] of map) while (rest >= v) { out += s; rest -= v; }
+	return out;
 }

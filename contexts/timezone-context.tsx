@@ -14,7 +14,7 @@ interface TimezoneContextValue {
 const TimezoneContext = createContext<TimezoneContextValue | undefined>(undefined);
 
 export function TimezoneProvider({ children }: { children: ReactNode }) {
-	// Afterglow is one city: every time renders in the gym’s zone (America/New_York), on the server
+	// One city: every time renders in Edinburgh time (Europe/London), on the server
 	// and in the browser, so SSR and hydration always agree and a visitor abroad sees gym time.
 	const [timezone, setTimezone] = useState<string>(siteConfig.timezone);
 
