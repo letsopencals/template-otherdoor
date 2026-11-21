@@ -1,4 +1,11 @@
 # The Clockmaker's Workshop media
 
-Pending: Gemini credits ran out before this world. Planned: `hero.mp4` + `hero-poster.jpg` (locked-off workshop, gears turning, wind-up toys), `wide.jpg`, `giant-clock.jpg`, `toys.jpg`, `cuckoo.jpg`, `layer-gears.jpg` (gears around the edges on near-black, depth layer), `key.jpg`. Prompts are ready in scripts/image-generation (run_escape_rooms_v2_assets.sh d).
-Until then the page can use the v1 dataset interiors clockmakers-workshop-1..3 (media.opencals.com products/seeding-datasets/escape-rooms/).
+How the world uses each file (components/worlds/clockmakers-workshop). Every one falls back if missing.
+
+- `hero.mp4` + `hero-poster.jpg`: the workshop loop behind the hero, graded to midnight blue under the SVG gear trains, great clock and wind-up key.
+- `wide.jpg`: the framed panorama at the top of "The story" (Master Wren at his bench).
+- `toys.jpg`: "The real ones are on the shelf" card under the SVG toy shelf.
+- `giant-clock.jpg`: the framed picture beside the lede in "Inside the workshop".
+- `cuckoo.jpg`: the arched picture above the notes in "Book your family's hour".
+- `layer-gears.jpg`: the gear frame behind the next-door teaser.
+- `key.jpg`: 3:4 key art (same as the store's `v2-key-clockmakers-workshop`); used by the shell, not the world.
