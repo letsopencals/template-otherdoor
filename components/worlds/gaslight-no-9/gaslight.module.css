@@ -1457,6 +1457,7 @@
 	justify-content: space-between;
 	gap: 1em;
 	margin-bottom: 0.55em;
+	padding-inline: 1.4em;
 	font-family: var(--g-type);
 	font-size: 0.68em;
 	color: #5a4f40;

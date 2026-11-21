@@ -68,29 +68,29 @@ export function buildWall({ photos, gameMaster, records }: { photos: number; gam
 	];
 	const columns: Column[] = [
 		{ w: 25, items: [{ key: 'intro', w: 25, y: 15, h: 17.5, r: -1.4, px: 0.5, ox: 0.9 }] },
-		{ w: 40, items: [{ key: 'paper', w: 40, y: 3, h: 48, r: -0.8, px: 0.1, ox: 0.93 }] },
+		{ w: 40, items: [{ key: 'paper', w: 40, y: 6, h: 41, r: -0.8, px: 0.035, py: 0.9, ox: 0.965 }] },
 		{
 			w: 30,
 			items: [
-				{ key: 'telegram', w: 30, y: 6, h: 18, r: 1.7, px: 0.08, ox: 0.82, oy: -1.3 },
-				{ key: 'window', dx: 5, w: 21, y: 29, h: 23.5, r: -2.2, px: 0.5, ox: 0.9 },
+				{ key: 'telegram', w: 30, y: 6, h: 18, r: 1.7, px: 0.035, py: 0.9, ox: 0.82, oy: -1.1 },
+				{ key: 'window', dx: 5, w: 21, y: 27.5, h: 23.5, r: -2.2, px: 0.5, ox: 0.9 },
 			],
 		},
-		{ w: 40, items: [{ key: 'plan', w: 40, y: 7, h: 36.5, r: 0.6, px: 0.08, ox: 0.92 }] },
-		{ w: 42, items: [{ key: 'desk', w: 42, y: 10, h: 32, r: -1.2, px: 0.07, ox: 0.93 }] },
+		{ w: 40, items: [{ key: 'plan', w: 40, y: 7, h: 36.5, r: 0.6, px: 0.035, py: 0.9, ox: 0.965 }] },
+		{ w: 42, items: [{ key: 'desk', w: 42, y: 10, h: 32, r: -1.2, px: 0.035, py: 0.9, ox: 0.965 }] },
 		{ w: 19, items: [{ key: 'ticket', w: 19, y: 5.5, h: 41.5, r: 2.4, py: 1, px: 0.5, ox: 0.5 }] },
 	];
 	if (gameMaster) {
 		columns.push({
 			w: 31,
 			items: [
-				{ key: 'card', w: 29, y: 7, h: 10.5, r: -2, px: 0.08, ox: 0.9, oy: -1.2 },
+				{ key: 'card', w: 29, y: 7, h: 10.5, r: -2, px: 0.04, py: 0.9, ox: 0.93, oy: -0.9 },
 				{ key: 'note', dx: 2.5, w: 28.5, y: 23, h: 17, r: 1.3, px: 0.78, ox: 0.93 },
 			],
 		});
 	}
 	if (photos > 0) columns.push({ w: 27, items: exhibitSpots.slice(0, Math.min(3, photos)) });
-	if (records) columns.push({ w: 23, items: [{ key: 'register', w: 23, y: 14, h: 15.5, r: -1, px: 0.1, ox: 0.9 }] });
+	if (records) columns.push({ w: 23, items: [{ key: 'register', w: 23, y: 14, h: 15.5, r: -1, px: 0.05, py: 0.9, ox: 0.95 }] });
 	columns.push({ w: 17, items: [{ key: 'end', w: 17, y: 22, h: 8, r: 2.2, px: 0.15, ox: 0.5, oy: -1.2 }] });
 
 	const docs: Record<string, DocBox> = {};
