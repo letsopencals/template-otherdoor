@@ -2065,6 +2065,11 @@
 	.doorCopy .h2 {
 		font-size: 2rem;
 	}
+	/* three dials always fit inside the narrower plate */
+	.dial {
+		width: calc((100% - 20px) / 3);
+		max-width: 86px;
+	}
 }
 
 @media (max-width: 720px) {
@@ -2258,17 +2263,39 @@
 	}
 }
 
+/* Portrait tablets: the carved door rides higher and smaller, fading into the dark floor,
+   so the plate and the copy sit in a band below the doorway instead of over it. */
 @media (max-aspect-ratio: 1/1) and (min-width: 721px) {
+	.doorPhoto {
+		top: 36%;
+		width: max(100vw, calc(100svh * 1.25));
+		-webkit-mask-image: linear-gradient(180deg, #000 82%, transparent 99%);
+		mask-image: linear-gradient(180deg, #000 82%, transparent 99%);
+	}
 	.doorCopy {
-		bottom: 4svh;
+		top: auto;
+		bottom: 3svh;
+		width: min(320px, 40vw);
 	}
 	.doorCopy .lede {
 		display: none;
 	}
+	.doorCopy .h2 {
+		font-size: 1.8rem;
+	}
 	.lock {
 		top: auto;
-		bottom: 4svh;
+		bottom: 3svh;
 		transform: none;
+		width: min(300px, 40vw);
+		padding: 16px 18px 12px;
+	}
+	.dials {
+		margin-top: 16px;
+	}
+	.lockStatus {
+		margin-top: 10px;
+		min-height: 0;
 	}
 }
 
