@@ -9,4 +9,4 @@ Palette: jungle green-black #0E1A12, jade #2F8A63, humid moss #4A6B2E, idol gold
 - `stone-door.jpg`: 16:9. Carved stone door ajar with gold light and mist in the gap, jaguar head relief above. Scene background behind the sliding-door scroll moment.
 - `light-shafts.jpg`: 16:9. Overgrown temple hall, moonlight shafts through a broken roof, puddles. Mid-story scene background.
 - `layer-foliage.jpg`: 16:9. Foreground leaves framing the edges on near-black (#050806), empty centre. Depth layer: composite over other stills with `mix-blend-mode: lighten` and parallax.
-- `key.jpg`: (pending: Gemini credits ran out before v2-key-jaguar-temple).
+- `key.jpg`: 3:4 key art (same as the store's `v2-key-jaguar-temple`): two explorers with torches before the golden jaguar on its altar. Used as the plate tucked behind Vance's notebook when the store has no cover.
