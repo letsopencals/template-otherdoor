@@ -4,6 +4,7 @@ import { useId, useRef, useState, type FormEvent } from 'react';
 import { SafeImg } from '@/components/ui/safe-img';
 import { say } from './meridian';
 import { MeridianLine } from './meridian-line';
+import { ModuleHead } from './module-head';
 import s from './protocol.module.css';
 
 const PHRASE = 'ORIGIN';
@@ -54,80 +55,88 @@ export function AccessPrompt({ still, fallback }: { still: string; fallback: str
 				: 'The phrase is somewhere on this page. MERIDIAN hides things in plain sight.';
 
 	return (
-		<div className={s.vault} data-state={state}>
-			<div className={s.vaultScene}>
-				<div className={s.vaultCore}>
-					<SafeImg
-						src={still}
-						alt="The core chamber: a column of glowing glass discs in a white circular room washed in alarm red"
-						fallback={<SafeImg src={fallback} alt="" fallback={<span className={s.imgFallback} />} />}
-					/>
+		<>
+			<ModuleHead
+				n="05"
+				title="Access"
+				status={state === 'granted' ? 'Open' : 'Locked'}
+				note={state === 'granted' ? 'Core doors open. The reservation below works either way.' : 'Optional. The reservation below works either way.'}
+			/>
+			<div className={s.vault} data-state={state}>
+				<div className={s.vaultScene}>
+					<div className={s.vaultCore}>
+						<SafeImg
+							src={still}
+							alt="The core chamber: a column of glowing glass discs in a white circular room washed in alarm red"
+							fallback={<SafeImg src={fallback} alt="" fallback={<span className={s.imgFallback} />} />}
+						/>
+					</div>
+					<div className={s.vaultMist} aria-hidden />
+					<div className={`${s.vaultDoor} ${s.vaultDoorL}`} aria-hidden>
+						<span className={s.doorTag}>SUBLEVEL 4</span>
+						<span className={s.doorNote}>Authorised personnel · MERIDIAN core</span>
+						<span className={s.doorLock} />
+						<span className={s.doorHazard} />
+					</div>
+					<div className={`${s.vaultDoor} ${s.vaultDoorR}`} aria-hidden>
+						<span className={s.doorTag}>CORE</span>
+						<span className={s.doorNote}>Door 14 of 14 · sealed 23:06</span>
+						<span className={s.doorLock} />
+						<span className={s.doorHazard} />
+					</div>
+					<p className={s.vaultGranted} aria-hidden>
+						ACCESS GRANTED
+					</p>
 				</div>
-				<div className={s.vaultMist} aria-hidden />
-				<div className={`${s.vaultDoor} ${s.vaultDoorL}`} aria-hidden>
-					<span className={s.doorTag}>SUBLEVEL 4</span>
-					<span className={s.doorNote}>Authorised personnel · MERIDIAN core</span>
-					<span className={s.doorLock} />
-					<span className={s.doorHazard} />
-				</div>
-				<div className={`${s.vaultDoor} ${s.vaultDoorR}`} aria-hidden>
-					<span className={s.doorTag}>CORE</span>
-					<span className={s.doorNote}>Door 14 of 14 · sealed 23:06</span>
-					<span className={s.doorLock} />
-					<span className={s.doorHazard} />
-				</div>
-				<p className={s.vaultGranted} aria-hidden>
-					ACCESS GRANTED
-				</p>
-			</div>
 
-			<form className={s.prompt} data-shake={shake ? (shake % 2 ? 'a' : 'b') : undefined} onSubmit={submit} noValidate>
-				<p className={s.promptHead}>
-					<span>SECURE DOOR · CORE</span>
-					<span>{state === 'granted' ? 'OPEN' : 'LOCKED'}</span>
-				</p>
-				<label htmlFor={id} className={s.promptLabel}>
-					Enter the access phrase
-				</label>
-				<div className={s.promptRow}>
-					<span className={s.promptCaret} aria-hidden>
-						&gt;
-					</span>
-					<input
-						ref={input}
-						id={id}
-						className={s.promptInput}
-						type="text"
-						autoComplete="off"
-						autoCapitalize="characters"
-						spellCheck={false}
-						maxLength={16}
-						disabled={state === 'granted'}
-						aria-describedby={`${id}-hint`}
-						placeholder="······"
-					/>
-					<button type="submit" className={s.promptGo} disabled={state === 'granted'}>
-						Enter
-					</button>
-				</div>
-				<p className={s.promptResult} aria-live="assertive" data-glitch={state === 'denied' ? (tries % 2 ? 'a' : 'b') : undefined}>
-					{state === 'denied' ? `ACCESS DENIED · ATTEMPT ${tries}` : state === 'granted' ? 'ACCESS GRANTED · DOORS OPENING' : ' '}
-				</p>
-				<p id={`${id}-hint`} className={s.promptHint}>
-					{state === 'granted' ? 'The core is open. MERIDIAN is sulking.' : hint}
-				</p>
-				<MeridianLine />
-				<div className={s.promptAlt}>
-					{state === 'granted' ? null : (
-						<button type="button" className={s.promptSkip} onClick={override}>
-							Override: open the doors without it
+				<form className={s.prompt} data-shake={shake ? (shake % 2 ? 'a' : 'b') : undefined} onSubmit={submit} noValidate>
+					<p className={s.promptHead}>
+						<span>SECURE DOOR · CORE</span>
+						<span>{state === 'granted' ? 'OPEN' : 'LOCKED'}</span>
+					</p>
+					<label htmlFor={id} className={s.promptLabel}>
+						Enter the access phrase
+					</label>
+					<div className={s.promptRow}>
+						<span className={s.promptCaret} aria-hidden>
+							&gt;
+						</span>
+						<input
+							ref={input}
+							id={id}
+							className={s.promptInput}
+							type="text"
+							autoComplete="off"
+							autoCapitalize="characters"
+							spellCheck={false}
+							maxLength={16}
+							disabled={state === 'granted'}
+							aria-describedby={`${id}-hint`}
+							placeholder="······"
+						/>
+						<button type="submit" className={s.promptGo} disabled={state === 'granted'}>
+							Enter
 						</button>
-					)}
-					<a href="#book" className={s.promptBook}>
-						Or skip straight to reservation ↓
-					</a>
-				</div>
-			</form>
-		</div>
+					</div>
+					<p className={s.promptResult} aria-live="assertive" data-glitch={state === 'denied' ? (tries % 2 ? 'a' : 'b') : undefined}>
+						{state === 'denied' ? `ACCESS DENIED · ATTEMPT ${tries}` : state === 'granted' ? 'ACCESS GRANTED · DOORS OPENING' : ' '}
+					</p>
+					<p id={`${id}-hint`} className={s.promptHint}>
+						{state === 'granted' ? 'The core is open. MERIDIAN is sulking.' : hint}
+					</p>
+					<MeridianLine />
+					<div className={s.promptAlt}>
+						{state === 'granted' ? null : (
+							<button type="button" className={s.promptSkip} onClick={override}>
+								Override: open the doors without it
+							</button>
+						)}
+						<a href="#book" className={s.promptBook}>
+							Or skip straight to reservation ↓
+						</a>
+					</div>
+				</form>
+			</div>
+		</>
 	);
 }

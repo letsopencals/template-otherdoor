@@ -12,6 +12,7 @@ import { MeridianConsole } from './console';
 import { Hesitate, Module } from './module';
 import { ContainmentMap, type Zone } from './containment-map';
 import { AccessPrompt } from './access-prompt';
+import { ModuleHead } from './module-head';
 import { GlitchDefs, PixelSeam } from './pixel-seam';
 import { MeridianLine } from './meridian-line';
 import { formatWholePrice } from '@/lib/format';
@@ -375,7 +376,6 @@ export default function ProtocolZero({ room, presentation: p, cover, photos, gam
 			{/* ================================================================ ACCESS PROMPT */}
 			<Module id="access" label="Access prompt" phase={4} className={s.mVoid} line="Go on. Guess. I love guessing games.">
 				<div className={s.mInnerWide}>
-					<ModuleHead n="05" title="Access" status="Locked" note="Optional. The reservation below works either way." />
 					<AccessPrompt still={core} fallback={aisle} />
 				</div>
 			</Module>
@@ -467,22 +467,6 @@ export default function ProtocolZero({ room, presentation: p, cover, photos, gam
 
 /* ------------------------------------------------------------------ pieces */
 
-function ModuleHead({ n, title, status, note }: { n: string; title: string; status: string; note: string }) {
-	return (
-		<div className={s.mHead}>
-			<p className={s.mNum}>
-				MODULE {n}
-				<span className={s.mStatus} data-status={status.toLowerCase()}>
-					{status}
-				</span>
-			</p>
-			<h2 className={s.mTitle} data-text={title}>
-				{title}
-			</h2>
-			<p className={s.mNote}>{note}</p>
-		</div>
-	);
-}
 
 function Param({ k, v, sub, meter, bar }: { k: string; v: string; sub?: string; meter?: number; bar?: number }) {
 	return (

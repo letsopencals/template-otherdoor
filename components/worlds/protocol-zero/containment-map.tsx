@@ -96,7 +96,8 @@ export function ContainmentMap({ zones }: { zones: Zone[] }) {
 						<rect x="60" y="170" width="110" height="120" rx="2" className={s.zoneShape} />
 						<path d="M60 230H170" className={s.mapThin} strokeDasharray="4 4" />
 						<text x="72" y="190" className={s.mapLabel}>
-							01 DECON
+							01
+							<tspan className={s.mapName}> DECON</tspan>
 						</text>
 						<g className={s.you}>
 							<circle cx="115" cy="258" r="12" className={s.youRing} />
@@ -113,7 +114,8 @@ export function ContainmentMap({ zones }: { zones: Zone[] }) {
 						<path d="M232 180 Q310 140 388 180" className={s.mapThin} />
 						<rect x="282" y="120" width="56" height="28" rx="3" className={s.mapThin} />
 						<text x="212" y="80" className={s.mapLabel}>
-							02 CONTROL
+							02
+							<tspan className={s.mapName}> CONTROL</tspan>
 						</text>
 					</g>
 
@@ -121,7 +123,8 @@ export function ContainmentMap({ zones }: { zones: Zone[] }) {
 					<g className={s.zone} data-zone="aisle" onClick={() => pick('aisle')}>
 						<rect x="200" y="250" width="380" height="150" rx="2" className={s.zoneShape} />
 						<text x="212" y="262" className={s.mapLabel} dy="-4">
-							03 SERVER AISLE
+							03
+							<tspan className={s.mapName}> SERVER AISLE</tspan>
 						</text>
 						{RACKS.map((r) => (
 							<rect key={r.i} x={r.x} y={r.y} width="22" height="34" rx="1.5" className={s.rack} data-w={r.i < 9 ? '' : undefined} style={{ animationDelay: `${r.i * 0.9}s` }} />
@@ -136,7 +139,8 @@ export function ContainmentMap({ zones }: { zones: Zone[] }) {
 						<circle cx="672" cy="160" r="30" className={s.coreRing} />
 						<circle cx="672" cy="160" r="16" className={s.coreRing2} />
 						<text x="628" y="272" className={s.mapLabel}>
-							04 CORE
+							04
+							<tspan className={s.mapName}> CORE</tspan>
 						</text>
 					</g>
 
@@ -159,7 +163,7 @@ export function ContainmentMap({ zones }: { zones: Zone[] }) {
 						<rect x="-7" y="-5" width="14" height="10" rx="2" className={s.cam} />
 					</g>
 
-					<text x="44" y="452" className={s.mapTiny}>
+					<text x="44" y="452" className={`${s.mapTiny} ${s.mapFoot}`}>
 						HALDEN LABS · SUBLEVEL 4 · 40 M BELOW COWGATE · NOT TO SCALE
 					</text>
 				</svg>

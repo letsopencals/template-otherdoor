@@ -967,6 +967,22 @@
 	letter-spacing: 0.14em;
 	fill: var(--pz-steel);
 }
+/* Phones: the plan prints at ~45%, so labels grow to zone numbers (the tabs below carry the names) and the footer line goes. */
+@media (max-width: 640px) {
+	.mapLabel {
+		font-size: 30px;
+		font-weight: 700;
+		letter-spacing: 0.04em;
+	}
+	.mapName,
+	.mapFoot {
+		display: none;
+	}
+	.mapTiny {
+		font-size: 22px;
+		font-weight: 700;
+	}
+}
 .zone {
 	cursor: pointer;
 }
