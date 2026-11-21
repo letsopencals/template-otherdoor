@@ -216,13 +216,12 @@ body {
 /* ------------------------------------------------------------------ Marbled endpaper strip */
 
 .marble {
-	height: 22px;
-	background-color: #7a1e22;
-	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='44'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='turbulence' baseFrequency='.012 .09' numOctaves='3' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 .95 0 0 0 0 .78 0 0 0 0 .4 0 0 0 1.6 -.8'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' fill='%231e3a30'/%3E%3Crect width='100%25' height='100%25' filter='url(%23m)'/%3E%3C/svg%3E");
-	background-size: 400px 44px;
-	border-top: 2px solid #c8a04a;
-	border-bottom: 2px solid #c8a04a;
-	box-shadow: 0 1px 0 #8c6a24, 0 -1px 0 #8c6a24;
+	height: 30px;
+	background-color: #5e1a1d;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='480' height='60'%3E%3Cfilter id='a'%3E%3CfeTurbulence type='turbulence' baseFrequency='.008 .07' numOctaves='4' seed='11'/%3E%3CfeColorMatrix values='0 0 0 0 .91 0 0 0 0 .76 0 0 0 0 .42 0 0 0 2.2 -1.25'/%3E%3C/filter%3E%3Cfilter id='b'%3E%3CfeTurbulence type='turbulence' baseFrequency='.012 .05' numOctaves='3' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 .12 0 0 0 0 .3 0 0 0 0 .24 0 0 0 2.6 -.9'/%3E%3C/filter%3E%3Cfilter id='c'%3E%3CfeTurbulence type='turbulence' baseFrequency='.02 .11' numOctaves='2' seed='23'/%3E%3CfeColorMatrix values='0 0 0 0 .97 0 0 0 0 .93 0 0 0 0 .84 0 0 0 3 -2.3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' fill='%235e1a1d'/%3E%3Crect width='100%25' height='100%25' filter='url(%23b)'/%3E%3Crect width='100%25' height='100%25' filter='url(%23a)'/%3E%3Crect width='100%25' height='100%25' filter='url(%23c)'/%3E%3C/svg%3E");
+	background-size: 480px 60px;
+	border-top: 3px double #c8a04a;
+	border-bottom: 3px double #c8a04a;
 }
 
 /* ------------------------------------------------------------------ Wax seal */
