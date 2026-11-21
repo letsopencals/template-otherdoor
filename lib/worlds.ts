@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import type { TeamOption } from '@/lib/rooms';
-import type { HeaderTone, RoomPalette } from '@/lib/site-config';
+import type { HeaderTone, RoomPalette, WorldMedia } from '@/lib/site-config';
 
 /**
  * THE ROOM-WORLD CONTRACT (read components/worlds/README.md).
@@ -48,8 +48,8 @@ export interface WorldPresentation {
 	genre: string;
 	year: string;
 	tagline: string;
-	/** Volume number on the society's shelf. */
-	volume: number;
+	/** Door number in the corridor (1-based). */
+	order: number;
 	/** 1–5 */
 	difficulty: number;
 	/** 0–5 */
@@ -66,12 +66,14 @@ export interface WorldPresentation {
 	headerTone: HeaderTone;
 	beats: Array<{ title: string; body: string }>;
 	wear: string;
+	/** Template media for this world (public/worlds/<slug>/), each optional. */
+	media: WorldMedia;
 }
 
 export interface WorldGameMaster {
 	slug: string;
 	name: string;
-	/** In-world title, e.g. "Keeper of Keys". */
+	/** Modern title, e.g. "Head game master · Kepler Station". */
 	title: string;
 	bio: string;
 	/** Store portrait; null until photos exist (draw initials/silhouette). */
@@ -98,7 +100,7 @@ export interface WorldRecord {
 export interface RoomWorldProps {
 	room: WorldRoom;
 	presentation: WorldPresentation;
-	/** Store cover art (3:4 illustrated, `imageUrls[0]`), or null: draw the world instead. */
+	/** Store key art (3:4 cinematic poster, `imageUrls[0]`), or null. */
 	cover: string | null;
 	/** Store interior photos (3:2, `imageUrls[1..]`). May be empty: never render a broken image. */
 	photos: string[];
@@ -108,7 +110,7 @@ export interface RoomWorldProps {
 	records: WorldRecord[];
 	/**
 	 * The shared BookingPanel, already wired for this room (date strip, sessions,
-	 * team size, add-ons, total, "Add to satchel"). Place it once, in normal flow,
+	 * team size, add-ons, total, "Add to your doors"). Place it once, in normal flow,
 	 * inside an element with `id` of your choice; the panel itself carries
 	 * `id="book"` (deep links `/rooms/<slug>?date=YYYY-MM-DD&time=HH:mm#book`).
 	 * Skin it only through the `--bp-*` CSS variables on an ancestor.

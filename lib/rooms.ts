@@ -218,7 +218,7 @@ export function buildCatalogue(input: {
 			rescheduleGap: first.rescheduleGap ?? 0,
 		});
 	}
-	// Shelf order: known rooms by volume, then the store's others by title.
+	// Corridor order: known rooms by door number, then the store's others by title.
 	rooms.sort((a, b) => {
 		const ia = ROOM_ORDER.indexOf(a.slug);
 		const ib = ROOM_ORDER.indexOf(b.slug);

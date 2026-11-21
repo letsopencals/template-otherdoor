@@ -28,7 +28,7 @@ export function worldPresentation(room: Pick<Room, 'slug' | 'options'>): WorldPr
 		genre: p?.genre ?? 'Adventure',
 		year: p?.year ?? '',
 		tagline: p?.tagline ?? '',
-		volume: p?.volume ?? 0,
+		order: p?.order ?? 0,
 		difficulty: p?.difficulty ?? 3,
 		fear: p?.fear ?? 1,
 		minAge: p?.minAge ?? 12,
@@ -40,9 +40,10 @@ export function worldPresentation(room: Pick<Room, 'slug' | 'options'>): WorldPr
 		epic: Boolean(p?.epic),
 		family: Boolean(p?.family),
 		palette: p?.palette ?? FALLBACK_PALETTE,
-		headerTone: p?.headerTone ?? 'dark',
+		headerTone: p?.headerTone ?? 'light',
 		beats: p?.beats ?? [],
 		wear: p?.wear ?? 'Comfortable clothes and closed shoes.',
+		media: p?.media ?? {},
 	};
 }
 
@@ -51,7 +52,7 @@ export function buildWorldProps(room: Room, catalogue: Catalogue, booking: React
 	const gmSlug = p?.gameMaster ?? null;
 	const gm = gameMaster(gmSlug);
 	const staff = catalogue.staff.find((s) => s.slug === gmSlug);
-	// Next room: the configured one if the store sells it, else the next on the shelf.
+	// Next door: the configured one if the store sells it, else the next in the corridor.
 	const idx = catalogue.rooms.findIndex((r) => r.slug === room.slug);
 	const nextRoom = catalogue.rooms.find((r) => r.slug === p?.next && r.slug !== room.slug) ?? (catalogue.rooms.length > 1 ? catalogue.rooms[(idx + 1) % catalogue.rooms.length] : undefined);
 	const from = room.options[0]?.price ?? 0;

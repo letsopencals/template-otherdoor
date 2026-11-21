@@ -59,7 +59,7 @@ export function minutesLabel(min: number): string {
 	return m ? `${h}h ${String(m).padStart(2, '0')}m` : `${h}h`;
 }
 
-/** Roman numeral for volume numbers (1–39). */
+/** Roman numeral (1–39). */
 export function roman(n: number): string {
 	const map: Array<[number, string]> = [[10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I']];
 	let out = '';
