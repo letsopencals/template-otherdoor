@@ -120,27 +120,26 @@ export function HeroMap({ variant }: { variant: 'night' | 'lit' }) {
 	);
 }
 
-/** Invisible-ink routes and notes (only visible under the lantern). */
+/** Invisible-ink routes and notes (only visible under the lantern). Same frame as the 1800×771 chart image. */
 export function InkLayer({ clue }: { clue: string }) {
 	const ink = '#8f2a1c';
 	return (
-		<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" className="absolute inset-0 h-full w-full" aria-hidden>
-			<g stroke={ink} strokeWidth="2.4" fill="none" strokeDasharray="10 9" strokeLinecap="round" opacity=".9">
-				<path d="M330 680 C 450 560 520 380 640 250" />
-				<path d="M640 250 C 760 320 790 400 760 470" />
-				<path d="M760 470 C 840 560 930 600 1010 620" />
-				<path d="M1010 620 C 1100 480 1140 380 1180 300" />
-				<path d="M1180 300 C 1260 340 1330 400 1360 470" />
+		<svg viewBox="0 0 1800 771" preserveAspectRatio="xMidYMid slice" className="absolute inset-0 h-full w-full" aria-hidden>
+			<g stroke={ink} strokeWidth="2.6" fill="none" strokeDasharray="10 9" strokeLinecap="round" opacity=".85">
+				<path d="M470 520 C 560 470 600 420 660 330" />
+				<path d="M1110 300 C 1160 380 1150 420 1110 450" />
+				<path d="M1500 310 C 1460 380 1440 420 1470 470" />
 			</g>
-			<g fill={ink} style={{ font: '20px var(--font-type)' }}>
-				<text x="380" y="560" transform="rotate(-38 380 560)">72 paces past the idol</text>
-				<text x="820" y="560" transform="rotate(14 820 560)">dive at low tide</text>
-				<text x="1080" y="460" transform="rotate(-58 1080 460)">mind the sand</text>
-				<text x="560" y="140">{clue}</text>
-				<text x="560" y="168" style={{ fontSize: 16 }}>— A.V., 1936</text>
+			<g fill={ink} style={{ font: '22px var(--font-type)' }}>
+				<text x="500" y="455" transform="rotate(-42 500 455)">72 paces past the idol</text>
+				<text x="1125" y="470" transform="rotate(8 1125 470)">the study door is false</text>
+				<text x="1440" y="525" transform="rotate(-8 1440 525)">wind it at midnight</text>
+				<text x="700" y="420" style={{ fontSize: 26, fontWeight: 700 }}>{clue}</text>
+				<text x="700" y="452" style={{ fontSize: 18 }}>— A.V., 1936</text>
+				<text x="300" y="380" transform="rotate(-10 300 380)">dive at low tide</text>
 			</g>
-			<g stroke={ink} strokeWidth="3" strokeLinecap="round">
-				<path d="M1346 456 l28 28 M1374 456 l-28 28" />
+			<g stroke={ink} strokeWidth="4" strokeLinecap="round">
+				<path d="M1086 588 l26 26 M1112 588 l-26 26" />
 			</g>
 		</svg>
 	);

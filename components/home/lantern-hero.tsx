@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useRef, type ReactNode } from 'react';
+import { SafeImg } from '@/components/ui/safe-img';
 import { HeroMap, InkLayer } from './hero-map';
 import s from './lantern-hero.module.css';
 
@@ -11,7 +12,7 @@ import s from './lantern-hero.module.css';
  * radial mask over the lit layer). With no pointer the lantern drifts along the
  * routes by itself; with reduced motion it rests over the first note.
  */
-export function LanternHero({ clue, compass, children }: { clue: string; compass: ReactNode; children?: ReactNode }) {
+export function LanternHero({ clue, compass, mapSrc, children }: { clue: string; compass: ReactNode; mapSrc?: string | null; children?: ReactNode }) {
 	const ref = useRef<HTMLElement>(null);
 	useEffect(() => {
 		const el = ref.current;
@@ -55,10 +56,10 @@ export function LanternHero({ clue, compass, children }: { clue: string; compass
 	return (
 		<section ref={ref} className={s.hero} aria-label="The Gilded Compass">
 			<div className={s.night}>
-				<HeroMap variant="night" />
+				<SafeImg src={mapSrc} alt="" className={s.mapImgNight} loading="eager" fallback={<HeroMap variant="night" />} />
 			</div>
 			<div className={s.lit}>
-				<HeroMap variant="lit" />
+				<SafeImg src={mapSrc} alt="" className={s.mapImg} loading="eager" fallback={<HeroMap variant="lit" />} />
 				<InkLayer clue={clue} />
 			</div>
 			<div className={s.glow} />

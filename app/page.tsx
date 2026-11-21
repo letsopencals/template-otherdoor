@@ -41,7 +41,7 @@ export default async function Home() {
 
 	return (
 		<>
-			<LanternHero clue="The society’s word is what every room is. Six letters." compass={<CompassNeedle next={nextLabel} />} />
+			<LanternHero mapSrc={siteConfig.media.heroMap} clue="The society’s word is what every room is. Six letters." compass={<CompassNeedle next={nextLabel} />} />
 
 			<section id="shelf" className="wrap scroll-mt-24 py-24">
 				<ChapterHead n={1} label="The Shelf" title="Six volumes. Pull one out." lede="Every room is an illustrated adventure in the society’s library. Hover a spine, open the volume and walk into its world. Each one is a 60-minute game for a private team; the Cartographer’s Tomb runs 90." />
