@@ -103,7 +103,7 @@ export function parseTeamSlug(slug: string): { room: string; size: number } | nu
 
 type V = Pick<
 	ProductListVariant,
-	'id' | 'slug' | 'title' | 'variantTitle' | 'description' | 'price' | 'duration' | 'maxAttendees' | 'productPoolId' | 'imageId' | 'image' | 'images' | 'locations' | 'staffMembers' | 'collections' | 'productPool' | 'cancelGap' | 'rescheduleGap'
+	'id' | 'productId' | 'slug' | 'title' | 'variantTitle' | 'description' | 'price' | 'duration' | 'maxAttendees' | 'productPoolId' | 'imageId' | 'image' | 'images' | 'locations' | 'staffMembers' | 'collections' | 'productPool' | 'cancelGap' | 'rescheduleGap'
 >;
 
 /** A group's variants; a group without any is its own single variant. */
@@ -143,8 +143,13 @@ function inCollection(v: V, slug: string, idx: Map<string, Set<string>>): boolea
 	return Boolean(v.collections?.some((c) => c.slug === slug) || idx.get(v.id)?.has(slug));
 }
 
-function roomKey(v: V): string | null {
-	return parseTeamSlug(v.slug)?.room ?? v.productPool?.name ?? null;
+const SLUG_LIKE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-/i;
+
+/** The room key: the `<room>` of `<room>-<n>p`, else a slug-like group key (`productId`), else the pool name. */
+function roomKey(v: V & { productId?: string }): string | null {
+	const group = v.productId && v.productId !== v.id && SLUG_LIKE.test(v.productId) && !UUID.test(v.productId) ? v.productId : null;
+	return parseTeamSlug(v.slug)?.room ?? group ?? v.productPool?.name ?? null;
 }
 
 export function buildCatalogue(input: {

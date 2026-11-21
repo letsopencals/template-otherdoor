@@ -127,6 +127,14 @@ export const siteConfig = {
 	/** Appointment customAttributes keys (team name travels with each booking). */
 	customAttributeKeys: { people: 'people', team: 'team' },
 
+	/**
+	 * Offer hints shown on session buttons. The store's discounts do the maths (the
+	 * satchel shows the real price); keep these in step with the dashboard.
+	 */
+	offers: {
+		matinee: { weekdays: [1, 2, 3, 4], beforeMinutes: 15 * 60, label: 'Matinee −15%' },
+	},
+
 	/** Call time before the start (the invitation). */
 	callTimeMinutes: 15,
 	/** Days shown in date strips. */
@@ -197,7 +205,7 @@ export const siteConfig = {
 			players: [2, 5],
 			palette: { ground: '#1C2B24', ink: '#EFE6D0', accent: '#D69A3C', accentInk: '#1A140A', second: '#7A8C7E', spine: '#24402F', foil: '#E2B86A' },
 			headerTone: 'light',
-			gameMaster: 'hamish-dunbar',
+			gameMaster: 'hamish-lorimer',
 			next: 'cartographers-tomb',
 			beats: [
 				{ title: 'The case', body: 'Professor Ambrose Quill locked his study at No. 9 Heriot Row from the inside, and was never seen again.' },
@@ -225,7 +233,7 @@ export const siteConfig = {
 			epic: true,
 			palette: { ground: '#E9D4A8', ink: '#2A1C10', accent: '#1F3F8F', accentInk: '#F6EBD2', second: '#B5532C', spine: '#1F3F8F', foil: '#E6C46A' },
 			headerTone: 'dark',
-			gameMaster: 'priya-ashworth',
+			gameMaster: 'morag-fairbairn',
 			next: 'leviathan-dive',
 			beats: [
 				{ title: 'The dig', body: 'In 1922 the society’s dig found a tomb no list mentioned: the resting place of the royal cartographer.' },
@@ -252,7 +260,7 @@ export const siteConfig = {
 			players: [2, 6],
 			palette: { ground: '#0D2A2E', ink: '#E3F1EC', accent: '#C9A24B', accentInk: '#10201E', second: '#3FA79A', spine: '#1F5A55', foil: '#D7B45E' },
 			headerTone: 'light',
-			gameMaster: 'callum-reid',
+			gameMaster: 'callum-rennie',
 			next: 'hotel-lumiere',
 			beats: [
 				{ title: 'The dive', body: 'Captain Elspeth Haldane took the Leviathan down in 1870 to find the bottom of the sea. She found it.' },
@@ -279,7 +287,7 @@ export const siteConfig = {
 			players: [2, 6],
 			palette: { ground: '#FFF4D6', ink: '#111111', accent: '#E63022', accentInk: '#FFFFFF', second: '#1B9AD6', spine: '#E63022', foil: '#FFD23F' },
 			headerTone: 'dark',
-			gameMaster: 'margaux-lindqvist',
+			gameMaster: 'eilidh-baxter',
 			next: 'clockmakers-workshop',
 			beats: [
 				{ title: 'The job', body: 'The Étoile de Menton sleeps in the penthouse safe of the Hôtel Lumière. Tonight it changes hands.' },
@@ -307,7 +315,7 @@ export const siteConfig = {
 			family: true,
 			palette: { ground: '#F3E3C8', ink: '#3B2414', accent: '#B5562B', accentInk: '#FFF6E8', second: '#4E6E7A', spine: '#6B3F22', foil: '#E8B66A' },
 			headerTone: 'dark',
-			gameMaster: 'thea-galloway',
+			gameMaster: 'fergus-drummond',
 			next: 'jaguar-temple',
 			beats: [
 				{ title: 'The workshop', body: 'Master Tobias Wren built toys that walked, sang and kept perfect time. Then, at midnight, every clock stopped.' },
@@ -352,12 +360,12 @@ export const siteConfig = {
 
 	/** Game masters by staff slug. The store's staff record supplies the portrait. */
 	gameMasters: {
-		'isla-moncrieff': { name: 'Isla Moncrieff', title: 'Head of Expeditions', room: 'jaguar-temple', tone: '#2E4A2A', bio: 'Former field archaeologist who built the temple’s carvings by hand. Will tell you about the rolling stone. Will not tell you how it works.' },
-		'hamish-dunbar': { name: 'Hamish Dunbar', title: 'Keeper of the Casebook', room: 'gaslight-no-9', tone: '#24402F', bio: 'Edinburgh tour-guide turned game designer. Knows every close in the Old Town and every alibi at No. 9.' },
-		'priya-ashworth': { name: 'Priya Ashworth', title: 'Mistress of Maps', room: 'cartographers-tomb', tone: '#1F3F8F', bio: 'Draws the society’s maps and designed the Epic. Has watched more teams lose the light than anyone alive.' },
-		'callum-reid': { name: 'Callum Reid', title: 'Chief Engineer', room: 'leviathan-dive', tone: '#1F5A55', bio: 'Ex-Leith shipyard fitter who riveted the Leviathan together. Talks you through the dive over the voice pipe.' },
-		'margaux-lindqvist': { name: 'Margaux Lindqvist', title: 'The Fixer', room: 'hotel-lumiere', tone: '#E63022', bio: 'Theatre stage manager by training. Runs the Lumière like an opening night and the lockpicking classes like a heist crew.' },
-		'thea-galloway': { name: 'Thea Galloway', title: 'Keeper of Keys', room: 'clockmakers-workshop', tone: '#6B3F22', bio: 'Clock restorer and the society’s cipher teacher. Builds the workshop’s toys and teaches the secret-inks class.' },
+		'isla-moncrieff': { name: 'Isla Moncrieff', title: 'Head of Expeditions', room: 'jaguar-temple', tone: '#2E4A2A', bio: 'Isla spent six years as a field archaeologist before deciding the best digs are the ones you can reset every ninety minutes. She briefs every Jaguar Temple team in full expedition kit and keeps a logbook of every party that made it out with the idol.' },
+		'hamish-lorimer': { name: 'Hamish Lorimer', title: 'Inspector of Curiosities', room: 'gaslight-no-9', tone: '#24402F', bio: 'A former Old Town ghost-tour guide with a weakness for Victorian ciphers. Hamish wrote half the clues in No. 9 himself, runs the Gaslight Affair most evenings and teaches Ciphers & Secret Inks at the Bond.' },
+		'morag-fairbairn': { name: 'Morag Fairbairn', title: 'Keeper of Maps', room: 'cartographers-tomb', tone: '#1F3F8F', bio: 'Morag drew maps for a living before she started hiding them. She designed the two chambers of the Cartographer’s Tomb, watches every Epic from the control desk and has never once given away the star chart.' },
+		'callum-rennie': { name: 'Callum Rennie', title: 'Chief of the Deep', room: 'leviathan-dive', tone: '#1F5A55', bio: 'Callum grew up on the Shore, worked the boats out of Leith and built most of the Leviathan’s brass by hand. He is the voice on the crackling speaker when the oxygen starts to run low.' },
+		'eilidh-baxter': { name: 'Eilidh Baxter', title: 'Keeper of Keys', room: 'hotel-lumiere', tone: '#E63022', bio: 'Eilidh trained as a stage magician and can open most padlocks faster than you can find the key. She runs the Hôtel Lumière Job in a dinner jacket and teaches Lockpicking 101 at the Bond.' },
+		'fergus-drummond': { name: 'Fergus Drummond', title: 'Master of Springs', room: 'clockmakers-workshop', tone: '#6B3F22', bio: 'A clock restorer from Stockbridge with a workshop full of wind-up toys. Fergus built the Clockmaker’s music box, plays Master Wren’s apprentice for families and has a gentle hint ready for every age.' },
 	} satisfies Record<string, GameMaster>,
 
 	workshops: {

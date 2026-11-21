@@ -1,0 +1,392 @@
+/*
+ * The booking controls (date strip, session buttons, team sizes, add-ons, the
+ * total bar). Plain and classic on purpose. Skinned only through --bp-*
+ * variables; every one has a house-style fallback. See components/worlds/README.md.
+ */
+
+.panel {
+	--_bg: var(--bp-bg, #fbf6ea);
+	--_ink: var(--bp-ink, #15201b);
+	--_muted: var(--bp-muted, #6f5a3e);
+	--_line: var(--bp-line, rgba(138, 106, 67, 0.35));
+	--_surface: var(--bp-surface, #f4ead5);
+	--_surface-ink: var(--bp-surface-ink, #15201b);
+	--_accent: var(--bp-accent, #1e3a30);
+	--_accent-ink: var(--bp-accent-ink, #fbf6ea);
+	--_focus: var(--bp-focus, #2f6f6a);
+	--_radius: var(--bp-radius, 4px);
+	--_display: var(--bp-font-display, var(--font-display));
+	--_ui: var(--bp-font-ui, var(--font-ui));
+	--_shadow: var(--bp-shadow, 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 24px 50px -28px rgba(60, 40, 15, 0.5));
+	--_bar-bg: var(--bp-bar-bg, var(--_bg));
+	--_bar-ink: var(--bp-bar-ink, var(--_ink));
+
+	position: relative;
+	background: var(--_bg);
+	color: var(--_ink);
+	font-family: var(--_ui);
+	border-radius: var(--_radius);
+	box-shadow: var(--_shadow);
+	border: 1px solid var(--_line);
+	text-align: left;
+	scroll-margin-top: calc(var(--header-h, 72px) + 12px);
+}
+
+.panel :focus-visible {
+	outline: 2px solid var(--_focus);
+	outline-offset: 2px;
+}
+
+.head {
+	padding: 20px 20px 4px;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 4px 16px;
+}
+.title {
+	font-family: var(--_display);
+	font-size: 1.6rem;
+	line-height: 1.1;
+	margin: 0;
+}
+.meta {
+	font-size: 0.85rem;
+	color: var(--_muted);
+}
+
+.section {
+	padding: 14px 20px;
+	border-top: 1px solid var(--_line);
+}
+.section:first-of-type {
+	border-top: 0;
+}
+.label {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: 8px;
+	font-size: 0.78rem;
+	font-weight: 800;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--_muted);
+	margin: 0 0 10px;
+}
+.labelNote {
+	font-weight: 600;
+	letter-spacing: 0;
+	text-transform: none;
+	font-size: 0.8rem;
+}
+
+/* ---- Date strip */
+.strip {
+	display: flex;
+	gap: 6px;
+	overflow-x: auto;
+	scrollbar-width: none;
+	padding: 2px 2px 4px;
+	margin: 0 -2px;
+	scroll-snap-type: x proximity;
+}
+.strip::-webkit-scrollbar {
+	display: none;
+}
+.day {
+	flex: 0 0 auto;
+	width: 58px;
+	padding: 7px 0 8px;
+	display: grid;
+	justify-items: center;
+	gap: 1px;
+	background: var(--_surface);
+	color: var(--_surface-ink);
+	border: 1px solid var(--_line);
+	border-radius: var(--_radius);
+	cursor: pointer;
+	scroll-snap-align: start;
+	font-family: var(--_ui);
+	transition: background 0.15s ease, color 0.15s ease;
+}
+.day:hover:not(:disabled) {
+	border-color: var(--_accent);
+}
+.day:disabled {
+	opacity: 0.38;
+	cursor: default;
+}
+.day[aria-pressed='true'] {
+	background: var(--_accent);
+	color: var(--_accent-ink);
+	border-color: var(--_accent);
+}
+.dayWd {
+	font-size: 0.7rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+}
+.dayNum {
+	font-size: 1.25rem;
+	font-weight: 800;
+	line-height: 1.1;
+}
+.dayMo {
+	font-size: 0.68rem;
+	opacity: 0.8;
+}
+.dayDot {
+	width: 5px;
+	height: 5px;
+	border-radius: 50%;
+	background: currentColor;
+	opacity: 0.6;
+	margin-top: 2px;
+}
+
+/* ---- Sessions */
+.times {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(86px, 1fr));
+	gap: 8px;
+}
+.time {
+	min-height: 48px;
+	padding: 6px 4px;
+	display: grid;
+	place-items: center;
+	align-content: center;
+	gap: 1px;
+	background: var(--_surface);
+	color: var(--_surface-ink);
+	border: 1px solid var(--_line);
+	border-radius: var(--_radius);
+	font-family: var(--_ui);
+	font-weight: 800;
+	font-size: 1.02rem;
+	font-variant-numeric: tabular-nums;
+	cursor: pointer;
+}
+.time:hover {
+	border-color: var(--_accent);
+}
+.time[aria-pressed='true'] {
+	background: var(--_accent);
+	color: var(--_accent-ink);
+	border-color: var(--_accent);
+}
+.timeNote {
+	font-size: 0.66rem;
+	font-weight: 700;
+	opacity: 0.8;
+	letter-spacing: 0.02em;
+}
+.empty {
+	font-size: 0.92rem;
+	color: var(--_muted);
+	padding: 6px 0;
+}
+.linkish {
+	background: none;
+	border: 0;
+	padding: 0;
+	color: inherit;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+	font: inherit;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+/* ---- Team sizes */
+.teams {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+	gap: 8px;
+}
+.team {
+	min-height: 64px;
+	padding: 8px 6px;
+	display: grid;
+	justify-items: center;
+	align-content: center;
+	gap: 2px;
+	background: var(--_surface);
+	color: var(--_surface-ink);
+	border: 1px solid var(--_line);
+	border-radius: var(--_radius);
+	font-family: var(--_ui);
+	cursor: pointer;
+}
+.team:hover {
+	border-color: var(--_accent);
+}
+.team[aria-pressed='true'] {
+	background: var(--_accent);
+	color: var(--_accent-ink);
+	border-color: var(--_accent);
+}
+.teamN {
+	font-weight: 800;
+	font-size: 0.95rem;
+}
+.teamPrice {
+	font-weight: 800;
+	font-size: 1.05rem;
+	font-variant-numeric: tabular-nums;
+}
+.teamPp {
+	font-size: 0.72rem;
+	opacity: 0.8;
+}
+
+/* ---- Add-ons */
+.addons {
+	display: grid;
+	gap: 6px;
+}
+.addon {
+	display: grid;
+	grid-template-columns: auto 1fr auto;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 12px;
+	border: 1px solid var(--_line);
+	border-radius: var(--_radius);
+	background: var(--_surface);
+	color: var(--_surface-ink);
+	cursor: pointer;
+	font-size: 0.92rem;
+}
+.addon input {
+	width: 18px;
+	height: 18px;
+	accent-color: var(--_accent);
+}
+.addonTitle {
+	font-weight: 700;
+}
+.addonDesc {
+	display: block;
+	font-size: 0.78rem;
+	opacity: 0.75;
+	font-weight: 500;
+}
+.addonPrice {
+	font-weight: 800;
+	font-variant-numeric: tabular-nums;
+}
+.more {
+	margin-top: 8px;
+}
+
+/* ---- Seats stepper (workshops) */
+.stepper {
+	display: inline-flex;
+	align-items: center;
+	border: 1px solid var(--_line);
+	border-radius: var(--_radius);
+	background: var(--_surface);
+}
+.stepper button {
+	width: 44px;
+	height: 44px;
+	font-size: 1.3rem;
+	font-weight: 800;
+	background: none;
+	border: 0;
+	color: var(--_surface-ink);
+	cursor: pointer;
+}
+.stepper button:disabled {
+	opacity: 0.3;
+	cursor: default;
+}
+.stepper output {
+	min-width: 44px;
+	text-align: center;
+	font-weight: 800;
+	font-size: 1.1rem;
+}
+
+/* ---- Total bar: sticky at the bottom of the panel (normal top header stays). */
+.bar {
+	position: sticky;
+	bottom: 0;
+	z-index: 2;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+	background: var(--_bar-bg);
+	color: var(--_bar-ink);
+	border-top: 1px solid var(--_line);
+	border-radius: 0 0 var(--_radius) var(--_radius);
+	box-shadow: 0 -12px 24px -18px rgba(0, 0, 0, 0.35);
+}
+.total {
+	flex: 1;
+	min-width: 0;
+	line-height: 1.15;
+}
+.totalAmount {
+	font-size: 1.35rem;
+	font-weight: 800;
+	font-variant-numeric: tabular-nums;
+}
+.totalNote {
+	display: block;
+	font-size: 0.76rem;
+	opacity: 0.8;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.cta {
+	flex: 0 0 auto;
+	min-height: 50px;
+	padding: 0 22px;
+	background: var(--_accent);
+	color: var(--_accent-ink);
+	border: 0;
+	border-radius: var(--_radius);
+	font-family: var(--_ui);
+	font-weight: 800;
+	font-size: 1rem;
+	cursor: pointer;
+	transition: filter 0.15s ease;
+}
+.cta:hover:not(:disabled) {
+	filter: brightness(1.1);
+}
+.cta:disabled {
+	opacity: 0.55;
+	cursor: not-allowed;
+}
+.error {
+	margin: 0 20px 12px;
+	padding: 10px 12px;
+	border-left: 3px solid #b3261e;
+	background: rgba(179, 38, 30, 0.08);
+	font-size: 0.9rem;
+}
+.ok {
+	margin: 0 20px 12px;
+	padding: 10px 12px;
+	border-left: 3px solid var(--_accent);
+	background: color-mix(in srgb, var(--_accent) 10%, transparent);
+	font-size: 0.9rem;
+}
+
+@media (max-width: 420px) {
+	.head,
+	.section {
+		padding-inline: 14px;
+	}
+	.cta {
+		padding: 0 16px;
+	}
+}

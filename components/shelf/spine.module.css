@@ -1,0 +1,113 @@
+/* A leather book spine. Size via --spine-w / --spine-h on the element. */
+.spine {
+	--spine-w: 64px;
+	--spine-h: 260px;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-between;
+	width: var(--spine-w);
+	height: var(--spine-h);
+	padding: 14px 0 12px;
+	color: var(--foil);
+	text-decoration: none;
+	border-radius: 3px 3px 2px 2px;
+	background:
+		linear-gradient(90deg, rgba(0, 0, 0, 0.35) 0%, rgba(255, 255, 255, 0.14) 18%, rgba(255, 255, 255, 0.04) 40%, rgba(0, 0, 0, 0.12) 70%, rgba(0, 0, 0, 0.4) 100%),
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='l'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23l)'/%3E%3C/svg%3E"),
+		var(--leather);
+	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25), 0 10px 18px -10px rgba(0, 0, 0, 0.55);
+	transform-origin: bottom center;
+	transition: transform 0.45s cubic-bezier(0.2, 0.9, 0.25, 1.2), box-shadow 0.3s ease;
+	cursor: pointer;
+	isolation: isolate;
+}
+.spine:hover,
+.spine:focus-visible,
+.spine[data-out='true'] {
+	transform: translateY(calc(var(--spine-h) * -0.09)) rotate(-1.5deg);
+	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25), 0 26px 30px -16px rgba(0, 0, 0, 0.6);
+	z-index: 2;
+}
+/* Pointer-following foil sheen. */
+.spine::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	background: radial-gradient(circle at 50% var(--sheen-y, 30%), rgba(255, 238, 190, 0.35), transparent 45%);
+	opacity: 0;
+	transition: opacity 0.3s ease;
+	pointer-events: none;
+	mix-blend-mode: screen;
+}
+.spine:hover::after {
+	opacity: 1;
+}
+.bands {
+	width: 100%;
+	display: grid;
+	gap: 3px;
+}
+.bands i {
+	display: block;
+	height: 2px;
+	background: var(--foil);
+	opacity: 0.85;
+}
+.raised {
+	height: 6px !important;
+	margin: 0 -1px;
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(0, 0, 0, 0.35)) !important;
+	box-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+}
+.vol {
+	font-family: var(--font-engraved);
+	font-size: 0.75rem;
+	letter-spacing: 0.12em;
+}
+.title {
+	writing-mode: vertical-rl;
+	transform: rotate(180deg);
+	font-family: var(--font-display);
+	font-size: calc(var(--spine-w) * 0.3);
+	line-height: 1;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-height: calc(var(--spine-h) - 110px);
+	background-image: linear-gradient(180deg, #fff2c4, var(--foil) 40%, color-mix(in srgb, var(--foil) 60%, #5a3d10) 100%);
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+	filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.45));
+}
+.letter {
+	display: grid;
+	place-items: center;
+	width: calc(var(--spine-w) * 0.5);
+	height: calc(var(--spine-w) * 0.5);
+	border: 1px solid var(--foil);
+	border-radius: 50%;
+	font-family: var(--font-display);
+	font-size: calc(var(--spine-w) * 0.26);
+	color: var(--foil);
+}
+.epic {
+	position: absolute;
+	top: 34%;
+	left: -3px;
+	right: -3px;
+	height: 18px;
+	background: #7a1e22;
+	box-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+	font-family: var(--font-engraved);
+	font-size: 0.62rem;
+	letter-spacing: 0.14em;
+	color: #f1d48e;
+	display: grid;
+	place-items: center;
+	text-transform: lowercase;
+	font-variant: small-caps;
+}
