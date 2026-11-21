@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { CSSProperties, ReactNode } from 'react';
 import type { RoomWorldProps } from '@/lib/worlds';
+import { SafeImg } from '@/components/ui/safe-img';
 import { cutive, gloock } from './font';
 import { buildWall, type DocBox, type DocKey } from './layout';
 import { Wall, type WallIndexItem } from './wall';
@@ -23,7 +24,7 @@ const MEDIA = '/worlds/gaslight-no-9';
  * ends before the warrant: the booking panel in a normal vertical section. Phones get the
  * same documents as a vertical stack.
  */
-export default function GaslightNo9({ room, presentation: p, photos, gameMaster, next, records, booking }: RoomWorldProps) {
+export default function GaslightNo9({ room, presentation: p, cover, photos, gameMaster, next, records, booking }: RoomWorldProps) {
 	const m = p.media;
 	const stills = m.stills ?? [];
 	const wide = stills[0] ?? `${MEDIA}/wide.jpg`;
@@ -183,6 +184,16 @@ export default function GaslightNo9({ room, presentation: p, photos, gameMaster,
 								<WaxSeal className={s.warrantSeal} />
 							</div>
 						</div>
+						<figure className={s.warrantPhoto}>
+							<span className={s.warrantPin} aria-hidden />
+							<div className={s.warrantPhotoPrint}>
+								<SafeImg src={cover ?? m.key} alt={`${room.title}: a figure with a lantern looks up at the lit window of No. 9 in the fog`} className={s.fill} fallback={<SafeImg src={m.key} alt="" className={s.fill} fallback={<span className={s.imgFallback} />} />} />
+							</div>
+							<figcaption>
+								Whoever goes in tonight
+								<span>Heriot Row, 11.40 p.m.</span>
+							</figcaption>
+						</figure>
 					</div>
 					<div className={s.panelCol}>{booking}</div>
 				</div>

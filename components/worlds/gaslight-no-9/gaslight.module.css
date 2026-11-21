@@ -51,6 +51,12 @@
 	outline: 2px solid var(--door, #6fd3a8);
 	outline-offset: 3px;
 }
+/* On paper the jade ring vanishes: ink it in dark red instead. */
+.doc :focus-visible,
+.warrantDoc :focus-visible,
+.notes:focus-visible {
+	outline-color: #8f1a1b;
+}
 .fill {
 	display: block;
 	width: 100%;
@@ -460,9 +466,9 @@
 }
 
 /* ================================================================== THE EVIDENCE WALL: sideways */
-@media (min-width: 1024px) and (min-aspect-ratio: 5/4) and (min-height: 600px) and (prefers-reduced-motion: no-preference) {
+@media (min-width: 1024px) and (min-aspect-ratio: 5/4) and (min-height: 680px) and (prefers-reduced-motion: no-preference) {
 	.wall {
-		font-size: clamp(9px, calc((100svh - var(--header-h)) / 60), 17px);
+		font-size: clamp(10px, calc((100svh - var(--header-h)) / 57), 17px);
 		height: calc(100svh + max(0px, var(--wall-w) - 100vw));
 		padding: 0;
 		background: var(--g-green);
@@ -484,7 +490,7 @@
 		height: 54em;
 		padding: 0;
 	}
-	.track {
+	.wall .track {
 		position: absolute;
 		left: 0;
 		top: 0;
@@ -780,7 +786,7 @@
 		transform 0.35s cubic-bezier(0.3, 1.5, 0.5, 1),
 		opacity 0.2s;
 }
-@media (min-width: 1024px) and (min-aspect-ratio: 5/4) and (min-height: 600px) and (prefers-reduced-motion: no-preference) {
+@media (min-width: 1024px) and (min-aspect-ratio: 5/4) and (min-height: 680px) and (prefers-reduced-motion: no-preference) {
 	.notes {
 		position: absolute;
 		left: 2.2em;
@@ -811,7 +817,7 @@
 	height: var(--ls);
 	border-radius: 50%;
 	transform: translate3d(calc(var(--lx, 0px) - var(--ls) / 2), calc(var(--ly, 0px) - var(--ls) / 2), 0);
-	touch-action: none;
+	touch-action: pan-y;
 	cursor: grab;
 	transition: opacity 0.4s;
 	filter: drop-shadow(0 1em 1.2em rgba(0, 0, 0, 0.55));
@@ -903,10 +909,10 @@
 /* hidden ink: barely there on the page, legible under the glass */
 .ink {
 	position: absolute;
-	left: 66%;
-	top: 76%;
-	width: 28%;
-	color: #3b3536;
+	left: 70%;
+	top: 78%;
+	width: 15%;
+	color: #2c2a36;
 	opacity: 0.07;
 	transform: rotate(-4deg);
 	pointer-events: none;
@@ -932,16 +938,28 @@
 	left: 47.1%;
 	top: 79.2%;
 	font-family: var(--g-type);
-	font-size: 0.42em;
+	font-size: 0.46em;
 	white-space: nowrap;
-	color: #fff1cf;
-	text-shadow: 0 0 2px #000, 0 0 4px #000;
+	padding: 0.05em 0.35em;
+	color: #fff4d8;
+	background: rgba(24, 16, 8, 0.6);
+	border-radius: 0.2em;
+	text-shadow: 0 0 2px #000;
 	opacity: 0;
 	transform: translate(-50%, -50%) rotate(-6deg);
 	pointer-events: none;
 }
 .lensInner .ink {
-	opacity: 0.88;
+	opacity: 0.92;
+}
+.ink path,
+.ink text {
+	paint-order: stroke;
+	stroke-linejoin: round;
+}
+.lensInner .ink text {
+	stroke: #ece3cb;
+	stroke-width: 3px;
 }
 .lensInner .sealMark {
 	opacity: 0.9;
@@ -1075,8 +1093,8 @@
 	gap: 1em;
 	margin-top: 0.8em;
 	font-family: var(--g-news);
-	font-size: 0.72em;
-	line-height: 1.42;
+	font-size: 0.78em;
+	line-height: 1.4;
 	text-align: justify;
 	hyphens: auto;
 }
@@ -1138,12 +1156,12 @@
 		display: none;
 	}
 	.ink {
-		top: 82%;
-		left: 60%;
-		width: 36%;
+		top: 84%;
+		left: 66%;
+		width: 22%;
 	}
 }
-@media (min-width: 1024px) and (min-aspect-ratio: 5/4) and (min-height: 600px) and (prefers-reduced-motion: no-preference) {
+@media (min-width: 1024px) and (min-aspect-ratio: 5/4) and (min-height: 680px) and (prefers-reduced-motion: no-preference) {
 	.kPaper {
 		height: calc(var(--h) * 1em);
 	}
@@ -1270,7 +1288,7 @@
 	font-size: 0.56em;
 	color: #a58c55;
 }
-@media (min-width: 1024px) and (min-aspect-ratio: 5/4) and (min-height: 600px) and (prefers-reduced-motion: no-preference) {
+@media (min-width: 1024px) and (min-aspect-ratio: 5/4) and (min-height: 680px) and (prefers-reduced-motion: no-preference) {
 	.cabinetPrint {
 		aspect-ratio: 1 / 0.94;
 	}
@@ -1459,7 +1477,7 @@
 	margin-bottom: 0.55em;
 	padding-inline: 1.4em;
 	font-family: var(--g-type);
-	font-size: 0.68em;
+	font-size: 0.72em;
 	color: #5a4f40;
 }
 .deskImg {
@@ -1531,7 +1549,7 @@
 }
 .ticketRows dt {
 	font-family: var(--g-type);
-	font-size: 0.6em;
+	font-size: 0.66em;
 	color: #5a4f40;
 }
 .ticketRows dd {
@@ -1788,10 +1806,7 @@
 		grid-template-columns: 1fr minmax(440px, 500px);
 		gap: 72px;
 	}
-	.warrantCol {
-		position: sticky;
-		top: calc(var(--header-h) + 36px);
-	}
+
 }
 .warrantDoc {
 	position: relative;
@@ -2194,11 +2209,75 @@
 	cursor: default;
 }
 
-@media (min-width: 1024px) and (min-aspect-ratio: 5/4) and (min-height: 600px) and (prefers-reduced-motion: no-preference) {
+@media (min-width: 1024px) and (min-aspect-ratio: 5/4) and (min-height: 680px) and (prefers-reduced-motion: no-preference) {
 	.kTicket {
 		display: flex;
 	}
 	.ticket {
 		flex: 1;
+	}
+}
+
+/* The warrant column rides along beside the panel only where it fits the screen. */
+@media (min-width: 960px) and (min-height: 1000px) {
+	.warrantCol {
+		position: sticky;
+		top: calc(var(--header-h) + 36px);
+	}
+}
+
+/* the key art as a pinned photograph beside the warrant */
+.warrantPhoto {
+	display: none;
+}
+@media (min-width: 960px) {
+	.warrantPhoto {
+		display: block;
+		position: relative;
+		width: 44%;
+		margin: -1.6em 3% 0 auto;
+		padding: 0.6em 0.6em 0.8em;
+		background: linear-gradient(170deg, #2f2c22, #191710);
+		box-shadow:
+			inset 0 0 0 0.2em #191710,
+			inset 0 0 0 0.26em rgba(201, 161, 90, 0.7),
+			0 1.6em 3em -1em rgba(0, 0, 0, 0.85);
+		transform: rotate(2.6deg);
+		font-size: clamp(13px, 1.05vw, 15px);
+	}
+	.warrantPhoto .warrantPin {
+		top: 0.7em;
+	}
+	.warrantPhoto .warrantPin::before {
+		display: none;
+	}
+	.warrantPhotoPrint {
+		aspect-ratio: 3 / 4;
+		overflow: hidden;
+		background: #1a160f;
+	}
+	.warrantPhotoPrint img {
+		filter: sepia(0.12) contrast(1.04);
+	}
+	.warrantPhoto figcaption {
+		margin-top: 0.55em;
+		text-align: center;
+		font-family: var(--g-display);
+		font-size: 0.92em;
+		color: #dcc99a;
+	}
+	.warrantPhoto figcaption span {
+		display: block;
+		margin-top: 0.2em;
+		font-family: var(--g-type);
+		font-size: 0.62em;
+		color: #a58c55;
+	}
+}
+
+/* tablets and portrait screens: a wider stack */
+@media (min-width: 700px) {
+	.track {
+		font-size: 17px;
 	}
 }

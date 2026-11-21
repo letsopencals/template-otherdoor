@@ -97,7 +97,7 @@ function NewspaperPage({ title, setup, description }: { title: string; setup?: s
 	);
 }
 
-const PAPER_CLUES: LensClue[] = [{ id: 'ink', x: 0.8, y: 0.84, label: 'Examine the pencil in the margin' }];
+const PAPER_CLUES: LensClue[] = [{ id: 'ink', x: 0.775, y: 0.83, label: 'Examine the pencil in the margin' }];
 const PAPER_REST: [number, number] = [0.3, 0.42];
 
 export function Newspaper({ title, setup, description }: { title: string; setup?: string; description: string }) {
@@ -133,7 +133,7 @@ export function Telegram({ stakes, venue }: { stakes?: { title: string; body: st
 					</p>
 				))}
 				<p className={s.tape} style={{ '--i': words.length } as CSSProperties}>
-					DALGLEISH INSPECTOR CITY POLICE
+					HALDANE INSPECTOR CITY POLICE
 				</p>
 			</div>
 		</div>

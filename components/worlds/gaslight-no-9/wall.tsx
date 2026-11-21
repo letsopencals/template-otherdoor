@@ -5,7 +5,7 @@ import { WALL_H } from './layout';
 import s from './gaslight.module.css';
 
 /** Must match the wall-mode media query in gaslight.module.css. */
-const WALL_QUERY = '(min-width: 1024px) and (min-aspect-ratio: 5/4) and (min-height: 600px) and (prefers-reduced-motion: no-preference)';
+const WALL_QUERY = '(min-width: 1024px) and (min-aspect-ratio: 5/4) and (min-height: 680px) and (prefers-reduced-motion: no-preference)';
 
 export interface WallIndexItem {
 	key: string;
@@ -114,8 +114,11 @@ export function Wall({ width, strings, knots, index, backdrop, notes, children }
 			const doc = (e.target as HTMLElement).closest<HTMLElement>('[data-doc]');
 			if (!doc) return;
 			const x = Number(doc.dataset.x) + Number(doc.dataset.w) / 2;
-			const top = scrollFor(x);
-			if (top != null && Math.abs(top - window.scrollY) > 4) window.scrollTo({ top, behavior: 'instant' as ScrollBehavior });
+			// After the browser's own focus scrolling has run.
+			requestAnimationFrame(() => {
+				const top = scrollFor(x);
+				if (top != null && Math.abs(top - window.scrollY) > 4) window.scrollTo({ top, behavior: 'instant' as ScrollBehavior });
+			});
 		};
 
 		measure();
