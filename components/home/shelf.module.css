@@ -20,7 +20,7 @@
 	align-items: flex-end;
 	justify-content: center;
 	gap: clamp(6px, 1.4vw, 18px);
-	min-height: 330px;
+	min-height: 380px;
 	overflow-x: auto;
 	overflow-y: visible;
 	padding: 40px 8px 0;

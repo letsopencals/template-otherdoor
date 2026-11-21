@@ -108,7 +108,10 @@ Your hero starts at the very top of the page (under the header): pad its content
 8. **Works at 390 px** with no horizontal scroll (`overflow-x: clip` on your root), and on a
    1440 px desktop. Images: `<img>`/`SafeImg`, `loading="lazy"` below the fold (images are
    unoptimised; size art in SVG, not bitmaps).
-9. Checks before you hand back: `npx tsc --noEmit`, `npm run lint`, and the page at 390 and 1440.
+9. **Hydration-safe SVG**: round every computed coordinate (`Math.round(n * 100) / 100` or
+   `n.toFixed(2)`). Raw `Math.sin/cos` output differs in the last digit between Node and the browser
+   and React reports a hydration mismatch. No `Math.random()`/`Date.now()` in render.
+10. Checks before you hand back: `npx tsc --noEmit`, `npm run lint`, and the page at 390 and 1440.
 
 ## Adding a world
 

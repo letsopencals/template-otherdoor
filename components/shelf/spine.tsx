@@ -40,7 +40,7 @@ export function Spine({ room, width = 64, height = 260, out, onFocus, onBlur, on
 					epic
 				</span>
 			) : null}
-			<span className={s.title} aria-hidden>
+			<span className={s.title} aria-hidden style={{ fontSize: `${Math.min(width * 0.32, (height - 130) / (room.short.length * 0.6)).toFixed(1)}px` }}>
 				{room.short}
 			</span>
 			<span className={s.bands} aria-hidden>

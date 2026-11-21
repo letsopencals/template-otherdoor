@@ -5,6 +5,9 @@
  * `ink` layer of invisible-ink routes and notes that only the lantern reveals.
  */
 
+/** Rounded so the server and the browser print identical attributes (hydration). */
+const r2 = (n: number) => Math.round(n * 100) / 100;
+
 const COAST_A = 'M-40 520 C 60 470 110 380 210 360 S 330 300 380 230 S 470 120 560 140 S 700 200 760 170 S 860 60 980 90 S 1120 180 1180 150 S 1300 70 1380 110 S 1500 220 1640 200 L 1640 -40 L -40 -40 Z';
 const ISLE_B = 'M240 640 C 300 590 390 600 430 640 S 520 700 470 750 S 330 800 280 760 S 200 690 240 640 Z';
 const ISLE_C = 'M900 560 C 960 500 1080 520 1130 580 S 1190 700 1100 730 S 940 720 900 660 S 860 600 900 560 Z';
@@ -23,7 +26,7 @@ function Rose({ x, y, r, stroke, fill }: { x: number; y: number; r: number; stro
 	const pts = Array.from({ length: 16 }, (_, i) => {
 		const a = (i * Math.PI) / 8;
 		const len = i % 4 === 0 ? r : i % 2 === 0 ? r * 0.62 : r * 0.38;
-		return `${x + Math.sin(a) * len},${y - Math.cos(a) * len}`;
+		return `${r2(x + Math.sin(a) * len)},${r2(y - Math.cos(a) * len)}`;
 	});
 	return (
 		<g stroke={stroke} fill="none" strokeWidth="1.2">
@@ -34,7 +37,7 @@ function Rose({ x, y, r, stroke, fill }: { x: number; y: number; r: number; stro
 				const a2 = ((i + 0.5) * Math.PI) / 8;
 				const a3 = ((i - 0.5) * Math.PI) / 8;
 				const w = r * 0.1;
-				return <path key={i} d={`M${x + Math.sin(a3) * w} ${y - Math.cos(a3) * w} L${px} ${py} L${x + Math.sin(a2) * w} ${y - Math.cos(a2) * w}Z`} fill={i % 2 ? 'none' : fill} />;
+				return <path key={i} d={`M${r2(x + Math.sin(a3) * w)} ${r2(y - Math.cos(a3) * w)} L${px} ${py} L${r2(x + Math.sin(a2) * w)} ${r2(y - Math.cos(a2) * w)}Z`} fill={i % 2 ? 'none' : fill} />;
 			})}
 			<text x={x} y={y - r * 1.28} textAnchor="middle" fill={stroke} stroke="none" style={{ font: `${r * 0.28}px var(--font-display)` }}>
 				N
@@ -71,7 +74,7 @@ export function HeroMap({ variant }: { variant: 'night' | 'lit' }) {
 				))}
 				{Array.from({ length: 16 }, (_, i) => {
 					const a = (i * Math.PI) / 8;
-					return <line key={`r${i}`} x1="800" y1="430" x2={800 + Math.cos(a) * 1200} y2={430 + Math.sin(a) * 1200} strokeDasharray="1 6" />;
+					return <line key={`r${i}`} x1="800" y1="430" x2={r2(800 + Math.cos(a) * 1200)} y2={r2(430 + Math.sin(a) * 1200)} strokeDasharray="1 6" />;
 				})}
 			</g>
 			{/* Coastlines with hatched shallows. */}

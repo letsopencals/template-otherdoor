@@ -10,7 +10,7 @@ import { Meter } from '@/components/ui/meters';
 import s from './shelf.module.css';
 
 /** The Shelf: rooms as leather spines. Hover or focus pulls one out; its catalogue card shows below. */
-export function ShelfSection({ shelf, tall = 300 }: { shelf: ShelfRoom[]; tall?: number }) {
+export function ShelfSection({ shelf, tall = 340 }: { shelf: ShelfRoom[]; tall?: number }) {
 	const [active, setActive] = useState<string | null>(null);
 	const room = shelf.find((r) => r.slug === active) ?? shelf[0];
 	if (!shelf.length) return <p className="py-10 text-center">The shelf is being restocked. Check back shortly.</p>;
@@ -20,7 +20,7 @@ export function ShelfSection({ shelf, tall = 300 }: { shelf: ShelfRoom[]; tall?:
 				<div className={s.row}>
 					<span className={s.bookend} aria-hidden />
 					{shelf.map((r, i) => (
-						<Spine key={r.slug} room={r} width={i % 3 === 1 ? 78 : 70} height={tall - (i % 2) * 22 - (i % 3) * 8} out={active === r.slug} onFocus={() => setActive(r.slug)} />
+						<Spine key={r.slug} room={r} width={i % 3 === 1 ? 96 : 86} height={tall - (i % 2) * 26 - (i % 3) * 10} out={active === r.slug} onFocus={() => setActive(r.slug)} />
 					))}
 					<span className={`${s.bookend} ${s.bookendR}`} aria-hidden />
 				</div>

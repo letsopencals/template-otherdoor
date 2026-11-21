@@ -22,7 +22,7 @@ export function VenuePlate({ kind, className = '' }: { kind: 'vaults' | 'leith';
 								<path d={`M${x} 300 V150 A55 55 0 0 1 ${x + 110} 150 V300`} fill={`url(#eng2-${kind})`} />
 								<path d={`M${x + 14} 300 V158 A41 41 0 0 1 ${x + 96} 158 V300`} fill="#2a1c0c" fillOpacity=".75" />
 								{[0, 1, 2, 3, 4, 5, 6].map((k) => (
-									<path key={k} d={`M${x + 55 + Math.cos(Math.PI + (k * Math.PI) / 6) * 55} ${150 + Math.sin(Math.PI + (k * Math.PI) / 6) * 55} L${x + 55 + Math.cos(Math.PI + (k * Math.PI) / 6) * 41} ${158 + Math.sin(Math.PI + (k * Math.PI) / 6) * 41}`} />
+									<path key={k} d={`M${(x + 55 + Math.cos(Math.PI + (k * Math.PI) / 6) * 55).toFixed(2)} ${(150 + Math.sin(Math.PI + (k * Math.PI) / 6) * 55).toFixed(2)} L${(x + 55 + Math.cos(Math.PI + (k * Math.PI) / 6) * 41).toFixed(2)} ${(158 + Math.sin(Math.PI + (k * Math.PI) / 6) * 41).toFixed(2)}`} />
 								))}
 								<circle cx={x + 55} cy="215" r="10" fill="#f6c96a" fillOpacity=".9" stroke="none" />
 								<circle cx={x + 55} cy="215" r="26" fill="#f6c96a" fillOpacity=".18" stroke="none" />

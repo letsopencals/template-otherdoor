@@ -16,17 +16,18 @@
 	opacity: 0.9;
 }
 .lit {
+	filter: sepia(0.25) saturate(1.1) brightness(0.92);
 	position: absolute;
 	inset: 0;
-	-webkit-mask-image: radial-gradient(circle var(--lr) at var(--lx) var(--ly), #000 0%, rgba(0, 0, 0, 0.85) 45%, transparent 100%);
-	mask-image: radial-gradient(circle var(--lr) at var(--lx) var(--ly), #000 0%, rgba(0, 0, 0, 0.85) 45%, transparent 100%);
+	-webkit-mask-image: radial-gradient(circle var(--lr) at var(--lx) var(--ly), rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.7) 45%, transparent 100%);
+	mask-image: radial-gradient(circle var(--lr) at var(--lx) var(--ly), rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.7) 45%, transparent 100%);
 	transition: -webkit-mask-position 0.2s;
 }
 .glow {
 	position: absolute;
 	inset: 0;
 	pointer-events: none;
-	background: radial-gradient(circle calc(var(--lr) * 1.6) at var(--lx) var(--ly), rgba(255, 190, 90, 0.22), transparent 70%);
+	background: radial-gradient(circle calc(var(--lr) * 1.6) at var(--lx) var(--ly), rgba(255, 170, 70, 0.14), transparent 70%);
 	mix-blend-mode: screen;
 	animation: flicker 3.2s infinite;
 }

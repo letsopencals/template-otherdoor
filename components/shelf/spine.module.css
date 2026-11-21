@@ -76,7 +76,7 @@
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	max-height: calc(var(--spine-h) - 110px);
+	max-height: calc(var(--spine-h) - 120px);
 	background-image: linear-gradient(180deg, #fff2c4, var(--foil) 40%, color-mix(in srgb, var(--foil) 60%, #5a3d10) 100%);
 	-webkit-background-clip: text;
 	background-clip: text;
@@ -96,7 +96,7 @@
 }
 .epic {
 	position: absolute;
-	top: 34%;
+	top: 62px;
 	left: -3px;
 	right: -3px;
 	height: 18px;
