@@ -59,7 +59,7 @@ from the media run; `components/brand/logo.tsx` inlines the mark so the slit tak
 | | Otherdoor |
 |---|---|
 | **Navigation** | One header, transparent over heroes and worlds, frosted glass on scroll (the blur lives on a child layer so the menus aren't clipped). "Rooms" opens a full-width **doors menu**: six tall door cards with key art and their light, plus an aside of routes. The cart button is a lit doorway: **Your doors**. Phones get a full-screen menu with a door thumbnail per room. |
-| **Home** | **The Corridor**: six physical doors (lacquered leaves, recessed panels, frosted transom showing the world, number plate, year, knob) in a dark hall over the home loop. Hover/focus opens a door from its hinge, plays that world's muted loop inside and spills its light across the floor; the whole shell takes the colour. Phones: a vertical stack of doors, first tap opens, second enters. Mood filters re-order the doors (FLIP). |
+| **Home** | **The Corridor**: six physical doors (lacquered leaves, recessed panels, a glazed upper panel showing the room's key art, number plate, year, knob) in a dark hall over the home loop. Hover/focus opens a door from its hinge, plays that world's muted loop inside and spills its light across the floor; the whole shell takes the colour. Phones: a vertical stack of doors, first tap opens, second enters. Mood filters re-order the doors (FLIP). |
 | **Section rhythm** | Asymmetric heads (mono number + label, big display title left, lede bottom-right, a sill of light under). Sections are separated by light, not by bands or rules: each "lamp" switches its pool on as it arrives. No eyebrow-pill/3-card grids. |
 | **Play** | A **keypad lock** (clues on the doors, in the dark room and in the small print; the code reveals the discount), **"Which door is yours?"** (six mini doors whose light grows with each answer; the winner opens), a **flashlight** room (the cursor's torch reveals words and keypad clues). |
 | **Booking** | Plain on purpose (usability rule): on room pages the shared BookingPanel (date strip directly above session buttons, team-size buttons with group price and £pp, extras, total + "Add to your doors" in a sticky bar). `/book`: venue filter + one date strip, one row per room with a door thumbnail and plain session buttons; team size opens inline. Workshops: date strip, sessions, seats stepper. No themed pickers or dials. |
@@ -81,14 +81,16 @@ Contract: `components/worlds/README.md` (props, the `--bp-*` variables, header t
 - contains a full-screen hero, a 3–5 scene scroll story, the stats, photos, the game master, the
   booking panel (skinned only with `--bp-*`) and the next-door teaser.
 
-Built: **Kepler Station** (2187): hero loop under a seeded parallax starfield canvas and HUD
-(beacon, window clock, falling life support); an incoming-signal transmission; a sticky
-**docking approach** (the station closes into the reticle as you scroll, range and closing speed
-count down, the briefing arrives as HUD messages); **airlock doors** parting onto the command deck
-with the life-support gauge and the two-deck map; lever detail and specs; CCTV photos; mission
-control comms; the docking log; the mission brief beside the panel; a hatch to the next door.
-Display: **Michroma**. Palette: indigo `#04071a`, ion teal `#2ec4c9`, warning amber `#f2a33a`,
-nebula magenta `#b3367a`.
+All six are built, one line each (concept · display font · signature interaction):
 
-To build: Jaguar Temple, Gaslight No. 9, Protocol Zero, Hôtel Lumière, Clockmaker's Workshop
-(they render the generic world `_placeholder` until then).
+| Room | Concept | Display | Signature interaction |
+|---|---|---|---|
+| **The Jaguar Temple** (1936) | A vertical descent from the canopy to the chamber of gold, measured on a plumb line | Rakkas | Leaf curtains part as each layer arrives; a three-face glyph lock slides the photo-real stone door open onto the idol |
+| **The Gaslight Affair at No. 9** (1891) | A detective's evidence wall read sideways, from the gaslit street to the warrant | Gloock (+ Cutive Mono) | Red string draws between pinned documents on scroll; a reading glass over the case file reveals hidden ink |
+| **Protocol Zero** (2071) | The page is MERIDIAN's interface, decaying from clinical white to black and alarm red | Doto | The AI's typing terminal and wipe countdown; an access prompt (passphrase hidden in the incident log) that shakes on denial and parts the core doors |
+| **Kepler Station** (2187) | Deep-space docking approach over the hero loop and a starfield | Michroma | Scroll is the docking approach (being revised to the depth of the others) |
+| **The Hôtel Lumière Job** (1963) | The page is a comic book: issue No. 9, cover to back pages, light newsprint (`headerTone: 'dark'`) | Bowlby One (+ Shantell Sans) | Panels slam in with halftone screens and popping balloons over halftoned stills; a winnable laser grid and a draggable safe dial |
+| **The Clockmaker's Workshop** (timeless, family) | The page is a wind-up toy: one mainspring drives every gear train | Caprasimo | Turn the key or scroll to wind it; the cabinet's six compartments open as their gears engage, a cuckoo calls each one, five hidden keys earn the rosette |
+
+The booking panel heading can be set per room (`bookingHeading` in `lib/site-config.ts`) where
+the world already titles the section around it.

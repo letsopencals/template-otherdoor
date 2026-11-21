@@ -43,6 +43,9 @@ world (hero video, starfield canvas, sticky scroll tracks writing `--p`, HUD SVG
 
 ## The booking panel
 
+- Its heading defaults to "Book this room". When your world already titles the section around the
+  panel, set `bookingHeading` on your room in `lib/site-config.ts` (e.g. 'Pick your time'); the room
+  page passes it as the panel's `heading`. Keep it short and functional, never empty.
 - It renders `<section id="book">` (deep links: `/rooms/<slug>?date=YYYY-MM-DD&time=HH:mm&team=4#book`;
   the page reads the query and preselects). Link your hero CTA to `#book`.
 - It is plain on purpose (Stan's usability rule): date strip directly above tappable session
@@ -84,8 +87,8 @@ on the hex pairs) rather than eyeballing. Kepler Station's skin is the worked ex
 The header is fixed, 72 px tall (`--header-h`), and **transparent over your hero** (with a soft dark
 gradient behind it) until the page scrolls, then **frosted dark glass**. Its text tone over the hero
 comes from `presentation.headerTone` in `lib/site-config.ts`: `light` (light text, for a dark hero;
-all six rooms are `light` today) or `dark` (dark text over a light hero; switch your room to `dark`
-only if your hero top is light, e.g. a comic page). Once scrolled it is always the dark glass with
+every room except Hôtel Lumière) or `dark` (dark text over a light hero; the Lumière comic cover is
+light newsprint, so it is `dark`). Once scrolled it is always the dark glass with
 light text. Your hero starts at the very top of the page (under the header): pad its content by
 `var(--header-h)`. Never restyle or hide the header from a world.
 
@@ -106,7 +109,8 @@ account.
    `components/worlds/<slug>/font.ts`), exposed as a CSS variable on your root. Check it is unused
    across `templates/*` and `demos/sites/*` and not in the ban list
    (`templates/_skills/build-opencals-template/references/uniqueness.md`; also taken here: the shell's
-   Funnel Display, Mona Sans and Spline Sans Mono, Kepler Station's Michroma, and Syne, Outfit,
+   Funnel Display, Mona Sans and Spline Sans Mono; the worlds' Rakkas, Gloock, Cutive Mono, Doto,
+   Michroma, Bowlby One, Shantell Sans and Caprasimo; and Syne, Outfit,
    Fragment Mono, Cinzel, IM Fell English (SC), Mulish, Courier Prime from siblings and v1).
 4. **Reduced motion**: every animation and scroll effect has a `@media (prefers-reduced-motion:
    reduce)` fallback showing the finished state. Nothing essential is only visible mid-animation.
@@ -143,7 +147,14 @@ world in the dark shell, lit by the room's glow, using `media.poster`).
 
 ## Status
 
-| Room | World |
-|---|---|
-| `kepler-station` | Built (Michroma; reference implementation) |
-| `jaguar-temple`, `gaslight-no-9`, `protocol-zero`, `hotel-lumiere`, `clockmakers-workshop` | Generic world until built (v1 drafts in the `v0-parchment` tag, for story ideas only) |
+| Room | World | Display |
+|---|---|---|
+| `jaguar-temple` | Built: vertical descent, leaf curtains, glyph lock on the stone door | Rakkas |
+| `gaslight-no-9` | Built: sideways evidence wall, red string, reading glass, warrant booking | Gloock + Cutive Mono |
+| `protocol-zero` | Built: MERIDIAN's decaying interface, terminal, countdown, access prompt | Doto |
+| `kepler-station` | Built (reference implementation); being revised to the depth of the others | Michroma |
+| `hotel-lumiere` | Built: comic book issue, laser grid, safe dial (`headerTone: 'dark'`) | Bowlby One + Shantell Sans |
+| `clockmakers-workshop` | Built: wind-up toy page, gear trains, cabinet compartments, cuckoo | Caprasimo |
+
+Media: every folder in `public/worlds/` is complete (hero loop + poster, `key.jpg`, 4–5 stills;
+see each `MEDIA.md`). `presentation.media.stills` lists them in the order the worlds read them.

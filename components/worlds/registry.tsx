@@ -8,8 +8,7 @@ import type { RoomWorldProps } from '@/lib/worlds';
  * A store room without an entry renders the generic world (`_placeholder`).
  * Add a line here when you add a world; nothing else in the shell changes.
  *
- * Built: kepler-station. To build: jaguar-temple, gaslight-no-9, protocol-zero,
- * hotel-lumiere, clockmakers-workshop (the v1 drafts are in the `v0-parchment` tag).
+ * All six rooms have their own world (status table in components/worlds/README.md).
  */
 const WORLDS: Record<string, ComponentType<RoomWorldProps>> = {
 	'kepler-station': dynamic(() => import('./kepler-station')),

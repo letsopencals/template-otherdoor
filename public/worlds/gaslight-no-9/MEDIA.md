@@ -9,4 +9,4 @@ Palette: night slate #141A22, wet cobble blue #2B3A4A, gaslight amber #E8A33D, b
 - `case-file.jpg`: 3:2. Top-down desk: case file with illegible handwriting, sepia photos, magnifier, pocket watch, red string, wax seal. Background for the magnifier-lens interaction.
 - `evidence-wall.jpg`: 16:9. Green-papered wall of pinned photos and notes joined by red string, gas lamp. Backdrop for the red-string evidence board drawing on scroll.
 - `plate-fog.jpg`: 2400 px. Empty foggy lane with three receding gas lamps. Fog/parallax background layer.
-- `key.jpg`: (pending: Gemini credits ran out before v2-key-gaslight-no-9).
+- `key.jpg`: 3:4 key art (same as the store's `v2-key-gaslight-no-9`): a woman in a long coat with a lantern looks up at the lit window of No. 9 in the fog. Pinned beside the warrant; door cards, rooms menu, next-door teasers.

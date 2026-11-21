@@ -8,5 +8,5 @@ Palette: clinical white #EEF2F4, lab steel #5C6670, cold cyan #1FD1E8, alarm red
 - `server-aisle.jpg`: 16:9. Server aisle in deep perspective, cyan status lights, mist, red racks at the far end. Scene background for the server-corridor scroll.
 - `terminal.jpg`: 3:2. Curved terminal screen with cyan waveforms only (no text), hand on keyboard, red alarm wash. Background or inset behind the typing-terminal overlay.
 - `core.jpg`: 16:9. Circular white AI core chamber, glowing cyan glass-disc column, red alarm wash, two small suited figures. "Access granted" reveal scene.
-- `key.jpg`: (pending: Gemini credits ran out before v2-key-protocol-zero).
-- Missing: `plate-glitch.jpg` (two takes rejected: dot clusters read as digits, then a non-plate). Until it exists, use `server-aisle.jpg` with a CSS blur as the glitch backdrop.
+- `key.jpg`: 3:4 key art (same as the store's `v2-key-protocol-zero`): a researcher in a lab coat with a tablet in a white server aisle, one rack bank glowing alarm red. Subject brief; door cards, rooms menu, next-door teasers.
+- `plate-glitch.jpg`: 2400 px. Dark server room, a technician pulling cables, defocused cyan and red status lights above. Backdrop behind the incident log (falls back to `server-aisle.jpg`).
