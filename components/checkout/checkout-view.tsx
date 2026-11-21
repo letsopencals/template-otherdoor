@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { useState, type ReactNode } from 'react';
+import { useState, type CSSProperties, type ReactNode } from 'react';
 import type { CheckoutQuestionResponse, CustomerProviderCatalogItem, PaymentProviderName } from '@opencals/storefront-sdk';
 import { useCheckout } from '@/contexts/checkout-context';
 import { useCart } from '@/contexts/cart-context';
@@ -11,6 +11,8 @@ import { grossSubtotal, linePrice, visibleDiscounts } from '@/lib/cart-lines';
 import { codeState } from '@/lib/discount-state';
 import { formatPrice } from '@/lib/format';
 import { DoorCard } from '@/components/cart/door-card';
+import { DoorArt } from '@/components/doors/door-art';
+import { roomPresentation } from '@/lib/site-config';
 import s from './checkout.module.css';
 
 const StripePayment = dynamic(() => import('./stripe-payment').then((m) => m.StripePayment), {
@@ -118,6 +120,7 @@ export function CheckoutView() {
 					))}
 				</div>
 
+				<div className={s.layout}>
 				<div className={s.flow}>
 					<form onSubmit={c.handleSign} className="contents">
 						{c.questions.length ? (
@@ -274,6 +277,8 @@ export function CheckoutView() {
 						</Link>
 					</p>
 				</div>
+				<FirstDoor items={items} />
+				</div>
 			</div>
 		</div>
 	);
@@ -298,5 +303,23 @@ function HoldNote({ seconds, onExtend }: { seconds: number | null; onExtend: () 
 				'Your hold has run out.'
 			)}
 		</p>
+	);
+}
+
+/** Beside the form: the first door you picked, standing open (decoration, not a summary). */
+function FirstDoor({ items }: { items: ReturnType<typeof useCheckout>['items'] }) {
+	const it = items[0];
+	if (!it?.appointment) return null;
+	const v = visitOf({ ...it.appointment, addOns: [] } as never);
+	const media = roomPresentation(v.key)?.media;
+	return (
+		<aside className={s.aside} aria-hidden style={{ '--slit': v.palette.glow } as CSSProperties}>
+			<div className={s.asideFrame}>
+				<DoorArt sources={[media?.key, media?.poster]} alt="" glow={v.palette.glow} className={s.asideArt} />
+				<span className={s.asideLeaf} />
+			</div>
+			<span className={`slit ${s.asideSill}`} />
+			<p className={s.asideCaption}>{v.title}</p>
+		</aside>
 	);
 }

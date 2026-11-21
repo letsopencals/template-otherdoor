@@ -8,8 +8,21 @@
 }
 @media (min-width: 960px) {
 	.stage {
-		grid-template-columns: 1fr 320px 1.1fr;
-		gap: 56px;
+		grid-template-columns: 1.2fr 1fr;
+		grid-template-areas: "head door" "lock door";
+		gap: 28px 72px;
+		align-items: end;
+	}
+	.headline {
+		grid-area: head;
+	}
+	.lock {
+		grid-area: lock;
+		align-self: start;
+		justify-self: start;
+	}
+	.doorway {
+		grid-area: door;
 	}
 }
 /* ---- The lock */

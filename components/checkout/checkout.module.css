@@ -193,3 +193,63 @@
 	box-shadow: inset 2px 0 0 #ff4358;
 	color: var(--color-ink);
 }
+.layout {
+	display: grid;
+	gap: 64px;
+	margin-top: 56px;
+}
+.layout .flow {
+	margin-top: 0;
+}
+@media (min-width: 1100px) {
+	.layout {
+		grid-template-columns: minmax(0, 780px) 1fr;
+		gap: 96px;
+	}
+}
+.aside {
+	display: none;
+}
+@media (min-width: 1100px) {
+	.aside {
+		display: block;
+		padding-top: 40px;
+	}
+}
+.asideFrame {
+	position: relative;
+	width: min(320px, 100%);
+	margin-inline: auto;
+	aspect-ratio: 5 / 8;
+	border-radius: 8px 8px 1px 1px;
+	overflow: hidden;
+	perspective: 900px;
+	box-shadow: 0 0 0 1px color-mix(in srgb, var(--slit) 55%, transparent), 0 0 0 9px #0f0d15, 0 0 0 10px rgba(255, 255, 255, 0.07), 0 0 90px 4px color-mix(in srgb, var(--slit) 30%, transparent);
+}
+.asideArt {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+.asideLeaf {
+	position: absolute;
+	inset: 0;
+	transform-origin: left;
+	transform: rotateY(62deg);
+	background: linear-gradient(180deg, #1e1a29, #110f17);
+	box-shadow: inset -1px 0 0 color-mix(in srgb, var(--slit) 60%, transparent);
+}
+.asideSill {
+	display: block;
+	width: min(300px, 92%);
+	margin: 0 auto;
+}
+.asideCaption {
+	margin-top: 22px;
+	text-align: center;
+	font-family: var(--font-mono);
+	font-size: 0.78rem;
+	color: var(--color-ink-3);
+}
