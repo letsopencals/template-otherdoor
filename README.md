@@ -2,6 +2,7 @@
 
 A production-ready booking website for an escape-room company with several themed rooms. Built with **Next.js 15**, **Tailwind CSS v4** and the **Opencals Storefront SDK**.
 
+<!-- TODO(screenshots): docs/cover.png is being produced by the cover run. -->
 ![Otherdoor on a tablet, a laptop and a phone at a glowing door: the corridor of six doors, a room world and the booking panel](docs/cover.png)
 
 **[View Live Demo →](https://template-otherdoor.vercel.app)** · **[GitHub](https://github.com/letsopencals/template-otherdoor)** · **[Docs](https://opencals.com/docs/open-source/otherdoor)**
@@ -119,7 +120,7 @@ Sign in with a 6-digit code by email or a magic link from the booking email. No 
 | Extras | Add-ons on every room (team portrait, escape on film, the Victory Bottle, Lobby sharing board, costume rail, birthday ceremony); portrait and film on workshops too |
 | Matinee, `OTHERDOOR` | An automatic 15% off rooms starting before 15:00 Monday to Thursday, and a 10% code, once per customer. The keypad on the home page reveals the code |
 
-The parser in `lib/rooms.ts` relies on these names: the `rooms` and `workshops` collection slugs, the `<room>-<n>p` variant slugs (the team size is read from them) and the venue location slugs. Stats (difficulty, fear, escape rate, record), palettes and the world media aren't API fields: they live in `lib/site-config.ts`.
+The parser in `lib/rooms.ts` relies on these names: the `rooms` and `workshops` collection slugs and the `<room>-<n>p` variant slugs (the team size is read from them); `lib/site-config.ts` keys each room's venue copy by the location slugs. Stats (difficulty, fear, escape rate, record), palettes and the world media aren't API fields: they live in `lib/site-config.ts`.
 
 ---
 
