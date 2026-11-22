@@ -94,7 +94,6 @@ In the Opencals dashboard, go to **Account → API Keys** and create a **private
 | `OPENCALS_API_KEY` | Your private storefront key (starts with `spk_`) |
 | `AUTH_SECRET` | Any random string, used for session encryption |
 | `OPENCALS_API_URL` | *(optional)* Defaults to `https://api.opencals.com` |
-| `OTHERDOOR_PREVIEW` | *(optional)* `1` shows the `/preview/*` fixture screens in production |
 
 Card payments use the Stripe account connected to your store; the key comes from the checkout API, so there's no Stripe variable to set. Set your domain as `url` in `lib/site-config.ts` (canonical URLs and Open Graph).
 
@@ -175,7 +174,7 @@ cp .env.example .env.local   # set OPENCALS_API_KEY and AUTH_SECRET
 npm run dev
 ```
 
-Checks: `npm run typecheck`, `npm run lint` and `npm test` (the catalogue parser, the session grid, the corridor moods, bookings, the account history, cart maths and the API guards). `/preview/thank-you`, `/preview/account` and `/preview/cart` show the post-booking screens with sample data in development.
+Checks: `npm run typecheck`, `npm run lint` and `npm test` (the catalogue parser, the session grid, the corridor moods, bookings, the account history, cart maths and the API guards).
 
 ---
 
