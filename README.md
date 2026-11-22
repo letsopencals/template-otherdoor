@@ -20,51 +20,51 @@ MIT licensed: clone it, rebrand it, ship it.
 
 ## Screenshots
 
-![The Corridor: six doors over the hall video](docs/home-corridor.png)
+![The Corridor: six doors over the hall video, Tonight's mood filters below](docs/home-corridor.png)
 
 | | | |
 |---|---|---|
-| ![A door swung open onto its room's loop, its light spilling into the hall](docs/home-door-open.png) | ![Which door is yours? Your answers pick a room](docs/home-which-door.png) | ![The keypad lock: 2187 opens it and gives up the code](docs/home-keypad.png) |
+| ![Kepler Station's door swung open onto its room's loop, its light spilling into the hall](docs/home-door-open.png) | ![Which door is yours? Four questions, one door opens](docs/home-which-door.png) | ![The keypad lock: 2187 opens it and gives up the code OTHERDOOR](docs/home-keypad.png) |
 | A door swings open onto its room | "Which door is yours?" | The keypad lock |
 
 ### Six worlds, each with its own signature moment
 
 | The world | Its moment |
 |---|---|
-| ![Kepler Station (2187): the mission timeline, starfield and docking approach](docs/room-kepler-station.png) | ![Kepler Station: the power board restored, the whole page relit](docs/room-kepler-station-power-restored.png) |
-| **Kepler Station** (2187): the mission timeline | Power restored: the board relights the page |
-| ![The Jaguar Temple (1936): the descent from the canopy to the idol chamber](docs/room-jaguar-temple.png) | ![The Jaguar Temple: the sealed door's three faces, turned in order, before the golden idol](docs/room-jaguar-temple-idol-door.png) |
-| **The Jaguar Temple** (1936): the descent from the canopy | The sealed door: three faces, one order |
-| ![The Gaslight Affair at No. 9 (1891): a rain-soaked gaslit street](docs/room-gaslight-no-9.png) | ![The Gaslight Affair at No. 9: the evidence wall joined by red string](docs/room-gaslight-no-9-evidence-wall.png) |
-| **The Gaslight Affair at No. 9** (1891): the gaslit street | The evidence wall and its red string |
+| ![Kepler Station (2187): the derelict station over a nebula, life support failing](docs/room-kepler-station.png) | ![Kepler Station: the junction board at 100%, power restored by hand](docs/room-kepler-station-power-restored.png) |
+| **Kepler Station** (2187): the derelict station | Bring the station back by hand |
+| ![The Jaguar Temple (1936): the sealed temple in the canopy](docs/room-jaguar-temple.png) | ![The Jaguar Temple: the sealed door's three faces, turned in order, before the golden idol](docs/room-jaguar-temple-idol-door.png) |
+| **The Jaguar Temple** (1936): the canopy | The sealed door: three faces, one order |
+| ![The Gaslight Affair at No. 9 (1891): a rain-soaked gaslit street](docs/room-gaslight-no-9.png) | ![The Gaslight Affair at No. 9: the evidence wall, pinned papers and the reading glass](docs/room-gaslight-no-9-evidence-wall.png) |
+| **The Gaslight Affair at No. 9** (1891): the gaslit street | The evidence wall and the reading glass |
 | ![Protocol Zero (2071): MERIDIAN's interface, clinical white before the decay](docs/room-protocol-zero.png) | ![Protocol Zero: the access phrase ORIGIN opens the core doors](docs/room-protocol-zero-access-granted.png) |
 | **Protocol Zero** (2071): MERIDIAN's interface, wipe countdown running | Access granted: the core doors open |
-| ![The Hôtel Lumière Job (1963): the comic-book cover](docs/room-hotel-lumiere.png) | ![The Hôtel Lumière Job: the playable safe dial](docs/room-hotel-lumiere-safe.png) |
-| **The Hôtel Lumière Job** (1963): the comic book | The safe dial |
-| ![The Hôtel Lumière Job: the playable laser corridor](docs/room-hotel-lumiere-laser-corridor.png) | ![The Clockmaker's Workshop: the music box drum that plays the numbers](docs/room-clockmakers-workshop-music-box.png) |
-| The Hôtel Lumière Job: the laser corridor | The Clockmaker's Workshop: the numbers, played on a drum |
-| ![The Clockmaker's Workshop (family, 7+): the great clock you wind up](docs/room-clockmakers-workshop.png) | ![All six rooms on /rooms](docs/rooms.png) |
-| **The Clockmaker's Workshop** (family, 7+): the toy you wind up | `/rooms`: every door in one list |
+| ![The Hôtel Lumière Job (1963): the comic-book cover](docs/room-hotel-lumiere.png) | ![The Hôtel Lumière Job: the vault corridor, a laser grid crossed with the pointer](docs/room-hotel-lumiere-laser-corridor.png) |
+| **The Hôtel Lumière Job** (1963): the comic book | The vault corridor's laser grid |
+| ![The Clockmaker's Workshop (family, 7+): the grandfather clock and its wind-up key](docs/room-clockmakers-workshop.png) | ![The Clockmaker's Workshop: the music box drum that plays the numbers](docs/room-clockmakers-workshop-music-box.png) |
+| **The Clockmaker's Workshop** (family, 7+): the clock you wind up | The numbers, played on a drum |
+
+<p align="center"><img src="docs/room-hotel-lumiere-safe.png" width="70%" alt="The Hôtel Lumière Job: the penthouse safe, opened with the dial"><br><em>And the Hôtel Lumière's penthouse safe: ka-chunk.</em></p>
 
 ### Booking to the door unlocking
 
 | | |
 |---|---|
-| ![Book: every room's sessions for a day, venue filter and team sizes inline](docs/book.png) | ![The booking panel on a room page: date strip, sessions, team sizes, extras and the total](docs/booking-panel.png) |
-| `/book`: every room's sessions for a day | The booking panel every world embeds |
-| ![Workshops: lockpicking and cipher sessions booked per head](docs/workshops.png) | ![Your doors: the cart as door cards with the hold countdown](docs/cart.png) |
-| `/workshops`: seats per head | Your doors (the cart) |
-| ![Checkout: your team, contact and payment on one page](docs/checkout.png) | ![The door unlocks: the booking reference opens the door onto the room](docs/thank-you.png) |
-| One-page checkout | "The door unlocks" |
-| ![Doors opened: upcoming bookings and every room as a door, played ones lit](docs/account.png) | |
-| "Doors opened" in the account | |
+| ![Six doors, six worlds: every room compared on /rooms](docs/rooms.png) | ![Book: every room's sessions for a day, with a venue filter](docs/book.png) |
+| `/rooms`: every room side by side | `/book`: every room's sessions for a day |
+| ![The booking panel in the Jaguar Temple: date strip, sessions, team sizes, extras and the total](docs/booking-panel.png) | ![Workshops: lockpicking at the long tables, seats per head](docs/workshops.png) |
+| The booking panel every world embeds | `/workshops`: seats per head |
+| ![Your doors: two doors held, with the hold countdown](docs/cart.png) | ![Checkout: your team, contact and payment on one page](docs/checkout.png) |
+| Your doors (the cart) | One-page checkout |
+| ![The door unlocks: the booking reference opens the door onto the room](docs/thank-you.png) | ![Doors opened: every room as a door, played ones lit](docs/account.png) |
+| "The door unlocks" | "Doors opened" in the account |
 
 ### On a phone
 
 | | | |
 |---|---|---|
-| ![The Corridor on a phone](docs/mobile-home.png) | ![A room world on a phone](docs/mobile-world.png) | ![The booking panel on a phone](docs/mobile-booking.png) |
-| The Corridor | A room world | Booking |
+| ![The Corridor on a phone: the doors as a list](docs/mobile-home.png) | ![Kepler Station on a phone](docs/mobile-world.png) | ![The Hôtel Lumière Job's booking panel on a phone](docs/mobile-booking.png) |
+| The Corridor | Kepler Station | Booking in the Hôtel Lumière |
 
 ---
 
