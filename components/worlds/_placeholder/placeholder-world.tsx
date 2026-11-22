@@ -7,9 +7,9 @@ import { DoorArt } from '@/components/doors/door-art';
 import s from './placeholder-world.module.css';
 
 /**
- * The generic world, in the dark shell, lit by the room's door colour. Every room
- * without its own folder (and any store room this template doesn't know)
- * renders this until its world agent replaces it.
+ * The fallback world, in the dark shell, lit by the room's door colour. All six
+ * Otherdoor rooms have their own route; a store room this template doesn't know
+ * renders this until you build its world (components/worlds/README.md).
  */
 export default function PlaceholderWorld({ room, presentation: p, cover, photos, gameMaster, next, booking }: RoomWorldProps) {
 	const vars = { '--w-glow': p.palette.glow, '--slit': p.palette.glow } as CSSProperties;

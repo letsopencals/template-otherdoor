@@ -7,7 +7,7 @@ is the world's.
 ```
 components/worlds/room-page.tsx RoomPage: reads the store, builds the props, wires the BookingPanel
 app/rooms/<slug>/page.tsx       one route file per built world (imports only that world)
-app/rooms/[slug]/page.tsx       any other store room: the generic world (_placeholder)
+app/rooms/[slug]/page.tsx       a store room with no world yet: the fallback world (_placeholder)
 components/worlds/<slug>/      YOUR FOLDER: index.tsx (default export) + CSS module + art
 lib/worlds.ts                  RoomWorldProps (the types below) + the --bp-* variable list
 lib/world-props.ts             how the props are built (store + lib/site-config.ts)
@@ -138,7 +138,7 @@ account.
 ## Adding a world
 
 1. Create `components/worlds/<slug>/index.tsx` with
-   `export default function MyWorld(props: RoomWorldProps) { … }` (replace the placeholder).
+   `export default function MyWorld(props: RoomWorldProps) { … }`.
 2. If the slug is new, copy `app/rooms/kepler-station/page.tsx` to `app/rooms/<slug>/page.tsx`
    (change `SLUG` and the import) and add the room's presentation to `lib/site-config.ts` → `rooms`
    (palette, headerTone, stats, beats). A route file per world, not a slug → `next/dynamic` map:
@@ -146,7 +146,7 @@ account.
    ship all six worlds' JS and CSS.
 3. Render `{props.booking}` once and set the `--bp-*` variables on your root.
 
-A store room without a route file falls back to `_placeholder/placeholder-world.tsx` (the generic
+A store room without a route file falls back to `_placeholder/placeholder-world.tsx` (the fallback
 world in the dark shell, lit by the room's glow, using `media.poster`).
 
 ## Status

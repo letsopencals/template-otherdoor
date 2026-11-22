@@ -2,8 +2,7 @@
 
 A production-ready booking website for an escape-room company with several themed rooms. Built with **Next.js 15**, **Tailwind CSS v4** and the **Opencals Storefront SDK**.
 
-<!-- TODO(screenshots): docs/cover.png is being produced by the cover run. -->
-![Otherdoor on a tablet, a laptop and a phone at a glowing door: the corridor of six doors, a room world and the booking panel](docs/cover.png)
+![Otherdoor on a tablet and a phone on terrazzo: the corridor of six doors and a room world](docs/cover.png)
 
 **[View Live Demo →](https://template-otherdoor.vercel.app)** · **[GitHub](https://github.com/letsopencals/template-otherdoor)** · **[Docs](https://opencals.com/docs/open-source/otherdoor)**
 
@@ -21,25 +20,51 @@ MIT licensed: clone it, rebrand it, ship it.
 
 ## Screenshots
 
-<!-- TODO(screenshots): captured by the screenshot run into docs/. Reconcile names and captions with the files there before release. -->
+![The Corridor: six doors over the hall video](docs/home-corridor.png)
 
-![The Corridor: six doors over the hall video, one swung open onto its room](docs/home-corridor.png)
+| | | |
+|---|---|---|
+| ![A door swung open onto its room's loop, its light spilling into the hall](docs/home-door-open.png) | ![Which door is yours? Your answers pick a room](docs/home-which-door.png) | ![The keypad lock: 2187 opens it and gives up the code](docs/home-keypad.png) |
+| A door swings open onto its room | "Which door is yours?" | The keypad lock |
+
+### Six worlds, each with its own signature moment
+
+| The world | Its moment |
+|---|---|
+| ![Kepler Station (2187): the mission timeline, starfield and docking approach](docs/room-kepler-station.png) | ![Kepler Station: the power board restored, the whole page relit](docs/room-kepler-station-power-restored.png) |
+| **Kepler Station** (2187): the mission timeline | Power restored: the board relights the page |
+| ![The Jaguar Temple (1936): the descent from the canopy to the idol chamber](docs/room-jaguar-temple.png) | ![The Jaguar Temple: the sealed door's three faces, turned in order, before the golden idol](docs/room-jaguar-temple-idol-door.png) |
+| **The Jaguar Temple** (1936): the descent from the canopy | The sealed door: three faces, one order |
+| ![The Gaslight Affair at No. 9 (1891): a rain-soaked gaslit street](docs/room-gaslight-no-9.png) | ![The Gaslight Affair at No. 9: the evidence wall joined by red string](docs/room-gaslight-no-9-evidence-wall.png) |
+| **The Gaslight Affair at No. 9** (1891): the gaslit street | The evidence wall and its red string |
+| ![Protocol Zero (2071): MERIDIAN's interface, clinical white before the decay](docs/room-protocol-zero.png) | ![Protocol Zero: the access phrase ORIGIN opens the core doors](docs/room-protocol-zero-access-granted.png) |
+| **Protocol Zero** (2071): MERIDIAN's interface, wipe countdown running | Access granted: the core doors open |
+| ![The Hôtel Lumière Job (1963): the comic-book cover](docs/room-hotel-lumiere.png) | ![The Hôtel Lumière Job: the playable safe dial](docs/room-hotel-lumiere-safe.png) |
+| **The Hôtel Lumière Job** (1963): the comic book | The safe dial |
+| ![The Hôtel Lumière Job: the playable laser corridor](docs/room-hotel-lumiere-laser-corridor.png) | ![The Clockmaker's Workshop: the music box drum that plays the numbers](docs/room-clockmakers-workshop-music-box.png) |
+| The Hôtel Lumière Job: the laser corridor | The Clockmaker's Workshop: the numbers, played on a drum |
+| ![The Clockmaker's Workshop (family, 7+): the great clock you wind up](docs/room-clockmakers-workshop.png) | ![All six rooms on /rooms](docs/rooms.png) |
+| **The Clockmaker's Workshop** (family, 7+): the toy you wind up | `/rooms`: every door in one list |
+
+### Booking to the door unlocking
 
 | | |
 |---|---|
-| ![Kepler Station (2187): the mission timeline, starfield and docking approach](docs/room-kepler-station.png) | ![The Jaguar Temple (1936): the descent from the canopy to the idol chamber](docs/room-jaguar-temple.png) |
-| ![The Gaslight Affair at No. 9 (1891): the evidence wall travelled sideways](docs/room-gaslight-no-9.png) | ![Protocol Zero (2071): MERIDIAN's interface decaying as you scroll](docs/room-protocol-zero.png) |
-| ![The Hôtel Lumière Job (1963): the page as a comic book](docs/room-hotel-lumiere.png) | ![The Clockmaker's Workshop: the great clock and the cabinet you wind up](docs/room-clockmakers-workshop.png) |
+| ![Book: every room's sessions for a day, venue filter and team sizes inline](docs/book.png) | ![The booking panel on a room page: date strip, sessions, team sizes, extras and the total](docs/booking-panel.png) |
+| `/book`: every room's sessions for a day | The booking panel every world embeds |
+| ![Workshops: lockpicking and cipher sessions booked per head](docs/workshops.png) | ![Your doors: the cart as door cards with the hold countdown](docs/cart.png) |
+| `/workshops`: seats per head | Your doors (the cart) |
+| ![Checkout: your team, contact and payment on one page](docs/checkout.png) | ![The door unlocks: the booking reference opens the door onto the room](docs/thank-you.png) |
+| One-page checkout | "The door unlocks" |
+| ![Doors opened: upcoming bookings and every room as a door, played ones lit](docs/account.png) | |
+| "Doors opened" in the account | |
 
-![Book: every room's sessions for a day, venue filter and team sizes inline](docs/book.png)
+### On a phone
 
-![Your doors: the cart as door cards with the hold countdown](docs/cart.png)
-
-![Checkout: your team, contact and payment on one page](docs/checkout.png)
-
-![The door unlocks: the booking reference opens the door onto the room](docs/thank-you.png)
-
-![Doors opened: upcoming bookings and every room as a door, played ones lit](docs/account.png)
+| | | |
+|---|---|---|
+| ![The Corridor on a phone](docs/mobile-home.png) | ![A room world on a phone](docs/mobile-world.png) | ![The booking panel on a phone](docs/mobile-booking.png) |
+| The Corridor | A room world | Booking |
 
 ---
 
@@ -92,10 +117,10 @@ Every room has its own landing page with its own palette, display font, layout a
 | **The Hôtel Lumière Job** (1963) | Leith | A comic book: a cover, then pages of panels that slam in with halftone screens, speech balloons and sound effects, a playable laser grid and safe dial, and the plan around the booking panel. Bowlby One and Shantell Sans. |
 | **The Clockmaker's Workshop** (family, 7+) | Leith | A mechanical toy you wind up: the key (or the scroll) drives every gear, the cabinet's compartments open one by one, a cuckoo calls, toys walk the shelf and five brass keys hide on the page. Caprasimo. |
 
-A store room without a world of its own gets the generic world. See `components/worlds/README.md` to build one.
+All six rooms ship with their world. A room you add to the store gets a plain fallback page (`app/rooms/[slug]`) until you give it a world of its own: see `components/worlds/README.md`.
 
 ### Booking
-The booking panel is plain on purpose: the date strip sits right above the session times, team sizes show the group price and the price per head, extras are checkboxes, and the total with "Add to your doors" stays in view. `/book` lists every room's sessions for a day with a venue filter, with team sizes inline once you pick a time; `/workshops` books seats per head with a stepper. Room pages take deep links (`/rooms/kepler-station?date=2026-12-05&time=18:00&team=6#book`). Availability is read once per room for the whole booking window, cached for 60 seconds and cut into sessions on the room's grid in the browser.
+The booking panel is plain on purpose: the date strip sits right above the session times, team sizes show the group price and the price per head, extras are checkboxes, and the total with "Add to your doors" stays in view. `/book` lists every room's sessions for a day with a venue filter, with team sizes inline once you pick a time; `/workshops` books seats per head with a stepper. Room pages take deep links (`/rooms/kepler-station?date=2026-12-05&time=18:00&team=6#book`), and `/book?date=2026-12-05` opens the board on that day while it is inside the booking window. Availability is read once per room for the whole booking window, cached for 60 seconds and cut into sessions on the room's grid in the browser.
 
 ### Your doors, checkout, confirmation, account
 - **Your doors**: the cart as slim door cards edged in each room's colour, with the hold countdown.
