@@ -99,7 +99,7 @@ export function DoorsOpened({ rooms, fixture }: { rooms: SigilRoom[]; fixture?: 
 					) : null}
 					<div className="mt-6 grid gap-4">
 						{upcoming.map(({ e, a }) => {
-							const w = changeWindow({ from: a.from, status: (a.status as never) ?? 'scheduled', product: a.product as never }, now || Date.now());
+							const w = changeWindow({ from: a.from, status: (a.status as never) ?? 'scheduled', product: a.product as never }, now);
 							return (
 								<div key={e.id}>
 									<DoorCard
@@ -116,7 +116,8 @@ export function DoorsOpened({ rooms, fixture }: { rooms: SigilRoom[]; fixture?: 
 											)
 										}
 									/>
-									<p className="mt-2 pl-3 text-[0.8rem] text-ink-3">{policyLine(w)}</p>
+									{/* No clock on the server or while hydrating (now = 0): the policy line arrives after mount. */}
+									{now ? <p className="mt-2 pl-3 text-[0.8rem] text-ink-3">{policyLine(w)}</p> : null}
 								</div>
 							);
 						})}
