@@ -54,8 +54,8 @@ export function Cutaway() {
 							<stop offset="1" stopColor="#2a3349" />
 						</linearGradient>
 						<linearGradient id="kcLit" x1="0" y1="0" x2="0" y2="1">
-							<stop offset="0" stopColor="#1d3550" />
-							<stop offset="1" stopColor="#0b1428" />
+							<stop offset="0" stopColor="#2c587a" />
+							<stop offset="1" stopColor="#0f1d36" />
 						</linearGradient>
 						<linearGradient id="kcCone" x1="0" y1="0" x2="0" y2="1">
 							<stop offset="0" stopColor="#d8fbff" stopOpacity=".42" />
@@ -180,6 +180,7 @@ function RoomCell({ r, dark, active }: { r: DeckRoom; dark: boolean; active: boo
 			<RoomArt id={r.id} w={r.w} />
 			<rect x={r.w / 2 - 24} y="2" width="48" height="4" rx="2" className={s.lamp} />
 			<circle cx={r.w - 12} cy="14" r="3.2" className={s.emergency} />
+			<rect width={r.w} height={deck.h} className={s.redWash} />
 			<rect width={r.w} height={deck.h} className={s.roomEdge} />
 		</g>
 	);

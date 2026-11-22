@@ -442,6 +442,14 @@
 	.gauge em {
 		display: none;
 	}
+	.stencil {
+		font-size: 0.7rem;
+		letter-spacing: 0.2em;
+		top: 6%;
+	}
+	.panel {
+		inset: 5% 8% 24% 8%;
+	}
 }
 @media (prefers-reduced-motion: reduce) {
 	.door,

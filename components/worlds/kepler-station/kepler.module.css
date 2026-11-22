@@ -1318,7 +1318,7 @@
 }
 @media (max-width: 1100px) {
 	.cmdGrid {
-		grid-template-columns: 1fr;
+		grid-template-columns: minmax(0, 1fr);
 	}
 	.leverShot {
 		min-height: 220px;
@@ -1326,10 +1326,10 @@
 	.habGrid,
 	.controlGrid,
 	.specRow {
-		grid-template-columns: 1fr;
+		grid-template-columns: minmax(0, 1fr);
 	}
 	.bookGrid {
-		grid-template-columns: 1fr;
+		grid-template-columns: minmax(0, 1fr);
 		gap: 40px;
 	}
 	.brief {
@@ -1413,7 +1413,7 @@
 		padding: 20px 16px;
 	}
 	.next {
-		grid-template-columns: 1fr;
+		grid-template-columns: minmax(0, 1fr);
 	}
 	.phaseTag {
 		font-size: 0.64rem;

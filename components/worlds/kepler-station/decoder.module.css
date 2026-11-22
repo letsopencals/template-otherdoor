@@ -315,6 +315,11 @@
 }
 
 @media (max-width: 560px) {
+	.head {
+		padding-inline: 8px;
+		font-size: 0.58rem;
+		letter-spacing: 0.08em;
+	}
 	.fine span {
 		font-size: 0.74rem;
 	}
