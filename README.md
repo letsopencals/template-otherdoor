@@ -2,17 +2,43 @@
 
 A production-ready booking website for an escape-room company with several themed rooms. Built with **Next.js 15**, **Tailwind CSS v4** and the **Opencals Storefront SDK**.
 
-**[View Live Demo →](https://template-otherdoor.vercel.app)**
+![Otherdoor on a tablet, a laptop and a phone at a glowing door: the corridor of six doors, a room world and the booking panel](docs/cover.png)
+
+**[View Live Demo →](https://template-otherdoor.vercel.app)** · **[GitHub](https://github.com/letsopencals/template-otherdoor)** · **[Docs](https://opencals.com/docs/open-source/otherdoor)**
 
 "Pick a door. Leave the world behind." Otherdoor is a dark, modern, genre-neutral shell around six rooms that each look like a different film: a jungle temple in 1936, a gaslit Victorian study, a rogue-AI lab in 2071, a derelict space station in 2187, a Riviera heist and a family clockwork workshop. It runs in **Edinburgh** (GBP, `Europe/London`) at two venues, Otherdoor Vaults under the Old Town and Otherdoor Leith on the Shore. It has:
 
 - **the Corridor**: six doors on the home page that open onto each room's video loop when you hover (tap on phones), with mood filters, live "Tonight" sessions, a "which door is yours?" picker, a flashlight room and a **keypad lock** that hides a discount code;
-- a **room world** per room at `/rooms/<slug>` with its own design, built on cinematic video and stills (Kepler Station: a parallax starfield, a scroll-driven docking approach, airlock doors and HUD overlays);
+- a **room world** per room at `/rooms/<slug>`: six landing pages that share nothing but the header, the footer and the booking panel, each with its own palette, display font, layout and motion, built on cinematic video and stills;
 - **team-size pricing**: rooms are booked by the whole team, with the group price and the price per head on every button;
 - **Your doors** (the cart), a **one-page checkout**, **"The door unlocks"** confirmation and **"Doors opened"** in the account;
 - lockpicking and cipher **workshops** priced per head.
 
 MIT licensed: clone it, rebrand it, ship it.
+
+---
+
+## Screenshots
+
+<!-- TODO(screenshots): captured by the screenshot run into docs/. Reconcile names and captions with the files there before release. -->
+
+![The Corridor: six doors over the hall video, one swung open onto its room](docs/home-corridor.png)
+
+| | |
+|---|---|
+| ![Kepler Station (2187): the mission timeline, starfield and docking approach](docs/room-kepler-station.png) | ![The Jaguar Temple (1936): the descent from the canopy to the idol chamber](docs/room-jaguar-temple.png) |
+| ![The Gaslight Affair at No. 9 (1891): the evidence wall travelled sideways](docs/room-gaslight-no-9.png) | ![Protocol Zero (2071): MERIDIAN's interface decaying as you scroll](docs/room-protocol-zero.png) |
+| ![The Hôtel Lumière Job (1963): the page as a comic book](docs/room-hotel-lumiere.png) | ![The Clockmaker's Workshop: the great clock and the cabinet you wind up](docs/room-clockmakers-workshop.png) |
+
+![Book: every room's sessions for a day, venue filter and team sizes inline](docs/book.png)
+
+![Your doors: the cart as door cards with the hold countdown](docs/cart.png)
+
+![Checkout: your team, contact and payment on one page](docs/checkout.png)
+
+![The door unlocks: the booking reference opens the door onto the room](docs/thank-you.png)
+
+![Doors opened: upcoming bookings and every room as a door, played ones lit](docs/account.png)
 
 ---
 
@@ -27,11 +53,11 @@ Sign up at **[app.opencals.com](https://app.opencals.com)** and create a **Dev S
 - two workshops (Lockpicking 101, Ciphers & Secret Inks) and six game masters with portraits;
 - the extras (team portrait, escape on film, victory bottle, Lobby sharing board, costume rail, birthday ceremony);
 - the checkout questions (team name, occasion, experience, anything we should know);
-- the discounts (Matinee 15% Monday to Thursday before 15:00, and the code `OTHERDOOR`, once per email).
+- the discounts (Matinee 15% Monday to Thursday before 15:00, and the code `OTHERDOOR` for 10% off, once per customer).
 
 ### 2. Get your API key
 
-In the Opencals dashboard, go to **User Account Settings** and generate a **private storefront key** (`spk_`). The template calls the API from its server, so the key stays secret, and it forwards each visitor's IP so visitors get their own rate limits. A public key (`sfk_`) also works, but then all visitors share your server's limits.
+In the Opencals dashboard, go to **Account → API Keys** and create a **private storefront key** (`spk_`). The template calls the API from its server, so the key stays secret, and it forwards each visitor's IP so visitors get their own rate limits. A public key (`sfk_`) also works, but then all visitors share your server's limits.
 
 ### 3. Deploy to Vercel
 
@@ -41,9 +67,10 @@ In the Opencals dashboard, go to **User Account Settings** and generate a **priv
 |----------|-------|
 | `OPENCALS_API_KEY` | Your private storefront key (starts with `spk_`) |
 | `AUTH_SECRET` | Any random string, used for session encryption |
-| `NEXT_PUBLIC_SITE_URL` | *(optional)* Your domain, for the sitemap, canonical URLs and Open Graph |
+| `OPENCALS_API_URL` | *(optional)* Defaults to `https://api.opencals.com` |
+| `OTHERDOOR_PREVIEW` | *(optional)* `1` shows the `/preview/*` fixture screens in production |
 
-Card payments use the Stripe account connected to your store; the key comes from the checkout API, so there's no Stripe variable to set.
+Card payments use the Stripe account connected to your store; the key comes from the checkout API, so there's no Stripe variable to set. Set your domain as `url` in `lib/site-config.ts` (canonical URLs and Open Graph).
 
 ---
 
@@ -53,10 +80,21 @@ Card payments use the Stripe account connected to your store; the key comes from
 Six doors in a dark hall over a video of the corridor. Each door is a lacquered leaf with a frosted transom, its number and its year; hover or focus one and it swings open from the hinge onto that room's muted loop, its light spills across the floor and the whole site takes its colour. Mood filters (the past, the future, family, hardest, scariest) re-order the corridor. Then: Tonight (the next free sessions per room, live), how it works, "Which door is yours?", the flashlight room, the keypad lock, both venues, the game masters, the Hall of Fame (**sample records**, labelled as such), groups and the FAQ.
 
 ### Room worlds (`/rooms/<slug>`)
-Every room has its own landing page with its own palette, display font, layout and motion, on top of a hero loop and world stills in `public/worlds/<slug>/`. Each has the story in scenes, the stats, interior photos, the game master, the booking panel and a teaser for the next door. **Kepler Station** is the reference world; the other five use the generic world until they are built. See `components/worlds/README.md` to build one.
+Every room has its own landing page with its own palette, display font, layout and motion, on top of a hero loop and world stills in `public/worlds/<slug>/`. Each tells the story, shows the stats, the interiors and the game master, embeds the booking panel and ends on a teaser for the next door.
+
+| Room | Venue | The world |
+|---|---|---|
+| **Kepler Station** (2187, the 120-minute Epic) | Leith | The mission timeline from first contact to the final docking, with its own mission-clock navigation: a station you can turn, a scroll-driven docking approach, a cutaway of both decks with failing lights, a signal decoder, a power board that relights the whole page and an airlock you press and hold. Michroma. |
+| **The Jaguar Temple** (1936) | Vaults | One continuous descent from the canopy to the idol chamber: leaves that part like curtains, lianas that swing to the pointer, a glyph lock on the sealed door and a rolling stone. Rakkas. |
+| **The Gaslight Affair at No. 9** (1891) | Vaults | A rain-soaked gaslit street, then the detective's evidence wall travelled sideways: pinned documents joined by red string that draws itself, and a reading glass that finds hidden clues. Gloock and Cutive Mono. |
+| **Protocol Zero** (2071) | Vaults | The page is the rogue AI's interface: it boots, then decays as you scroll from clinical white to alarm red, with a terminal that talks, a wipe countdown and an access prompt before the booking. Doto. |
+| **The Hôtel Lumière Job** (1963) | Leith | A comic book: a cover, then pages of panels that slam in with halftone screens, speech balloons and sound effects, a playable laser grid and safe dial, and the plan around the booking panel. Bowlby One and Shantell Sans. |
+| **The Clockmaker's Workshop** (family, 7+) | Leith | A mechanical toy you wind up: the key (or the scroll) drives every gear, the cabinet's compartments open one by one, a cuckoo calls, toys walk the shelf and five brass keys hide on the page. Caprasimo. |
+
+A store room without a world of its own gets the generic world. See `components/worlds/README.md` to build one.
 
 ### Booking
-The booking panel is plain on purpose: the date strip sits right above the session times, team sizes show the group price and the price per head, extras are checkboxes, and the total with "Add to your doors" stays in view. `/book` lists every room's sessions for a day with a venue filter; `/workshops` books seats.
+The booking panel is plain on purpose: the date strip sits right above the session times, team sizes show the group price and the price per head, extras are checkboxes, and the total with "Add to your doors" stays in view. `/book` lists every room's sessions for a day with a venue filter, with team sizes inline once you pick a time; `/workshops` books seats per head with a stepper. Room pages take deep links (`/rooms/kepler-station?date=2026-12-05&time=18:00&team=6#book`). Availability is read once per room for the whole booking window, cached for 60 seconds and cut into sessions on the room's grid in the browser.
 
 ### Your doors, checkout, confirmation, account
 - **Your doors**: the cart as slim door cards edged in each room's colour, with the hold countdown.
@@ -69,7 +107,7 @@ Sign in with a 6-digit code by email or a magic link from the booking email. No 
 
 ---
 
-## The Escape-Room Model
+## Catalogue convention (the escape-room model)
 
 | Concept | In the store |
 |---|---|
@@ -78,8 +116,10 @@ Sign in with a 6-digit code by email or a magic link from the booking email. No 
 | Workshop | A product in the `workshops` collection, staff-led, priced per head, seats = max attendees |
 | Team name | A checkout question; it appears on the confirmation |
 | Venue | A location (`otherdoor-vaults`, `otherdoor-leith`) |
+| Extras | Add-ons on every room (team portrait, escape on film, the Victory Bottle, Lobby sharing board, costume rail, birthday ceremony); portrait and film on workshops too |
+| Matinee, `OTHERDOOR` | An automatic 15% off rooms starting before 15:00 Monday to Thursday, and a 10% code, once per customer. The keypad on the home page reveals the code |
 
-Stats (difficulty, fear, escape rate, record), palettes and the world media aren't API fields: they live in `lib/site-config.ts`.
+The parser in `lib/rooms.ts` relies on these names: the `rooms` and `workshops` collection slugs, the `<room>-<n>p` variant slugs (the team size is read from them) and the venue location slugs. Stats (difficulty, fear, escape rate, record), palettes and the world media aren't API fields: they live in `lib/site-config.ts`.
 
 ---
 
@@ -89,7 +129,7 @@ Stats (difficulty, fear, escape rate, record), palettes and the world media aren
 |----------|-----------|
 | Framework | Next.js 15 (App Router) |
 | Styling | Tailwind CSS v4 + CSS modules |
-| Fonts | next/font: Funnel Display, Mona Sans, Spline Sans Mono (+ one per room world: Michroma for Kepler Station) |
+| Fonts | next/font: Funnel Display, Mona Sans, Spline Sans Mono for the shell; each world loads its own (Michroma, Rakkas, Gloock, Cutive Mono, Doto, Bowlby One, Shantell Sans, Caprasimo) |
 | Motion | CSS, canvas and scroll-driven CSS variables; no motion library |
 | Data | SWR (client) + React Server Components |
 | Payments | Stripe Elements |
@@ -138,6 +178,17 @@ Checks: `npm run typecheck`, `npm run lint` and `npm test` (the catalogue parser
 | [Gable](https://github.com/letsopencals/template-gable) | Coworking | [template-gable.vercel.app](https://template-gable.vercel.app) |
 | [Afterglow](https://github.com/letsopencals/template-afterglow) | Content gym | [template-afterglow.vercel.app](https://template-afterglow.vercel.app) |
 | [METTLE](https://github.com/letsopencals/template-mettle) | Boutique gym | [template-mettle.vercel.app](https://template-mettle.vercel.app) |
+
+See all templates and the Storefront API at **[opencals.com/developers](https://opencals.com/developers)**.
+
+## Build with AI
+
+Prefer to let an AI agent do the heavy lifting? Install the **[Opencals Agent Skills](https://github.com/letsopencals/skills)** in Claude Code, Cursor, Codex or Gemini CLI:
+
+- **`opencals-build-booking-site`**: scaffold, wire and deploy a template like this one
+- **`opencals-storefront-api`**: ground-truth reference for the Opencals API & SDK
+
+Docs: **[opencals.com/docs → AI Agents](https://opencals.com/docs/ai-agents/overview)**.
 
 ---
 

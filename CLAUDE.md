@@ -11,15 +11,15 @@ to be copied across them (only the template name / branding differs).
 data in a `useEffect` on the client.
 
 - Server reads go through `lib/server-data.ts` — `React.cache()`-wrapped helpers
-  (`getStoreSettings`, `getProducts`, `getProduct`) that call the SDK directly.
+  (`getStoreSettings`, `getProducts`, `getProduct`, `getCatalogue`, `getRoomRanges`) that call the SDK directly.
   `React.cache` dedupes calls within a request. Never import `lib/server-data.ts`
   from a `'use client'` file.
 - `app/layout.tsx` is an async Server Component: it fetches store settings once
   and seeds `<Providers initialSettings={...}>`. `SettingsProvider` takes the
   value as a prop — it does not fetch.
-- Read-only pages (e.g. `app/coaches/page.tsx`) are async Server Components that
+- Read-only pages (e.g. `app/workshops/page.tsx`) are async Server Components that
   fetch with `lib/server-data.ts` and hand the result to a small `'use client'`
-  child as `initialProducts` / `initialProduct`.
+  child as initial props.
 
 **Client reads use SWR, seeded with server data.** For data that genuinely needs
 to live on the client (filtering, availability, add-ons, cart), use `useSWR`
@@ -79,7 +79,7 @@ composes the smaller ones.
 - Hoist static objects (default non-primitive props) to module-level `const`s
   instead of recreating them inline.
 - `React.memo` leaf components that take stable props and render often
-  (e.g. `components/schedule/session-row.tsx`).
+  (e.g. `components/booking/session-buttons.tsx`, `components/booking/date-strip.tsx`).
 - Prefer a ternary (`cond ? <x/> : null`) over `cond && <x/>` for conditional
   rendering, to avoid accidentally rendering `0`/`''`.
 
@@ -111,6 +111,15 @@ Design contract: **DESIGN.md**. Room-world contract: **components/worlds/README.
 - `lib/doors.ts` (`DoorRoom`, `doorsForMood`), `lib/visit.ts` (one booking as the UI shows it),
   `lib/cart-lines.ts` (cart maths), `lib/history.ts` (upcoming/past, doors opened),
   `lib/order-visits.ts`, `lib/world-props.ts` + `lib/worlds.ts` (the world contract).
+
+### Room worlds (`components/worlds/<slug>/`, contract in `components/worlds/README.md`)
+Each built world has its own route file `app/rooms/<slug>/page.tsx` (imports only that world), its
+own CSS module and its own display font (`font.ts`): Kepler Station (Michroma), The Jaguar Temple
+(Rakkas), The Gaslight Affair at No. 9 (Gloock + Cutive Mono), Protocol Zero (Doto), The Hôtel
+Lumière Job (Bowlby One + Shantell Sans), The Clockmaker's Workshop (Caprasimo). A store room with
+no world folder falls back to `app/rooms/[slug]` (`_placeholder`). Worlds skin the BookingPanel
+only through `--bp-*`; they never restyle its controls. Never copy one world's structure into
+another (each has its own layout grammar and motion).
 
 ### Availability
 - `/api/rooms/availability` (`getRoomRanges`): merged free windows per room, cached 60 s, tag
