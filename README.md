@@ -8,7 +8,7 @@ A production-ready booking website for an escape-room company with several theme
 
 "Pick a door. Leave the world behind." Otherdoor is a dark, modern, genre-neutral shell around six rooms that each look like a different film: a jungle temple in 1936, a gaslit Victorian study, a rogue-AI lab in 2071, a derelict space station in 2187, a Riviera heist and a family clockwork workshop. It runs in **Edinburgh** (GBP, `Europe/London`) at two venues, Otherdoor Vaults under the Old Town and Otherdoor Leith on the Shore. It has:
 
-- **the Corridor**: six doors on the home page that open onto each room's video loop when you hover (tap on phones), with mood filters, live "Tonight" sessions, a "which door is yours?" picker, a flashlight room and a **keypad lock** that hides a discount code;
+- **the Corridor**: six 3D doors on the home page that swing open onto each room's video loop when you hover (tap on phones), with mood filters, live "Tonight" sessions, a "which door is yours?" picker, a flashlight room and a **keypad lock** that hides a discount code;
 - a **room world** per room at `/rooms/<slug>`: six landing pages that share nothing but the header, the footer and the booking panel, each with its own palette, display font, layout and motion, built on cinematic video and stills;
 - **team-size pricing**: rooms are booked by the whole team, with the group price and the price per head on every button;
 - **Your doors** (the cart), a **one-page checkout**, **"The door unlocks"** confirmation and **"Doors opened"** in the account;
@@ -20,11 +20,11 @@ MIT licensed: clone it, rebrand it, ship it.
 
 ## Screenshots
 
-![The Corridor: six doors over the hall video, Tonight's mood filters below](docs/home-corridor.png)
+![The Corridor: six doors with lit reeded glass over the hall video, the mood filters below](docs/home-corridor.png)
 
 | | | |
 |---|---|---|
-| ![Kepler Station's door swung open onto its room's loop, its light spilling into the hall](docs/home-door-open.png) | ![Which door is yours? Four questions, one door opens](docs/home-which-door.png) | ![The keypad lock: 2187 opens it and gives up the code OTHERDOOR](docs/home-keypad.png) |
+| ![Kepler Station's door swung out on its hinge onto the station's loop, its light spilling into the hall](docs/home-door-open.png) | ![Which door is yours? Four questions, one door opens](docs/home-which-door.png) | ![The keypad lock: 2187 opens it and gives up the code OTHERDOOR](docs/home-keypad.png) |
 | A door swings open onto its room | "Which door is yours?" | The keypad lock |
 
 ### Six worlds, each with its own signature moment
@@ -103,7 +103,7 @@ Card payments use the Stripe account connected to your store; the key comes from
 ## What's Included
 
 ### The Corridor (home)
-Six doors in a dark hall over a video of the corridor. Each door is a lacquered leaf with a frosted transom, its number and its year; hover or focus one and it swings open from the hinge onto that room's muted loop, its light spills across the floor and the whole site takes its colour. Mood filters (the past, the future, family, hardest, scariest) re-order the corridor. Then: Tonight (the next free sessions per room, live), how it works, "Which door is yours?", the flashlight room, the keypad lock, both venues, the game masters, the Hall of Fame (**sample records**, labelled as such), groups and the FAQ.
+Six doors in a dark hall over a video of the corridor. Each door is a lacquered slab with reeded glass lit in its room's colour, a brass lever, its number and its year, with light leaking round the latch. Hover or focus one and the lever turns, the door swings out towards you on its hinge, and the room comes on behind it: its muted loop starts seamlessly from the still, dust turns in the light, its glow spills across the floor and the whole site takes its colour. Mood filters (the past, the future, family, hardest, scariest) re-order the corridor. Then: Tonight (the next free sessions per room, live), how it works, "Which door is yours?", the flashlight room, the keypad lock, both venues, the game masters, the Hall of Fame (**sample records**, labelled as such), groups and the FAQ.
 
 ### Room worlds (`/rooms/<slug>`)
 Every room has its own landing page with its own palette, display font, layout and motion, on top of a hero loop and world stills in `public/worlds/<slug>/`. Each tells the story, shows the stats, the interiors and the game master, embeds the booking panel and ends on a teaser for the next door.
