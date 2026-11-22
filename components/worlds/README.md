@@ -39,8 +39,8 @@ reference them from your world. Code goes on top: canvas, SVG/CSS overlays, scro
 Hand-made SVG only for UI ornaments and overlays. Every image goes through
 `components/ui/safe-img.tsx` or `components/doors/door-art.tsx` (fallback chain), so a missing file
 never shows a broken-image icon; a video gets an `onError` that drops back to its poster. Set
-`muted` through a ref before `play()`. See `components/worlds/kepler-station/` for the reference
-world (hero video, starfield canvas, sticky scroll tracks writing `--p`, HUD SVG).
+`muted` through a ref before `play()`. Any built world is a worked example; none is a template to
+copy (each one has its own structure).
 
 ## The booking panel
 
@@ -156,7 +156,7 @@ world in the dark shell, lit by the room's glow, using `media.poster`).
 | `jaguar-temple` | Built: vertical descent, leaf curtains, glyph lock on the stone door | Rakkas |
 | `gaslight-no-9` | Built: sideways evidence wall, red string, reading glass, warrant booking | Gloock + Cutive Mono |
 | `protocol-zero` | Built: MERIDIAN's decaying interface, terminal, countdown, access prompt | Doto |
-| `kepler-station` | Built (reference implementation); being revised to the depth of the others | Michroma |
+| `kepler-station` | Built: mission timeline, mission-clock dial, turnable station, deck cutaway, decoder, restore-power board, airlock cycle | Michroma |
 | `hotel-lumiere` | Built: comic book issue, laser grid, safe dial (`headerTone: 'dark'`) | Bowlby One + Shantell Sans |
 | `clockmakers-workshop` | Built: wind-up toy page, gear trains, cabinet compartments, cuckoo | Caprasimo |
 
