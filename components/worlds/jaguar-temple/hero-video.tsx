@@ -35,7 +35,7 @@ export function TempleLoop({ src, poster, className }: { src?: string; poster?: 
 		<div ref={box} className={className} aria-hidden>
 			{/* eslint-disable-next-line @next/next/no-img-element */}
 			{posterOk && poster ? <img src={poster} alt="" fetchPriority="high" onError={() => setPosterOk(false)} /> : null}
-			{play && src ? <video ref={video} src={src} poster={poster} muted loop playsInline autoPlay preload="auto" onError={() => setPlay(false)} /> : null}
+			{play && src ? <video ref={video} src={src} poster={poster} muted loop playsInline preload="metadata" onError={() => setPlay(false)} /> : null}
 		</div>
 	);
 }

@@ -20,6 +20,7 @@ const LAMPS = [
  */
 export function HeroMedia({ src, poster, fog }: { src?: string; poster?: string; fog: string }) {
 	const ref = useRef<HTMLVideoElement>(null);
+	const live = useRef(false);
 	const [on, setOn] = useState(false);
 	const [posterOk, setPosterOk] = useState(Boolean(poster));
 	useEffect(() => {
@@ -27,10 +28,11 @@ export function HeroMedia({ src, poster, fog }: { src?: string; poster?: string;
 		setOn(true);
 	}, [src]);
 	return (
-		<Live className={s.heroMedia} onChange={(live) => {
+		<Live className={s.heroMedia} onChange={(isLive) => {
+			live.current = isLive;
 			const v = ref.current;
 			if (!v) return;
-			if (live) {
+			if (isLive) {
 				v.muted = true;
 				v.play().catch(() => undefined);
 			} else v.pause();
@@ -44,15 +46,14 @@ export function HeroMedia({ src, poster, fog }: { src?: string; poster?: string;
 							ref.current = v;
 							if (v) {
 								v.muted = true;
-								v.play().catch(() => undefined);
+								if (live.current) v.play().catch(() => undefined);
 							}
 						}}
 						src={src}
 						muted
 						loop
 						playsInline
-						autoPlay
-						preload="auto"
+						preload="metadata"
 						onError={() => setOn(false)}
 					/>
 				) : null}

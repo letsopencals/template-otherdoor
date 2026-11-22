@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 /**
  * The home hero's background: a muted loop over its poster. If the video is
  * missing or fails, the poster stays; if that fails too, the CSS gradient shows.
- * Reduced motion: the poster only.
+ * Reduced motion: the poster only. Plays only while on screen.
  */
 export function HeroLoop({ src, poster, className }: { src: string; poster: string; className?: string }) {
 	const ref = useRef<HTMLVideoElement>(null);
@@ -19,13 +19,18 @@ export function HeroLoop({ src, poster, className }: { src: string; poster: stri
 		const v = ref.current;
 		if (!v) return;
 		v.muted = true;
-		v.play().catch(() => undefined);
+		const io = new IntersectionObserver(([e]) => {
+			if (e?.isIntersecting) v.play().catch(() => undefined);
+			else v.pause();
+		});
+		io.observe(v);
+		return () => io.disconnect();
 	}, [video]);
 	return (
 		<div className={className} aria-hidden>
 			{/* eslint-disable-next-line @next/next/no-img-element */}
 			{posterOk ? <img src={poster} alt="" onError={() => setPosterOk(false)} /> : null}
-			{video ? <video ref={ref} src={src} muted loop playsInline autoPlay preload="auto" onError={() => setVideo(false)} /> : null}
+			{video ? <video ref={ref} src={src} muted loop playsInline preload="metadata" onError={() => setVideo(false)} /> : null}
 		</div>
 	);
 }
