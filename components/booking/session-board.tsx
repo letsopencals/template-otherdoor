@@ -41,7 +41,7 @@ export interface BoardRoom {
  * room with plain session buttons. Tapping a time opens team size + total +
  * "Add to your doors" right under that row.
  */
-export function SessionBoard({ rooms, venues, initialRanges, renderedAt, initialVenue }: { rooms: BoardRoom[]; venues: Array<{ slug: string; short: string }>; initialRanges: Record<string, FreeRange[]>; renderedAt: number; initialVenue: string | null }) {
+export function SessionBoard({ rooms, venues, initialRanges, renderedAt, initialVenue, initialDate = null }: { rooms: BoardRoom[]; venues: Array<{ slug: string; short: string }>; initialRanges: Record<string, FreeRange[]>; renderedAt: number; initialVenue: string | null; initialDate?: string | null }) {
 	const { data } = useSWR<Record<string, FreeRange[]>>('/api/rooms/availability', fetcher, { fallbackData: initialRanges, revalidateOnFocus: false });
 	const now = useNow(60_000)?.getTime() ?? renderedAt;
 	const [venue, setVenue] = useState<string | null>(initialVenue && venues.some((v) => v.slug === initialVenue) ? initialVenue : null);
@@ -49,8 +49,9 @@ export function SessionBoard({ rooms, venues, initialRanges, renderedAt, initial
 	const sessions = useMemo(() => Object.fromEntries(rooms.map((r) => [r.slug, byDate(roomSessions(data?.[r.slug] ?? [], { durationMin: r.durationMin, now }))])), [rooms, data, now]);
 	const dates = useMemo(() => localDates(today(now), siteConfig.horizonDays), [now]);
 	const counts = useMemo(() => Object.fromEntries(dates.map((d) => [d, shown.reduce((n, r) => n + (sessions[r.slug]?.[d]?.length ?? 0), 0)])), [dates, shown, sessions]);
-	const [date, setDate] = useState<string | null>(null);
-	const active = date && counts[date] ? date : (dates.find((d) => counts[d]) ?? dates[0] ?? null);
+	// `?date=YYYY-MM-DD` deep link: kept while it is inside the horizon (a fully booked day still shows, row by row).
+	const [date, setDate] = useState<string | null>(initialDate);
+	const active = date && (counts[date] || (date === initialDate && dates.includes(date))) ? date : (dates.find((d) => counts[d]) ?? dates[0] ?? null);
 	const [pick, setPick] = useState<{ slug: string; session: Session } | null>(null);
 	const [team, setTeam] = useState<number | null>(null);
 	const [added, setAdded] = useState<string | null>(null);

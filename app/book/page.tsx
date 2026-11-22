@@ -8,7 +8,9 @@ import { doorArt } from '@/components/doors/door-sources';
 
 export const metadata: Metadata = { title: 'Book a session', description: 'Every escape room session at Otherdoor, Edinburgh: pick a date, a room and a time.' };
 
-type Search = Promise<{ venue?: string | string[] }>;
+type Search = Promise<{ venue?: string | string[]; date?: string | string[] }>;
+
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
 export default async function BookPage({ searchParams }: { searchParams: Search }) {
 	const sp = await searchParams;
@@ -23,7 +25,7 @@ export default async function BookPage({ searchParams }: { searchParams: Search 
 		<>
 			<PageHead label="Book" title="Every door, every session." lede="Pick a day, then a room and a time. Prices are for your whole team; Matinee sessions (Monday to Thursday before 15:00) are 15% off." />
 			<section className="wrap py-12 pb-24">
-				<SessionBoard rooms={rooms} venues={venues} initialRanges={ranges} renderedAt={Date.now()} initialVenue={typeof sp.venue === 'string' ? sp.venue : null} />
+				<SessionBoard rooms={rooms} venues={venues} initialRanges={ranges} renderedAt={Date.now()} initialVenue={typeof sp.venue === 'string' ? sp.venue : null} initialDate={typeof sp.date === 'string' && ISO_DATE.test(sp.date) ? sp.date : null} />
 			</section>
 		</>
 	);

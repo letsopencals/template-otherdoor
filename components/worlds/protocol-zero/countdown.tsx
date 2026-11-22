@@ -9,6 +9,8 @@ import s from './protocol.module.css';
  * never re-renders React. `data-state` drives the styling: calm, fast (near the
  * reservation, it accelerates), low (under five minutes) and wiped (00:00 hold).
  * The colon is a separate glyph in the mono face (Doto's colon reads as a dagger).
+ * The markup is the same fixed 60:00 on the server and on the first client
+ * render (no clock read in render); the live digits only arrive after mount.
  */
 export function Countdown({ className }: { className?: string }) {
 	const box = useRef<HTMLSpanElement>(null);
@@ -41,13 +43,13 @@ export function Countdown({ className }: { className?: string }) {
 	}, []);
 	return (
 		<span ref={box} className={className} data-state="calm" role="timer" aria-label="60 minutes 00 seconds">
-			<span ref={mm} aria-hidden suppressHydrationWarning>
+			<span ref={mm} aria-hidden>
 				60
 			</span>
 			<i className={s.colon} aria-hidden>
 				:
 			</i>
-			<span ref={ss} aria-hidden suppressHydrationWarning>
+			<span ref={ss} aria-hidden>
 				00
 			</span>
 		</span>

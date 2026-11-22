@@ -312,8 +312,8 @@ export const siteConfig = {
 			gameMaster: 'morag-fairbairn',
 			next: 'hotel-lumiere',
 			beats: [
-				{ title: 'The signal', body: 'Kepler Station went dark in 2179. Eight years later its beacon switched back on, and your shuttle was the closest.' },
-				{ title: 'The stakes', body: 'Life support is at 31% and falling. Ninety minutes to restore both decks and fly the station into its last docking window.' },
+				{ title: 'The signal', body: 'Kepler Station, in high orbit over a gas giant, has been silent for nineteen days. Then its beacon switched back on, and your shuttle was the closest.' },
+				{ title: 'The stakes', body: 'Life support is at 31% and falling. Ninety minutes to bring both decks back and fly the station into its last docking window.' },
 				{ title: 'What you’ll do', body: 'Split the crew across two decks, reroute power, decode the captain’s log and talk each other through the docking sequence.' },
 				{ title: 'Inside the room', body: 'Our Epic: the biggest set in Edinburgh, two decks in a bonded warehouse on the Shore, with a second deck most crews never reach.' },
 			],

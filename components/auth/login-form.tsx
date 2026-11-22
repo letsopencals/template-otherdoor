@@ -79,7 +79,7 @@ export function LoginForm({ callbackUrl, initialEmail = '' }: { callbackUrl: str
 				<form onSubmit={(e) => { e.preventDefault(); void send(); }} className="space-y-5">
 					<label className="block text-sm font-medium text-ink-2" htmlFor="login-email">
 						Email
-						<input id="login-email" type="email" autoComplete="email" autoFocus value={email} onChange={(e) => setEmail(e.target.value)} className={field} placeholder="you@example.com" />
+						<input id="login-email" type="email" enterKeyHint="send" autoComplete="email" autoFocus value={email} onChange={(e) => setEmail(e.target.value)} className={field} placeholder="you@example.com" />
 					</label>
 					<button type="submit" className="btn btn-block" disabled={loading}>
 						{loading ? 'Sending…' : 'Email me a code'}
@@ -87,7 +87,7 @@ export function LoginForm({ callbackUrl, initialEmail = '' }: { callbackUrl: str
 				</form>
 			) : (
 				<form onSubmit={(e) => { e.preventDefault(); void verify(); }} className="space-y-5">
-					<input type="text" inputMode="numeric" autoComplete="one-time-code" autoFocus maxLength={6} value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))} aria-label="6-digit code" placeholder="000000" className={`${field} mono h-16 text-center text-2xl tracking-[0.6em]`} />
+					<input type="text" inputMode="numeric" enterKeyHint="go" autoComplete="one-time-code" autoFocus maxLength={6} value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))} aria-label="6-digit code" placeholder="000000" className={`${field} mono h-16 text-center text-2xl tracking-[0.6em]`} />
 					<button type="submit" className="btn btn-block" disabled={loading}>
 						{loading ? 'Opening…' : 'Sign in'}
 					</button>

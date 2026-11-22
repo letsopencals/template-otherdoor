@@ -82,7 +82,6 @@ export function VisitDetail({ id, initialAction }: { id: string; initialAction: 
 						Cancel it
 					</button>
 				</div>
-				{!w.reschedule.allowed && !w.cancel.allowed ? <p className="mt-4">{w.cancel.reason}</p> : null}
 				{mode === 'move' && w.reschedule.allowed ? <MovePicker appt={a} kind={e.kind} roomKey={e.key} seats={e.seats} busy={busy} onMove={(start, end) => call(`/api/account/appointments/${a.id}/reschedule`, { slot: { productId: a.productId, fromDate: utc(start).date, fromTime: utc(start).time, toDate: utc(end).date, toTime: utc(end).time, staffMemberId: a.staffMemberId ?? null, locationId: a.locationId ?? null } }, `Moved to ${longDayLabel(start)} at ${timeLabel(start)}. A new confirmation is on its way.`)} /> : null}
 				{mode === 'cancel' && w.cancel.allowed ? (
 					<div className="glass mt-6 p-6">
