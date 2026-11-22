@@ -489,6 +489,14 @@ bottom: calc(34px + 26%);
 	.year {
 		font-size: 0.85rem;
 	}
+	.plate {
+		top: 2.4%;
+		font-size: 0.6rem;
+	}
+	.glass {
+		top: 13%;
+		height: 42%;
+	}
 	.spill {
 		display: none;
 	}
