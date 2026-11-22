@@ -149,7 +149,7 @@ export function Decoder() {
 
 	const pct = ((freq - BEACON.min) / (BEACON.max - BEACON.min)) * 100;
 	const bars = Math.round(clarity * 5);
-	const shown = decoded ? fullText : locked ? fullText.slice(0, typed) : scramble(fullText, clarity * 0.85, 7);
+	const shown = decoded ? fullText : locked ? fullText.slice(0, typed) : scramble(TRANSMISSION.lines.slice(0, 3).join('\n'), clarity * 0.85, 7);
 
 	return (
 		<div className={s.rx} ref={wrapRef} data-locked={locked || decoded}>
