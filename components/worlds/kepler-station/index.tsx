@@ -36,7 +36,7 @@ const MEDIA = '/worlds/kepler-station';
  * Restoring power is shared state: the lights come back across the whole page.
  * The booking panel sits in normal flow, skinned only with --bp-*.
  */
-export default function KeplerStation({ room, presentation: p, photos, gameMaster, next, records, booking }: RoomWorldProps) {
+export default function KeplerStation({ room, presentation: p, cover, photos, gameMaster, next, records, booking }: RoomWorldProps) {
 	const m = p.media;
 	const stills = m.stills ?? [];
 	const wide = stills[0] ?? `${MEDIA}/wide.jpg`;
@@ -296,6 +296,13 @@ export default function KeplerStation({ room, presentation: p, photos, gameMaste
 						<p className={s.wear}>
 							<span>Wear</span> {p.wear}
 						</p>
+						<figure className={s.keyArt}>
+							<SafeImg src={cover ?? m.key ?? `${MEDIA}/key.jpg`} alt="Kepler Station key art: a suited figure at an open hatch before the ring station" className={s.keyImg} fallback={<span className={s.imgFallback} />} />
+							<Brackets />
+							<figcaption>
+								<span>CREW MANIFEST · {crew} SEATS</span> Everyone who boards comes home together, or nobody does.
+							</figcaption>
+						</figure>
 					</div>
 					<div className={s.panelWrap}>{booking}</div>
 				</div>

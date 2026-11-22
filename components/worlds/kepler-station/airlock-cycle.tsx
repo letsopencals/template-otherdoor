@@ -160,7 +160,7 @@ export function AirlockCycle({ corridor, gameMinutes }: { corridor: string; game
 					onKeyUp={onKeyUp}
 					onBlur={stop}
 					onContextMenu={(e) => e.preventDefault()}
-					disabled={open}
+					aria-disabled={open}
 					aria-label={open ? 'Airlock open' : 'Press and hold to cycle the airlock'}
 				>
 					<svg viewBox="0 0 100 100" aria-hidden className={s.holdRing}>

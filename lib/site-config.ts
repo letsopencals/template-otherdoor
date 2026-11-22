@@ -308,6 +308,7 @@ export const siteConfig = {
 			moods: ['future'],
 			palette: { ground: '#050818', ink: '#E6EEFA', accent: '#F2A33A', accentInk: '#140A02', second: '#2EC4C9', glow: '#3ED2D6' },
 			headerTone: 'light',
+			bookingHeading: 'Pick a launch window',
 			gameMaster: 'morag-fairbairn',
 			next: 'hotel-lumiere',
 			beats: [

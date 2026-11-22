@@ -2,8 +2,14 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-/** The world's hero loop over its poster; missing video keeps the poster, missing poster shows deep space. */
+/**
+ * The world's hero loop over its poster. Metadata only until it is on screen,
+ * then it plays (and pauses again when scrolled away), so a deep link to #book
+ * doesn't download the loop. A missing video keeps the poster; a missing poster
+ * shows deep space. Reduced motion: poster only.
+ */
 export function HeroVideo({ src, poster, className }: { src?: string; poster?: string; className?: string }) {
+	const wrap = useRef<HTMLDivElement>(null);
 	const ref = useRef<HTMLVideoElement>(null);
 	const [on, setOn] = useState(false);
 	const [posterOk, setPosterOk] = useState(Boolean(poster));
@@ -13,15 +19,21 @@ export function HeroVideo({ src, poster, className }: { src?: string; poster?: s
 	}, [src]);
 	useEffect(() => {
 		const v = ref.current;
-		if (!v) return;
+		const el = wrap.current;
+		if (!on || !v || !el) return;
 		v.muted = true;
-		v.play().catch(() => undefined);
+		const io = new IntersectionObserver(([e]) => {
+			if (e?.isIntersecting) v.play().catch(() => undefined);
+			else v.pause();
+		});
+		io.observe(el);
+		return () => io.disconnect();
 	}, [on]);
 	return (
-		<div className={className} aria-hidden>
+		<div ref={wrap} className={className} aria-hidden>
 			{/* eslint-disable-next-line @next/next/no-img-element */}
 			{posterOk && poster ? <img src={poster} alt="" onError={() => setPosterOk(false)} /> : null}
-			{on && src ? <video ref={ref} src={src} muted loop playsInline autoPlay preload="auto" onError={() => setOn(false)} /> : null}
+			{on && src ? <video ref={ref} src={src} muted loop playsInline preload="metadata" poster={poster} onError={() => setOn(false)} /> : null}
 		</div>
 	);
 }

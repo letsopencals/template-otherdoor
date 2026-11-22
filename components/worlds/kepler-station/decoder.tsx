@@ -51,6 +51,8 @@ export function Decoder() {
 	const waveRef = useRef<SVGPathElement>(null);
 	const ghostRef = useRef<SVGPathElement>(null);
 	const live = useRef({ clarity: 0, locked: false });
+	const redraw = useRef<() => void>(() => undefined);
+	const tuneRef = useRef(0);
 
 	const dist = Math.abs(freq - BEACON.target);
 	const locked = dist <= BEACON.tolerance;
@@ -133,19 +135,39 @@ export function Decoder() {
 		io.observe(wrap);
 		drawNoise();
 		drawWave();
+		redraw.current = () => {
+			drawNoise();
+			drawWave();
+		};
 		return () => {
 			cancelAnimationFrame(raf);
 			io.disconnect();
 		};
 	}, [still]);
 
-	// reduced motion: redraw once per change
+	// reduced motion: no loop, so redraw the trace and static once per change
 	useEffect(() => {
-		if (!still) return;
-		const canvas = canvasRef.current;
-		if (!canvas) return;
-		canvas.style.opacity = String(locked ? 0 : 1 - clarity);
-	}, [still, locked, clarity]);
+		if (still) redraw.current();
+	}, [still, freq]);
+
+	useEffect(() => () => cancelAnimationFrame(tuneRef.current), []);
+	/** Auto-tune: sweep the needle onto the beacon (instant under reduced motion). */
+	const autoTune = () => {
+		if (still) {
+			setFreq(BEACON.target);
+			return;
+		}
+		const from = freq;
+		const t0 = performance.now();
+		const step = (t: number) => {
+			const k = Math.min(1, (t - t0) / 1400);
+			const e = 1 - Math.pow(1 - k, 3);
+			setFreq(Math.round((from + (BEACON.target - from) * e) * 100) / 100);
+			if (k < 1) tuneRef.current = requestAnimationFrame(step);
+		};
+		cancelAnimationFrame(tuneRef.current);
+		tuneRef.current = requestAnimationFrame(step);
+	};
 
 	const pct = ((freq - BEACON.min) / (BEACON.max - BEACON.min)) * 100;
 	const bars = Math.round(clarity * 5);
@@ -214,7 +236,12 @@ export function Decoder() {
 				<button type="button" onClick={() => setFreq((f) => Math.max(BEACON.min, Math.round((f - 0.1) * 100) / 100))} aria-label="Tune down 0.1 megahertz">
 					− 0.1
 				</button>
-				<span>Drag the band. The comms mast said where to look.</span>
+				<span className={s.fineHint}>
+					Drag the band. The comms mast said where to look.
+					<button type="button" className={s.auto} onClick={autoTune} disabled={locked || decoded}>
+						Auto-tune
+					</button>
+				</span>
 				<button type="button" onClick={() => setFreq((f) => Math.min(BEACON.max, Math.round((f + 0.1) * 100) / 100))} aria-label="Tune up 0.1 megahertz">
 					+ 0.1
 				</button>
@@ -225,9 +252,10 @@ export function Decoder() {
 					<span>{TRANSMISSION.stamp}</span>
 					<span>{TRANSMISSION.from}</span>
 				</p>
-				<p className={s.txBody} aria-live="polite" aria-label={decoded || locked ? undefined : 'Transmission unreadable: tune the receiver'}>
-					{shown}
+				<p className={s.txBody} aria-live={decoded ? 'polite' : 'off'}>
+					<span aria-hidden={!decoded}>{shown}</span>
 					{locked && !decoded ? <span className={s.caret} /> : null}
+					{decoded ? null : <span className={s.srOnly}>Transmission unreadable until the receiver is tuned.</span>}
 				</p>
 			</div>
 		</div>

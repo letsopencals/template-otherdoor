@@ -100,10 +100,21 @@
 }
 .caption {
 	display: grid;
+	opacity: 0;
+	transform: translateX(-6px);
+	transition:
+		opacity 0.25s ease,
+		transform 0.25s ease;
 	gap: 2px;
 	padding: 7px 12px 7px 10px;
 	border-left: 1px solid var(--k-teal);
 	background: linear-gradient(90deg, rgba(4, 7, 26, 0.9), rgba(4, 7, 26, 0.4));
+}
+.dial:hover .caption,
+.dial:focus-visible .caption,
+.dock[data-open='true'] .caption {
+	opacity: 1;
+	transform: none;
 }
 .caption b {
 	font-family: var(--k-display);

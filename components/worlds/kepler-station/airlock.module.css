@@ -47,13 +47,16 @@
 	text-align: center;
 	background: radial-gradient(40% 34% at 50% 50%, rgba(3, 5, 14, 0.7), transparent 100%);
 	opacity: 0;
+	visibility: hidden;
 	transform: translateY(14px);
 	transition:
 		opacity 0.6s ease 0.7s,
-		transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.7s;
+		transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.7s,
+		visibility 0s linear 0.7s;
 }
 .lock[data-open='true'] .cleared {
 	opacity: 1;
+	visibility: visible;
 	transform: none;
 }
 .clearedKicker {
@@ -342,7 +345,7 @@
 	-webkit-touch-callout: none;
 	transform: scale(calc(1 - var(--hold) * 0.04));
 }
-.hold:disabled {
+.hold[aria-disabled='true'] {
 	cursor: default;
 	box-shadow:
 		0 0 0 3px #1a2030,

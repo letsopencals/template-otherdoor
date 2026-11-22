@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { E, GRID, GRID_SCRAMBLE, GRID_SOLVED, N, S, W } from './mission';
 import { useMission } from './mission-state';
 import { LifeSupport } from './life-support';
@@ -78,6 +78,11 @@ export function PowerGrid() {
 	const { lit, done } = useMemo(() => flood(masks), [masks]);
 	const routed = power || done;
 	const moves = turns.flat().reduce((a, b) => a + b, 0);
+	const leverRef = useRef<HTMLButtonElement>(null);
+	const throwLever = () => {
+		if (!routed || power) return;
+		restore();
+	};
 
 	const turn = (r: number, c: number) => {
 		if (power) return;
@@ -86,6 +91,7 @@ export function PowerGrid() {
 	const bypass = () => {
 		setTurns(GRID_SCRAMBLE.map((row) => row.map((q) => (4 - q) % 4)));
 		restore();
+		leverRef.current?.focus();
 	};
 
 	return (
@@ -133,7 +139,7 @@ export function PowerGrid() {
 					<div className={s.gauge}>
 						<LifeSupport size={150} />
 					</div>
-					<button type="button" className={s.lever} disabled={!routed || power} data-thrown={power} onClick={restore} aria-label={power ? 'Main bus lever thrown' : 'Throw the main bus lever'}>
+					<button ref={leverRef} type="button" className={s.lever} aria-disabled={!routed || power} data-thrown={power} onClick={throwLever} aria-label={power ? 'Main bus lever thrown' : 'Throw the main bus lever'}>
 						<span className={s.leverSlot} aria-hidden>
 							<span className={s.leverArm}>
 								<i />

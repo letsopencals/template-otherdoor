@@ -394,12 +394,7 @@ function Hub() {
 			{/* command drum */}
 			{cyl(54, 64, 30, 'url(#kDrum)')}
 			<path d={`M${CX - 54} ${hubY(47)}A54 ${HUB_RY(54)} 0 0 0 ${CX + 54} ${hubY(47)}`} fill="none" stroke="#04070e" strokeOpacity=".6" strokeWidth="1.1" />
-			{/* radiator fins on the drum */}
-			<g className={s.fins}>
-				<path d={`M${CX - 54} ${hubY(56)}l-44 -8v12l44 5z`} />
-				<path d={`M${CX + 54} ${hubY(56)}l44 -8v12l-44 5z`} />
-			</g>
-			{/* solar wings */}
+			{/* solar wings on the despun mast (they hold still while the ring turns) */}
 			{solar(-1)}
 			{solar(1)}
 			{/* comms mast and dish */}

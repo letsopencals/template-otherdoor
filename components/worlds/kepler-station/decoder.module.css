@@ -248,7 +248,7 @@
 	color: var(--k-dim);
 	text-align: center;
 }
-.fine button {
+.fine > button {
 	flex: none;
 	min-width: 64px;
 	min-height: 40px;
@@ -262,22 +262,92 @@
 	cursor: pointer;
 	box-shadow: 0 2px 0 #05080f;
 }
-.fine button:active {
+.fine > button:active {
 	transform: translateY(2px);
 	box-shadow: none;
 }
-.fine button:focus-visible {
+.fine > button:focus-visible {
 	outline: 2px solid var(--k-teal);
 	outline-offset: 2px;
 }
 
+.fineHint {
+	display: grid;
+	justify-items: center;
+	gap: 6px;
+}
+.auto {
+	padding: 4px 10px;
+	border: 1px solid rgba(62, 210, 214, 0.45);
+	border-radius: 3px;
+	background: transparent;
+	color: var(--k-teal);
+	font-family: var(--font-mono);
+	font-size: 0.68rem;
+	letter-spacing: 0.08em;
+	cursor: pointer;
+}
+.auto:hover:not(:disabled) {
+	background: rgba(62, 210, 214, 0.1);
+}
+.auto:disabled {
+	opacity: 0.4;
+	cursor: default;
+}
+.auto:focus-visible {
+	outline: 2px solid var(--k-teal);
+	outline-offset: 2px;
+}
+.srOnly {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+	white-space: nowrap;
+}
 .transcript {
 	margin-top: 18px;
 	padding: 16px 18px;
 	border-left: 2px solid var(--k-warn);
 	background: rgba(4, 7, 26, 0.6);
 }
-.rx[data-locked='true'] .transcript {
+.rx[data-locked='true'] .fineHint {
+	display: grid;
+	justify-items: center;
+	gap: 6px;
+}
+.auto {
+	padding: 4px 10px;
+	border: 1px solid rgba(62, 210, 214, 0.45);
+	border-radius: 3px;
+	background: transparent;
+	color: var(--k-teal);
+	font-family: var(--font-mono);
+	font-size: 0.68rem;
+	letter-spacing: 0.08em;
+	cursor: pointer;
+}
+.auto:hover:not(:disabled) {
+	background: rgba(62, 210, 214, 0.1);
+}
+.auto:disabled {
+	opacity: 0.4;
+	cursor: default;
+}
+.auto:focus-visible {
+	outline: 2px solid var(--k-teal);
+	outline-offset: 2px;
+}
+.srOnly {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+	white-space: nowrap;
+}
+.transcript {
 	border-left-color: #7dffb1;
 }
 .txMeta {
@@ -291,6 +361,7 @@
 	color: var(--k-teal);
 }
 .txBody {
+	position: relative;
 	margin-top: 10px;
 	min-height: 8.6em;
 	white-space: pre-line;

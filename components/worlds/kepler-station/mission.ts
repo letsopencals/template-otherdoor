@@ -213,7 +213,7 @@ export const FAIL_ORDER = ['life', 'reactor', 'galley', 'quarters', 'nav', 'comm
 
 /* ------------------------------------------------------------ The commander's last transmission */
 
-export const BEACON = { min: 400, max: 440, target: 418.7, tolerance: 0.35, step: 0.05 };
+export const BEACON = { min: 405, max: 435, target: 418.7, tolerance: 0.6, step: 0.05 };
 
 export const TRANSMISSION = {
 	from: 'Cmdr. Ines Adeyemi-Ross',

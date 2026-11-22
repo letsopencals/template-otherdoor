@@ -36,6 +36,7 @@ export function Cutaway() {
 	const [dark, setDark] = useState(0);
 	const [open, setOpen] = useState<string>('airlock');
 	const onP = useCallback((p: number) => {
+		if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 		const n = Math.max(0, Math.min(FAIL_ORDER.length - 2, Math.floor(((p - 0.3) / 0.45) * (FAIL_ORDER.length - 1))));
 		setDark((d) => (d === n ? d : n));
 	}, []);

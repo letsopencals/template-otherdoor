@@ -52,11 +52,13 @@ export function HeroOrbit({ className }: { className?: string }) {
 					<stop offset=".5" stopColor="#3ed2d6" stopOpacity=".6" />
 					<stop offset="1" stopColor="#f2a33a" stopOpacity=".9" />
 				</linearGradient>
+				{/* the same arc reversed, so the range labels read left to right */}
+				<path id="kTrajText" d="M812 438C860 470 880 500 1020 590C1160 680 1390 790 1620 840" />
 			</defs>
 			<path id="kTrajPath" d="M1620 840C1390 790 1160 680 1020 590S860 470 812 438" className={s.traj} stroke="url(#kTraj)" />
-			{[0.15, 0.35, 0.55, 0.75].map((t, i) => (
-				<text key={t} className={s.trajTick}>
-					<textPath href="#kTrajPath" startOffset={`${Math.round(t * 100)}%`}>
+			{[0.82, 0.62, 0.42, 0.22].map((t, i) => (
+				<text key={t} className={s.trajTick} dy="-8">
+					<textPath href="#kTrajText" startOffset={`${Math.round(t * 100)}%`}>
 						{`· ${[12, 8, 4, 1][i]} KM`}
 					</textPath>
 				</text>

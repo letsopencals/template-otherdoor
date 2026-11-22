@@ -220,7 +220,7 @@
 	color: var(--k-ink);
 	cursor: pointer;
 }
-.lever:disabled {
+.lever[aria-disabled='true'] {
 	cursor: not-allowed;
 }
 .lever[data-thrown='true'] {
@@ -273,10 +273,10 @@
 		0 0 0 1px #6b3c06,
 		0 0 18px rgba(242, 163, 58, 0.35);
 }
-.lever:not(:disabled):hover .leverArm {
+.lever:not([aria-disabled='true']):hover .leverArm {
 	transform: rotate(-16deg);
 }
-.lever:not(:disabled) .leverArm i {
+.lever:not([aria-disabled='true']) .leverArm i {
 	box-shadow:
 		0 0 0 1px #6b3c06,
 		0 0 26px rgba(242, 163, 58, 0.9);
@@ -303,7 +303,7 @@
 	letter-spacing: 0.1em;
 	color: var(--k-dim);
 }
-.lever:not(:disabled) .leverText {
+.lever:not([aria-disabled='true']) .leverText {
 	color: var(--k-warn);
 }
 .lever[data-thrown='true'] .leverText {
@@ -384,7 +384,7 @@
 	}
 	.tile[data-on='true'] .pipeFlow,
 	.sink i,
-	.lever:not(:disabled) .leverArm i {
+	.lever:not([aria-disabled='true']) .leverArm i {
 		animation: none;
 	}
 }
