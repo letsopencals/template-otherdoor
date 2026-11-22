@@ -14,10 +14,15 @@ import s from './corridor.module.css';
 
 const PHONE = '(max-width: 767px)';
 
-/** A muted world loop that only loads and plays while its door is open. */
+/**
+ * A muted world loop behind the door. It loads on the first open and only
+ * becomes visible once frames are actually playing, over a poster that is the
+ * clip's first frame, so the scene never swaps pictures.
+ */
 function Glimpse({ src, poster, active }: { src?: string; poster?: string; active: boolean }) {
 	const ref = useRef<HTMLVideoElement>(null);
 	const [broken, setBroken] = useState(false);
+	const [playing, setPlaying] = useState(false);
 	useLayoutEffect(() => {
 		const v = ref.current;
 		if (!v || broken) return;
@@ -27,13 +32,19 @@ function Glimpse({ src, poster, active }: { src?: string; poster?: string; activ
 		} else v.pause();
 	}, [active, broken]);
 	if (!src || broken) return null;
-	return <video ref={ref} className={s.glimpse} src={src} poster={poster} muted loop playsInline preload="none" aria-hidden onError={() => setBroken(true)} data-on={active} />;
+	return <video ref={ref} className={s.glimpse} src={src} poster={poster} muted loop playsInline preload="none" aria-hidden onPlaying={() => setPlaying(true)} onError={() => setBroken(true)} data-on={playing} />;
+}
+
+/** The scene behind a door: the loop's first frame when there is a loop (so the video picks up seamlessly), else the key art chain. */
+function sceneArt(d: DoorRoom) {
+	return d.media.loop && d.media.poster ? [d.media.poster, ...doorArt(d)] : doorArt(d);
 }
 
 /**
- * The Corridor: six doors in a dark hall. Hover or focus a door and it opens a
- * crack: its world's light and a muted loop spill out and the whole shell takes
- * its colour. Click enters the world. On phones the doors stack; the first tap
+ * The Corridor: six doors in a dark hall, light leaking round their edges.
+ * Hover or focus a door: the lever turns, the leaf swings out towards you on its
+ * hinge, the room's light comes on behind it and its loop starts; the whole
+ * shell takes its colour. Click enters the world. On phones the doors stack; the first tap
  * opens one, the second walks in. Mood filters re-order the corridor.
  */
 export function Corridor({ doors, moods }: { doors: DoorRoom[]; moods: ReadonlyArray<{ key: Mood | 'all'; label: string }> }) {
@@ -94,18 +105,27 @@ export function Corridor({ doors, moods }: { doors: DoorRoom[]; moods: ReadonlyA
 							>
 								<span className={s.frame}>
 									<span className={s.inside} aria-hidden>
-										<DoorArt sources={doorArt(d)} alt="" glow={d.palette.glow} className={s.art} loading="eager" />
+										<DoorArt sources={sceneArt(d)} alt="" glow={d.palette.glow} className={s.art} loading="eager" />
 										<Glimpse src={d.media.loop} poster={d.media.poster} active={isOpen} />
 										<span className={s.wash} />
+										<span className={s.motes} />
 									</span>
+									<span className={s.gap} aria-hidden />
 									<span className={s.leaf} aria-hidden>
-										<span className={s.panelTop}>
-											<DoorArt sources={doorArt(d)} alt="" glow={d.palette.glow} className={s.transom} loading="eager" />
+										<span className={s.face}>
+											<span className={s.plate}>{String(d.number).padStart(2, '0')}</span>
+											<span className={s.glass}>
+												<DoorArt sources={sceneArt(d)} alt="" glow={d.palette.glow} className={s.glassArt} loading="eager" />
+											</span>
+											<span className={s.panelBottom}>
+												<span className={s.year}>{d.year}</span>
+											</span>
+											<span className={s.handle}>
+												<span className={s.lever} />
+											</span>
 										</span>
-										<span className={s.panelBottom} />
-										<span className={s.plate}>{String(d.number).padStart(2, '0')}</span>
-										<span className={s.year}>{d.year}</span>
-										<span className={s.knob} />
+										<span className={s.edge} />
+										<span className={s.back} />
 									</span>
 									<span className={s.spill} aria-hidden />
 								</span>
