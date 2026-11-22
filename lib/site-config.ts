@@ -560,9 +560,6 @@ export const siteConfig = {
 		{ href: '/workshops', label: 'Workshops' },
 		{ href: '/groups', label: 'Groups' },
 	],
-
-	/** `/preview/*` fixture screens in production (always on in dev). */
-	previewEnv: 'OTHERDOOR_PREVIEW',
 } as const;
 
 export type RoomSlug = keyof typeof siteConfig.rooms;

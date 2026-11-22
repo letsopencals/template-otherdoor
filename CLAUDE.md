@@ -141,7 +141,6 @@ another (each has its own layout grammar and motion).
 - **Thank-you** (`components/thank-you/*`): "The door unlocks". **Account**
   (`components/account/doors-opened.tsx`): "Doors opened"; `/account/appointments/[id]` moves or
   cancels (24 h rule, `lib/change-window.ts`).
-- `/preview/thank-you|account|cart` render fixtures (dev, or `OTHERDOOR_PREVIEW=1`).
 
 ### Times
 Always Edinburgh: `siteConfig.timezone` with `lib/when.ts` (24 h, `en-GB`).
@@ -171,6 +170,6 @@ refreshes tokens and protects `/account/*`.
   doors, visit, history, cart-lines, booking-state, field-errors, guards) must pass.
 - `npm run build` must pass before release. Don't `next build` while a
   `next dev` runs in this folder (shared `.next`); build in a copy.
-- Smoke test against a seeded `escape_rooms` store (or the mock): the corridor shows six doors and
+- Smoke test against a seeded `escape_rooms` store: the corridor shows six doors and
   Tonight lists sessions; Kepler Station books 6 players at 18:00 into Your doors; checkout with
   pay-at-the-venue lands on "The door unlocks"; the account shows the booking under Coming up.

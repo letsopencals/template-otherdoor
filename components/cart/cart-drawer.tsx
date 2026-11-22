@@ -39,7 +39,7 @@ export interface CartViewProps {
 	onClose?: () => void;
 }
 
-/** The cart itself, driven by props (the drawer passes the live cart; /preview passes a fixture). */
+/** The cart itself, driven by props (the drawer passes the live cart). */
 export function CartView({ cart, timeRemaining, removeItem, applyDiscountCode, removeDiscountCode, discountCodeError, onClose }: CartViewProps) {
 	const [code, setCode] = useState('');
 	const [busy, setBusy] = useState<string | null>(null);

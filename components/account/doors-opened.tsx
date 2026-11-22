@@ -32,16 +32,16 @@ type Appt = AppointmentShape & { status?: string | null; product?: AppointmentSh
  * collection of every room's door (played ones open and lit in their world's
  * colour with the date, the rest still closed), and the past list.
  */
-export function DoorsOpened({ rooms, fixture }: { rooms: SigilRoom[]; fixture?: Appt[] }) {
+export function DoorsOpened({ rooms }: { rooms: SigilRoom[] }) {
 	const { data: session } = useSession();
-	const { data, error, isLoading } = useSWR<{ data: Appt[] }>(fixture ? null : '/api/account/appointments?take=50&orderBy=from&order=DESC', fetcher, { revalidateOnFocus: false });
-	const list = useMemo(() => fixture ?? data?.data ?? [], [fixture, data]);
+	const { data, error, isLoading } = useSWR<{ data: Appt[] }>('/api/account/appointments?take=50&orderBy=from&order=DESC', fetcher, { revalidateOnFocus: false });
+	const list = useMemo(() => data?.data ?? [], [data]);
 	const now = useNow(60_000)?.getTime() ?? 0;
 	const entries = useMemo<Array<LogEntry & { a: Appt }>>(() => list.map((a) => ({ a, e: visitOf(a), status: a.status === 'scheduled' && Date.parse(a.to) < now ? 'completed' : (a.status ?? 'scheduled') })), [list, now]);
 	const { upcoming, past } = useMemo(() => splitLog(entries, now), [entries, now]);
 	const opened = useMemo(() => openedDoors(entries, now), [entries, now]);
 	const left = rooms.filter((r) => opened[r.slug] === undefined).length;
-	const name = fixture ? "Ada" : (session?.customer?.firstName ?? null);
+	const name = session?.customer?.firstName ?? null;
 
 	return (
 		<section className="pool wrap pb-24 pt-[calc(var(--header-h)+48px)]">
@@ -50,11 +50,9 @@ export function DoorsOpened({ rooms, fixture }: { rooms: SigilRoom[]; fixture?: 
 					<p className="label">Your account</p>
 					<h1 className="font-display mt-4 text-[clamp(2.6rem,6vw,5rem)] leading-[0.95] tracking-[-0.045em]">{name ? `Welcome back, ${name}.` : 'Welcome back.'}</h1>
 				</div>
-				{fixture ? null : (
-					<button type="button" className="link text-sm text-ink-2" onClick={() => void signOut({ callbackUrl: '/' })}>
-						Sign out
-					</button>
-				)}
+				<button type="button" className="link text-sm text-ink-2" onClick={() => void signOut({ callbackUrl: '/' })}>
+					Sign out
+				</button>
 			</div>
 
 			<div className={s.collection}>
@@ -105,15 +103,11 @@ export function DoorsOpened({ rooms, fixture }: { rooms: SigilRoom[]; fixture?: 
 									<DoorCard
 										v={e}
 										actions={
-											fixture ? (
-												<span className="text-ink-3">Move · Cancel · Details</span>
-											) : (
-												<>
-													{w.reschedule.allowed ? <Link href={`/account/appointments/${e.id}?do=move`}>Move</Link> : null}
-													{w.cancel.allowed ? <Link href={`/account/appointments/${e.id}?do=cancel`}>Cancel</Link> : null}
-													<Link href={`/account/appointments/${e.id}`}>Details</Link>
-												</>
-											)
+											<>
+												{w.reschedule.allowed ? <Link href={`/account/appointments/${e.id}?do=move`}>Move</Link> : null}
+												{w.cancel.allowed ? <Link href={`/account/appointments/${e.id}?do=cancel`}>Cancel</Link> : null}
+												<Link href={`/account/appointments/${e.id}`}>Details</Link>
+											</>
 										}
 									/>
 									{/* No clock on the server or while hydrating (now = 0): the policy line arrives after mount. */}
