@@ -61,7 +61,7 @@ export function VisitDetail({ id, initialAction }: { id: string; initialAction: 
 	};
 
 	return (
-		<div className="grid gap-10 lg:grid-cols-[minmax(0,420px)_1fr]">
+		<div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)]">
 			<div>
 				<DoorCard v={e} />
 				<dl className="mt-8 grid gap-3 text-[0.95rem]">
